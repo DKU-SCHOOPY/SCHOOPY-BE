@@ -3,7 +3,9 @@ package com.schoopy.back.qrScanning.dto.response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-public class RegistEventResponseDto {
+import com.schoopy.back.global.dto.ResponseDto;
+
+public class RegistEventResponseDto extends ResponseDto{
     private RegistEventResponseDto () {
         super();
     }
