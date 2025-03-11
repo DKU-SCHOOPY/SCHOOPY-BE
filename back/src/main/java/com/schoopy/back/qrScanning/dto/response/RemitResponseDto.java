@@ -3,7 +3,9 @@ package com.schoopy.back.qrScanning.dto.response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-public class RemitResponseDto {
+import com.schoopy.back.global.dto.ResponseDto;
+
+public class RemitResponseDto extends ResponseDto{
     private RemitResponseDto () {
         super();
     }
