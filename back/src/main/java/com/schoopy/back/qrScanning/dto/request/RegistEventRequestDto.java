@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RegistEventRequestDto {
-    private String eventCode;
+    private String eventName;
     private String qrURL;
 }
