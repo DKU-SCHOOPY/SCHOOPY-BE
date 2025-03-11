@@ -15,7 +15,7 @@ public class EventEntity {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String eventCode;
+    private String eventName;
 
     @Column(nullable = false)
     private String qrURL;
