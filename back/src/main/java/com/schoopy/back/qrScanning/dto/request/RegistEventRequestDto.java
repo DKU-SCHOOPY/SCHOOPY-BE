@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class RegistEventRequestDto {
     private String eventName;
-    private String qrURL;
+    private String name;
 }
