@@ -25,7 +25,7 @@ public class EventServiceImplement implements EventService{
         try {
             EventEntity eventEntity = new EventEntity();
             eventEntity.setEventName(dto.getEventName());
-            eventEntity.setQrURL(dto.getQrURL());
+            eventEntity.setQrURL(dto.getQrUrl());
             eventRepository.save(eventEntity);
         } catch (Exception e) {
             e.printStackTrace();
