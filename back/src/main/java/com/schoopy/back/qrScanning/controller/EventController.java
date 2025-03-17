@@ -4,7 +4,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.schoopy.back.qrScanning.dto.request.RegistEventRequestDto;
+import com.schoopy.back.qrScanning.dto.request.RemitRequestDto;
 import com.schoopy.back.qrScanning.dto.response.RegistEventResponseDto;
+import com.schoopy.back.qrScanning.dto.response.RemitResponseDto;
 import com.schoopy.back.qrScanning.service.EventService;
 
 import jakarta.validation.Valid;
@@ -26,6 +28,14 @@ public class EventController {
         @RequestBody @Valid RegistEventRequestDto requestBody
     ) {
         ResponseEntity<? super RegistEventResponseDto> response = EventService.registEvent(requestBody);
+        return response;
+    }
+
+    @PostMapping("/remit-event")
+    public ResponseEntity<? super RemitResponseDto> remitEvent(
+        @RequestBody @Valid RemitRequestDto requestBodyDto
+    ) {
+        ResponseEntity<? super RemitResponseDto> response = EventService.remitEvent(requestBodyDto);
         return response;
     }
     
