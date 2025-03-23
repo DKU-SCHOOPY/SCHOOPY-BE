@@ -19,7 +19,7 @@ import lombok.Setter;
 public class CertificationEntity {
     @Id
     @Column(nullable = false, updatable = false)
-    private String email;
+    private String studentNum;
 
     @Column(nullable = false)
     private String certificationNumber;
