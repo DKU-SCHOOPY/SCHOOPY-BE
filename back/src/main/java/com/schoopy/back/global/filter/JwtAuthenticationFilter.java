@@ -44,8 +44,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
         try {
             // JWT 유효성 검증
-            String email = jwtProvider.validate(token);
-            if (email == null) {
+            String studentNum = jwtProvider.validate(token);
+            if (studentNum == null) {
                 // 유효하지 않은 토큰인 경우
                 response.setContentType("application/json");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             }
 
             // 사용자 찾기
-            UserEntity userEntity = userRepository.findByEmail(email);
+            UserEntity userEntity = userRepository.findByStudentNum(studentNum);
             if (userEntity == null) {
                 // 사용자 찾기 실패
                 response.setContentType("application/json");
@@ -71,7 +71,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             // Spring Security Context 설정
             SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
             AbstractAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(email, null, authorities);
+                new UsernamePasswordAuthenticationToken(studentNum, null, authorities);
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             securityContext.setAuthentication(authenticationToken);
