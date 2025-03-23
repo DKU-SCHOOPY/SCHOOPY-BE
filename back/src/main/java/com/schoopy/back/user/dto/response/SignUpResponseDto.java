@@ -29,4 +29,9 @@ public class SignUpResponseDto extends ResponseDto{
         ResponseDto responseBody = new ResponseDto(UserResponseCode.CERTIFICATION_FAIL, UserResponseMessage.CERTIFICATION_FAIL);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseBody);
     }
+
+    public static ResponseEntity<? super SignUpResponseDto> passwordEmptyError() {
+        ResponseDto responseBody = new ResponseDto(UserResponseCode.PASSWORD_EMPTY, UserResponseMessage.PASSWORD_EMPTY);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseBody);
+    }
 }
