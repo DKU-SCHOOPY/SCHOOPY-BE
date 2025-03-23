@@ -2,7 +2,7 @@ package com.schoopy.back.user.common;
 
 import com.schoopy.back.global.common.ResponseCode;
 
-public interface UserResponseCode extends ResponseCode{
+public interface UserResponseCode extends ResponseCode {
     String MAIL_FAIL = "MF";
     String USER_NOT_EXISTS = "UNE";
     String ENTITY_NOT_FOND = "ENF";

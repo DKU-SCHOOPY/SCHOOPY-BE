@@ -7,6 +7,6 @@ import com.schoopy.back.qrScanning.dto.request.RemitRequestDto;
 import com.schoopy.back.qrScanning.dto.response.RegistEventResponseDto;
 import com.schoopy.back.qrScanning.dto.response.RemitResponseDto;
 public interface EventService {
-    ResponseEntity<? super RegistEventResponseDto> registEvent(RegistEventRequestDto dto);
-    ResponseEntity<? super RemitResponseDto> remitEvent(RemitRequestDto dto);
+    ResponseEntity<? super RegistEventResponseDto> registEvent(RegistEventRequestDto requestDto);
+    ResponseEntity<? super RemitResponseDto> remitEvent(RemitRequestDto requestDto);
 }

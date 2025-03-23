@@ -3,20 +3,31 @@ package com.schoopy.back.qrScanning.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Table(name="event")
 public class EventEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long eventCode;
 
-    @Column(nullable = false, unique = true)
     private String eventName;
-
-    @Column(nullable = false)
-    private String qrURL;
+    private Date surveyStartDate;
+    private Date surveyEndDate;
+    private Date eventStartDate;
+    private Date eventEndDate;
+    private int maxParticipants;
+    private int currentParticipants;
+    @Column(columnDefinition = "LONGTEXT")
+    private String eventDescription;
+    @ElementCollection
+    private List<String> eventImages;
+    @ElementCollection
+    private List<String> QrCodeImages;
 }

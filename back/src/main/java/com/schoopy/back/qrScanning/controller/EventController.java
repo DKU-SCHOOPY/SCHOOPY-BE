@@ -1,5 +1,6 @@
 package com.schoopy.back.qrScanning.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,13 +22,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequiredArgsConstructor
 @RequestMapping("/schoopy/v1/event")
 public class EventController {
-    
-    private final EventService EventService;
+    private final EventService eventService;
+
     @PostMapping("/regist-event")
     public ResponseEntity<? super RegistEventResponseDto> registEvent(
         @RequestBody @Valid RegistEventRequestDto requestBody
     ) {
-        ResponseEntity<? super RegistEventResponseDto> response = EventService.registEvent(requestBody);
+        ResponseEntity<? super RegistEventResponseDto> response = eventService.registEvent(requestBody);
         return response;
     }
 
@@ -35,9 +36,7 @@ public class EventController {
     public ResponseEntity<? super RemitResponseDto> remitEvent(
         @RequestBody @Valid RemitRequestDto requestBodyDto
     ) {
-        ResponseEntity<? super RemitResponseDto> response = EventService.remitEvent(requestBodyDto);
+        ResponseEntity<? super RemitResponseDto> response = eventService.remitEvent(requestBodyDto);
         return response;
     }
-    
-
 }

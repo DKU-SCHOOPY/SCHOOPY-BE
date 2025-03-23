@@ -25,7 +25,15 @@ public class EventServiceImplement implements EventService{
         try {
             EventEntity eventEntity = new EventEntity();
             eventEntity.setEventName(dto.getEventName());
-            eventEntity.setQrURL(dto.getQrUrl());
+            eventEntity.setSurveyStartDate(dto.getSurveyStartDate());
+            eventEntity.setSurveyEndDate(dto.getSurveyEndDate());
+            eventEntity.setEventStartDate(dto.getEventStartDate());
+            eventEntity.setEventEndDate(dto.getEventEndDate());
+            eventEntity.setMaxParticipants(dto.getMaxParticipants());
+            eventEntity.setCurrentParticipants(0);
+            eventEntity.setEventDescription(dto.getEventDescription());
+            eventEntity.setEventImages(dto.getEventImages());
+            eventEntity.setQrCodeImages(dto.getQrCodeImages());
             eventRepository.save(eventEntity);
         } catch (Exception e) {
             e.printStackTrace();
