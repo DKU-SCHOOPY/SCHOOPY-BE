@@ -7,8 +7,8 @@ import com.schoopy.back.user.entity.CertificationEntity;
 import jakarta.transaction.Transactional;
 
 public interface CertificationRepository extends JpaRepository<CertificationEntity, String>{
-    CertificationEntity findByEmail(String email);
+    CertificationEntity findBystudentNum(String studentNum);
 
     @Transactional
-    void deleteByEmail(String email);
+    void deleteByStudentNum(String studentNum);
 }

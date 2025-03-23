@@ -34,8 +34,8 @@ public class UserServiceImplement implements UserService{
         
         try {
 
-            String email = dto.getEmail();
-            boolean isExistId = userRepository.existsByEmail(email);
+            String studentNum = dto.getStudentNum();
+            boolean isExistId = userRepository.existsByStudentNum(studentNum);
             if (isExistId) return EmailCheckResponseDto.duplicatedId();
             
         } catch (Exception exception) {
@@ -51,21 +51,22 @@ public class UserServiceImplement implements UserService{
         
         try {
 
-            String email = dto.getEmail();
+            String studentNum = dto.getStudentNum();
 
             //존재하는 이메일인지 확인
-            boolean isExistId = userRepository.existsByEmail(email);
+            boolean isExistId = userRepository.existsByStudentNum(studentNum);
             if (isExistId) return EmailCertificationResponseDto.duplicateId();
 
             //인증번호 생성
             String certificationNumber = getCertificationNumber();
 
+            String email = studentNum + "@dankook.ac.kr";
             //메일 전송
             boolean isSuccessed = emailProvider.sendCertificationMail(email, certificationNumber);
             if (!isSuccessed) return EmailCertificationResponseDto.mailSendFail();
 
             //메일 전송 결과 저장
-            CertificationEntity certificationEntity = new CertificationEntity(email, certificationNumber);
+            CertificationEntity certificationEntity = new CertificationEntity(studentNum, certificationNumber);
             certificationRepository.save(certificationEntity);
             
         } catch (Exception exception) {
@@ -89,13 +90,13 @@ public class UserServiceImplement implements UserService{
     public ResponseEntity<? super CheckCertificationResponseDto> checkCertification(CheckCertificationRequestDto dto) {
         try {
 
-            String email = dto.getEmail();
+            String studentNum = dto.getStudentNum();
             String certificationNumber = dto.getCertificationNumber();
 
-            CertificationEntity certificationEntity = certificationRepository.findByEmail(email);
+            CertificationEntity certificationEntity = certificationRepository.findBystudentNum(studentNum);
             if (certificationEntity == null) return CheckCertificationResponseDto.databaseError();
 
-            boolean isMatched = certificationEntity.getEmail().equals(email) && certificationEntity.getCertificationNumber().equals(certificationNumber);
+            boolean isMatched = certificationEntity.getStudentNum().equals(studentNum) && certificationEntity.getCertificationNumber().equals(certificationNumber);
             if (!isMatched) return CheckCertificationResponseDto.certificationFail();
 
         } catch (Exception exception) {
@@ -111,26 +112,27 @@ public class UserServiceImplement implements UserService{
         
         try {
 
-            String email = dto.getEmail();
-            boolean isExistId = userRepository.existsByEmail(email);
+            String studentNum = dto.getStudentNum();
+            boolean isExistId = userRepository.existsByStudentNum(studentNum);
             if (isExistId) return SignUpResponseDto.duplicateId();
 
             String certificationNumber = dto.getCertificationNumber();
             
-            CertificationEntity certificationEntity = certificationRepository.findByEmail(email);
+            CertificationEntity certificationEntity = certificationRepository.findBystudentNum(studentNum);
             boolean isMatched = 
-                certificationEntity.getEmail().equals(email) && 
+                certificationEntity.getStudentNum().equals(studentNum) && 
                 certificationEntity.getCertificationNumber().equals(certificationNumber);
             if (!isMatched) return SignUpResponseDto.certificationFail();
 
             String password = dto.getPassword();
+            if (password == null || password.isEmpty()) return SignUpResponseDto.passwordEmptyError();
             String encodedPassword = passwordEncoder.encode(password);
             dto.setPassword(encodedPassword);
 
             UserEntity userEntity = new UserEntity(dto);
             userRepository.save(userEntity);
 
-            certificationRepository.deleteByEmail(email);
+            certificationRepository.deleteByStudentNum(studentNum);
 
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -145,12 +147,12 @@ public class UserServiceImplement implements UserService{
 
         String token = null;
         UserEntity userEntity;
-        String email;
+        String studentNum;
 
         try {
             
-            email = dto.getEmail();
-            userEntity = userRepository.findByEmail(email);
+            studentNum = dto.getStudentNum();
+            userEntity = userRepository.findByStudentNum(studentNum);
             if ( userEntity == null ) return SignInResponseDto.signInFailEmail();
 
             String password = dto.getPassword();
@@ -158,7 +160,7 @@ public class UserServiceImplement implements UserService{
             boolean isMatched = passwordEncoder.matches(password, encodedPassword);
             if (!isMatched) return SignInResponseDto.signInFailPassword();
 
-            token = jwtProvider.create(email);
+            token = jwtProvider.create(studentNum);
 
         } catch (Exception exception) {
             exception.printStackTrace();

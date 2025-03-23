@@ -12,4 +12,5 @@ public interface UserResponseMessage extends ResponseMessage{
     String DUPLICATE_NICKNAME = "duplicated nickname";
     String EMAIL_MISSMATCH = "email missmatch";
     String PASSWORD_MISSMATCH = "password missmatch";
+    String PASSWORD_EMPTY = "password is empty";
 }
