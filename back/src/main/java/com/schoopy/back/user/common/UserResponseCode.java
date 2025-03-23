@@ -12,4 +12,5 @@ public interface UserResponseCode extends ResponseCode{
     String DUPLICATE_NICKNAME = "DN";
     String EMAIL_MISSMATCH = "EM";
     String PASSWORD_MISSMATCH = "PM";
+    String PASSWORD_EMPTY = "PE";
 }
