@@ -2,6 +2,7 @@ package com.schoopy.back.user.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,7 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class EmailCertificationRequestDto {
-    @Email
     @NotBlank
-    private String email;
+    @Pattern(regexp = "\\d{8}", message = "학번은 8자리 숫자여야 합니다.")
+    private String studentNum;
 }
