@@ -14,9 +14,6 @@ import lombok.Getter;
 public class SignInResponseDto extends ResponseDto{
     private String token;
     private int expirationTime;
-    private String nickname;
-    private int point;
-    private int treeLevel;
     private boolean notice;
 
     private SignInResponseDto (String token, UserEntity user) {
