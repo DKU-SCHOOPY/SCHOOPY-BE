@@ -1,4 +1,4 @@
-package com.schoopy.back.qrScanning.entity;
+package com.schoopy.back.event.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,7 +20,7 @@ public class EventEntity {
     private String eventName;
     private Date surveyStartDate;
     private Date surveyEndDate;
-    private Date eventStartDate;
+    private Date eventStxartDate;
     private Date eventEndDate;
     private int maxParticipants;
     private int currentParticipants;
