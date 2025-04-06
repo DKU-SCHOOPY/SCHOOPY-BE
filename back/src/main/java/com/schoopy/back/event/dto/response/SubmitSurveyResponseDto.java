@@ -45,5 +45,3 @@ public class SubmitSurveyResponseDto {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
     }
 }
-
-

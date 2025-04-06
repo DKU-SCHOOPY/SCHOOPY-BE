@@ -20,7 +20,7 @@ public class EventEntity {
     private String eventName;
     private Date surveyStartDate;
     private Date surveyEndDate;
-    private Date eventStxartDate;
+    private Date eventStartDate;
     private Date eventEndDate;
     private int maxParticipants;
     private int currentParticipants;

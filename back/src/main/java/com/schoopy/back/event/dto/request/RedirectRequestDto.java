@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RedirectRequestDto {
-    private Long studentNum;
-    private String qrUrl;
-    private String transactionId;
+    private String studentNum;
+    private Long eventCode;
+    private String remitType;
 }
