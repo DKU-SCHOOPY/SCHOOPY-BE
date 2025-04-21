@@ -10,7 +10,7 @@ import com.schoopy.back.event.entity.SubmitSurveyEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.schoopy.back.event.dto.request.RegistEventRequestDto;
-import com.schoopy.back.event.dto.response.CalenderResponseDto;
+import com.schoopy.back.event.dto.response.CalendarResponseDto;
 import com.schoopy.back.event.dto.response.RegistEventResponseDto;
 import com.schoopy.back.event.service.EventService;
 
@@ -69,11 +69,11 @@ public class EventController {
     }
 
     @GetMapping("/calender")
-    public ResponseEntity<List<CalenderResponseDto>> getCalendarEventsByYearAndMonth(
+    public ResponseEntity<List<CalendarResponseDto>> getCalendarEventsByYearAndMonth(
         @RequestParam int year,
         @RequestParam int month
     ) {
-        List<CalenderResponseDto> events = eventService.getCalendarEventsByYearAndMonth(year, month);
+        List<CalendarResponseDto> events = eventService.getCalendarEventsByYearAndMonth(year, month);
         return ResponseEntity.ok(events);
 }
     
