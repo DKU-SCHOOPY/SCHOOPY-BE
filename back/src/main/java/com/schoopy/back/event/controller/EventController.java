@@ -10,6 +10,7 @@ import com.schoopy.back.event.entity.SubmitSurveyEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.schoopy.back.event.dto.request.RegistEventRequestDto;
+import com.schoopy.back.event.dto.response.CalenderResponseDto;
 import com.schoopy.back.event.dto.response.RegistEventResponseDto;
 import com.schoopy.back.event.service.EventService;
 
@@ -19,6 +20,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -63,4 +67,14 @@ public class EventController {
     public ResponseEntity<? super UpdatePaymentStatusResponseDto> approveSubmission(@RequestBody @Valid UpdatePaymentStatusRequestDto requestBody) {
         return eventService.updatePaymentStatus(requestBody);
     }
+
+    @GetMapping("/calender")
+    public ResponseEntity<List<CalenderResponseDto>> getCalendarEventsByYearAndMonth(
+        @RequestParam int year,
+        @RequestParam int month
+    ) {
+        List<CalenderResponseDto> events = eventService.getCalendarEventsByYearAndMonth(year, month);
+        return ResponseEntity.ok(events);
+}
+    
 }
