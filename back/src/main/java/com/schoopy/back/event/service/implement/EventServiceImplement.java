@@ -3,6 +3,7 @@ package com.schoopy.back.event.service.implement;
 import com.schoopy.back.event.dto.request.RedirectRequestDto;
 import com.schoopy.back.event.dto.request.SubmitSurveyRequestDto;
 import com.schoopy.back.event.dto.request.UpdatePaymentStatusRequestDto;
+import com.schoopy.back.event.dto.response.CalendarResponseDto;
 import com.schoopy.back.event.dto.response.RedirectResponseDto;
 import com.schoopy.back.event.dto.response.SubmitSurveyResponseDto;
 import com.schoopy.back.event.dto.response.UpdatePaymentStatusResponseDto;
@@ -22,7 +23,9 @@ import com.schoopy.back.event.service.EventService;
 
 import lombok.RequiredArgsConstructor;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -174,5 +177,28 @@ public class EventServiceImplement implements EventService{
             e.printStackTrace();
             return ResponseEntity.badRequest().body(UpdatePaymentStatusResponseDto.updateFail()+"서버 내부 오류.");
         }
+    }
+
+    @Override
+    public List<CalendarResponseDto> getCalendarEventsByYearAndMonth(int year, int month) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        return eventRepository.findAll().stream()
+            .filter(event -> {
+                if (event.getEventStartDate() == null) return false;
+                java.util.Calendar calendar = java.util.Calendar.getInstance();
+                calendar.setTime(event.getEventStartDate());
+                int eventYear = calendar.get(java.util.Calendar.YEAR);
+                int eventMonth = calendar.get(java.util.Calendar.MONTH) + 1; // 0-based
+                return eventYear == year && eventMonth == month;
+            })
+            .map(event -> new CalendarResponseDto(
+                event.getEventCode(),
+                event.getEventName(),
+                formatter.format(event.getEventStartDate()),
+                formatter.format(event.getEventEndDate())
+            ))
+            .sorted((e1, e2) -> e1.getStart().compareTo(e2.getStart()))
+            .collect(Collectors.toList());
     }
 }
