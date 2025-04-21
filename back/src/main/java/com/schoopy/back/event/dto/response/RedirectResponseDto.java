@@ -2,9 +2,7 @@ package com.schoopy.back.event.dto.response;
 
 import com.schoopy.back.event.common.EventResponseCode;
 import com.schoopy.back.event.common.EventResponseMessage;
-import com.schoopy.back.event.entity.EventEntity;
 import com.schoopy.back.global.dto.ResponseDto;
-import com.schoopy.back.user.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
