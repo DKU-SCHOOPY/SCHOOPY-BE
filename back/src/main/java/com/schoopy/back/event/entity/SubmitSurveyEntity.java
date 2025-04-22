@@ -24,7 +24,7 @@ public class SubmitSurveyEntity {
 
     @ManyToOne
     @JoinColumn(name="student_num")
-    private UserEntity studentNum;
+    private UserEntity user;
 
     private Boolean isStudent;
     private Boolean councilFeePaid;
