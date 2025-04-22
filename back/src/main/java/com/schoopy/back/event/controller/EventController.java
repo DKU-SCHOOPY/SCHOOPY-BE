@@ -68,10 +68,10 @@ public class EventController {
         return eventService.updatePaymentStatus(requestBody);
     }
 
-    @GetMapping("/calender")
+    @GetMapping("/calendar")
     public ResponseEntity<List<CalendarResponseDto>> getCalendarEventsByYearAndMonth(
-        @RequestParam int year,
-        @RequestParam int month
+        @RequestParam(name = "year") int year,
+        @RequestParam(name = "month") int month
     ) {
         List<CalendarResponseDto> events = eventService.getCalendarEventsByYearAndMonth(year, month);
         return ResponseEntity.ok(events);
