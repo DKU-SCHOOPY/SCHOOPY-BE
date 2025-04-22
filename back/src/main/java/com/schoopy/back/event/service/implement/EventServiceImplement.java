@@ -13,6 +13,7 @@ import com.schoopy.back.user.entity.UserEntity;
 import com.schoopy.back.user.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.schoopy.back.global.dto.ResponseDto;
 import com.schoopy.back.event.dto.request.RegistEventRequestDto;
@@ -79,11 +80,11 @@ public class EventServiceImplement implements EventService{
             if(user==null || event==null){
                 return ResponseEntity.badRequest().body(SubmitSurveyResponseDto.submitFail());
             }
-            if(submitSurveyRepository.existsByStudentNum(dto.getStudentNum())){
+            if(submitSurveyRepository.existsByUser_StudentNum(dto.getStudentNum())){
                 return ResponseEntity.badRequest().body(SubmitSurveyResponseDto.submitFail());
             }
             submit.setEventCode(event);
-            submit.setStudentNum(user);
+            submit.setUser(user);
             submit.setIsStudent(dto.getIsStudent());
             submit.setCouncilFeePaid(dto.getCouncilFeePaid());
 
@@ -92,7 +93,7 @@ public class EventServiceImplement implements EventService{
             return ResponseEntity.ok(SubmitSurveyResponseDto.success(
                     submit.getApplicationId(),
                     submit.getEventCode(),
-                    submit.getStudentNum(),
+                    submit.getUser(),
                     submit.getIsStudent(),
                     submit.getCouncilFeePaid(),
                     false
@@ -180,7 +181,10 @@ public class EventServiceImplement implements EventService{
     }
 
     @Override
-    public List<CalendarResponseDto> getCalendarEventsByYearAndMonth(int year, int month) {
+    public List<CalendarResponseDto> getCalendarEventsByYearAndMonth(
+        @RequestParam(name = "year") int year,
+        @RequestParam(name = "month") int month
+    ) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
         return eventRepository.findAll().stream()
