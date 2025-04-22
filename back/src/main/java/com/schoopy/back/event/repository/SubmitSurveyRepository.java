@@ -12,5 +12,5 @@ public interface SubmitSurveyRepository extends JpaRepository<SubmitSurveyEntity
 
     SubmitSurveyEntity findByApplicationId(Long applicationId);
 
-    boolean existsByStudentNum(String studentNum);
+    boolean existsByUser_StudentNum(String studentNum);
 }
