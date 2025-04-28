@@ -1,21 +1,21 @@
 package com.schoopy.back.event.service.implement;
 
 import com.schoopy.back.event.dto.request.RedirectRequestDto;
-import com.schoopy.back.event.dto.request.SubmitSurveyRequestDto;
+import com.schoopy.back.event.dto.request.ApplicationRequestDto;
 import com.schoopy.back.event.dto.request.UpdatePaymentStatusRequestDto;
 import com.schoopy.back.event.dto.response.CalendarResponseDto;
 import com.schoopy.back.event.dto.response.RedirectResponseDto;
-import com.schoopy.back.event.dto.response.SubmitSurveyResponseDto;
+import com.schoopy.back.event.dto.response.ApplicationResponseDto;
 import com.schoopy.back.event.dto.response.UpdatePaymentStatusResponseDto;
-import com.schoopy.back.event.entity.SubmitSurveyEntity;
-import com.schoopy.back.event.repository.SubmitSurveyRepository;
+import com.schoopy.back.event.entity.ApplicationEntity;
+import com.schoopy.back.event.repository.ApplicationRepository;
+import com.schoopy.back.global.s3.S3Uploader;
 import com.schoopy.back.user.entity.UserEntity;
 import com.schoopy.back.user.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.schoopy.back.global.dto.ResponseDto;
 import com.schoopy.back.event.dto.request.RegistEventRequestDto;
 import com.schoopy.back.event.dto.response.RegistEventResponseDto;
 import com.schoopy.back.event.entity.EventEntity;
@@ -23,8 +23,10 @@ import com.schoopy.back.event.repository.EventRepository;
 import com.schoopy.back.event.service.EventService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,14 +36,22 @@ public class EventServiceImplement implements EventService{
 
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
-    private final SubmitSurveyRepository submitSurveyRepository;
-
+    private final ApplicationRepository submitSurveyRepository;
+    private final S3Uploader s3Uploader;
 
     @Override
     public ResponseEntity<? super RegistEventResponseDto> registEvent(RegistEventRequestDto dto) {
         EventEntity eventEntity = new EventEntity();
         try {
+            List<String> imageUrls = new ArrayList<>();
+            if (dto.getEventImages() != null && !dto.getEventImages().isEmpty()) {
+                for (MultipartFile file : dto.getEventImages()) {
+                    String url = s3Uploader.upload(file, "event-images");
+                    imageUrls.add(url);
+                }
+            }
             eventEntity.setEventName(dto.getEventName());
+            eventEntity.setDepartment(dto.getDepartment());
             eventEntity.setSurveyStartDate(dto.getSurveyStartDate());
             eventEntity.setSurveyEndDate(dto.getSurveyEndDate());
             eventEntity.setEventStartDate(dto.getEventStartDate());
@@ -49,39 +59,43 @@ public class EventServiceImplement implements EventService{
             eventEntity.setMaxParticipants(dto.getMaxParticipants());
             eventEntity.setCurrentParticipants(0);
             eventEntity.setEventDescription(dto.getEventDescription());
-            eventEntity.setEventImages(dto.getEventImages());
+            eventEntity.setEventImages(imageUrls);
             eventEntity.setQrCodeImages(dto.getQrCodeImages());
+
             eventRepository.save(eventEntity);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.databaseError();
+            return ResponseEntity.badRequest().body(RegistEventResponseDto.registFail());
         }
         return RegistEventResponseDto.success(
-            eventEntity.getEventCode(),
-            eventEntity.getSurveyStartDate(),
-            eventEntity.getSurveyEndDate(),
-            eventEntity.getEventStartDate(),
-            eventEntity.getEventEndDate(),
-            eventEntity.getMaxParticipants(),
-            eventEntity.getCurrentParticipants(),
-            eventEntity.getEventDescription(),
-            eventEntity.getEventImages(),
-            eventEntity.getQrCodeImages()
+                eventEntity.getEventCode(),
+                eventEntity.getEventName(),
+                eventEntity.getDepartment(),
+                eventEntity.getSurveyStartDate(),
+                eventEntity.getSurveyEndDate(),
+                eventEntity.getEventStartDate(),
+                eventEntity.getEventEndDate(),
+                eventEntity.getMaxParticipants(),
+                eventEntity.getCurrentParticipants(),
+                eventEntity.getEventDescription(),
+                eventEntity.getEventImages(),
+                eventEntity.getQrCodeImages()
         );
     }
 
+
     @Override
-    public ResponseEntity<? super SubmitSurveyResponseDto> submitSurvey(SubmitSurveyRequestDto dto) {
+    public ResponseEntity<? super ApplicationResponseDto> application(ApplicationRequestDto dto) {
         try{
             UserEntity user = userRepository.findByStudentNum(dto.getStudentNum());
             EventEntity event = eventRepository.findByEventCode(dto.getEventCode());
-            SubmitSurveyEntity submit = new SubmitSurveyEntity();
+            ApplicationEntity submit = new ApplicationEntity();
 
             if(user==null || event==null){
-                return ResponseEntity.badRequest().body(SubmitSurveyResponseDto.submitFail());
+                return ResponseEntity.badRequest().body(ApplicationResponseDto.submitFail());
             }
             if(submitSurveyRepository.existsByUser_StudentNum(dto.getStudentNum())){
-                return ResponseEntity.badRequest().body(SubmitSurveyResponseDto.submitFail());
+                return ResponseEntity.badRequest().body(ApplicationResponseDto.submitFail());
             }
             submit.setEventCode(event);
             submit.setUser(user);
@@ -90,7 +104,7 @@ public class EventServiceImplement implements EventService{
 
             submitSurveyRepository.save(submit);
 
-            return ResponseEntity.ok(SubmitSurveyResponseDto.success(
+            return ResponseEntity.ok(ApplicationResponseDto.success(
                     submit.getApplicationId(),
                     submit.getEventCode(),
                     submit.getUser(),
@@ -99,7 +113,8 @@ public class EventServiceImplement implements EventService{
                     false
             ));
         }catch(Exception e) {
-            return ResponseEntity.badRequest().body(SubmitSurveyResponseDto.submitFail());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(ApplicationResponseDto.submitFail());
         }
     }
 
@@ -144,7 +159,7 @@ public class EventServiceImplement implements EventService{
     }
 
     @Override
-    public List<SubmitSurveyEntity> getSubmissionsByEvent(Long eventCode){
+    public List<ApplicationEntity> getSubmissionsByEvent(Long eventCode){
         EventEntity event = eventRepository.findByEventCode(eventCode);
         if(event == null) {
             throw new IllegalArgumentException("행사가 존재하지 않습니다.");
@@ -155,7 +170,7 @@ public class EventServiceImplement implements EventService{
     @Override
     public ResponseEntity<? super UpdatePaymentStatusResponseDto> updatePaymentStatus(UpdatePaymentStatusRequestDto dto){
         try {
-            SubmitSurveyEntity submit = submitSurveyRepository.findByApplicationId(dto.getApplicationId());
+            ApplicationEntity submit = submitSurveyRepository.findByApplicationId(dto.getApplicationId());
             if (submit == null) {
                 return ResponseEntity.badRequest().body(UpdatePaymentStatusResponseDto.updateFail());
             }

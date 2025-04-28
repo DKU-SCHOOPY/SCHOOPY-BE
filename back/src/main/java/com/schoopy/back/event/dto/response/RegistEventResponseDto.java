@@ -24,6 +24,7 @@ public class RegistEventResponseDto extends ResponseDto{
     private Long eventCode;
 
     private String eventName;
+    private String department;
     private Date surveyStartDate;
     private Date surveyEndDate;
     private Date eventStartDate;
@@ -38,11 +39,13 @@ public class RegistEventResponseDto extends ResponseDto{
     private List<String> QrCodeImages;
 
     public static ResponseEntity<RegistEventResponseDto> success(
-            Long eventCode, Date surveyStartDate, Date surveyEndDate, Date eventStartDate, Date eventEndDate,
+            Long eventCode, String eventName, String department, Date surveyStartDate, Date surveyEndDate, Date eventStartDate, Date eventEndDate,
             int maxParticipants, int currentParticipants, String eventDescription, List<String> eventImages, List<String> QrCodeImages
     ) {
         RegistEventResponseDto responseBody = new RegistEventResponseDto();
         responseBody.setEventCode(eventCode);
+        responseBody.setEventName(eventName);
+        responseBody.setDepartment(department);
         responseBody.setSurveyStartDate(surveyStartDate);
         responseBody.setSurveyEndDate(surveyEndDate);
         responseBody.setEventStartDate(eventStartDate);

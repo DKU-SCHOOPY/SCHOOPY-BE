@@ -3,6 +3,7 @@ package com.schoopy.back.event.dto.request;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
@@ -11,22 +12,19 @@ import java.util.List;
 @Setter
 public class RegistEventRequestDto {
     @NotNull
-    private String eventName;
+    private String eventName; // 1-1
     @NotNull
-    private Date surveyStartDate;
-    @NotNull
+    private String department;
+    private Date surveyStartDate; //
     private Date surveyEndDate;
-    @NotNull
     private Date eventStartDate;
-    @NotNull
     private Date eventEndDate;
-    @NotNull
     private int maxParticipants;
-    @NotNull
     private int currentParticipants;
-    @NotNull
-    private String eventDescription;
-
-    private List<String> eventImages;
+    private String eventDescription; // 1-2
+    private List<MultipartFile> eventImages;
     private List<String> qrCodeImages;
 }
+
+
+

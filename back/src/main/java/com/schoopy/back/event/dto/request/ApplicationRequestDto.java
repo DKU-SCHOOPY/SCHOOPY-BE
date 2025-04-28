@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SubmitSurveyRequestDto {
+public class ApplicationRequestDto {
     @NotNull
     private String studentNum;
 

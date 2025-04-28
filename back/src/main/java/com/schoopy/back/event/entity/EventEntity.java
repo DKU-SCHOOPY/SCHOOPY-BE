@@ -18,6 +18,7 @@ public class EventEntity {
     private Long eventCode;
 
     private String eventName;
+    private String department;
     private Date surveyStartDate;
     private Date surveyEndDate;
     private Date eventStartDate;

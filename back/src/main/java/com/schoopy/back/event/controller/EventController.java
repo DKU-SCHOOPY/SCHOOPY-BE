@@ -1,12 +1,12 @@
 package com.schoopy.back.event.controller;
 
 import com.schoopy.back.event.dto.request.RedirectRequestDto;
-import com.schoopy.back.event.dto.request.SubmitSurveyRequestDto;
+import com.schoopy.back.event.dto.request.ApplicationRequestDto;
 import com.schoopy.back.event.dto.request.UpdatePaymentStatusRequestDto;
-import com.schoopy.back.event.dto.response.SubmitSurveyResponseDto;
+import com.schoopy.back.event.dto.response.ApplicationResponseDto;
 import com.schoopy.back.event.dto.response.UpdatePaymentStatusResponseDto;
 import com.schoopy.back.event.entity.EventEntity;
-import com.schoopy.back.event.entity.SubmitSurveyEntity;
+import com.schoopy.back.event.entity.ApplicationEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.schoopy.back.event.dto.request.RegistEventRequestDto;
@@ -31,35 +31,36 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class EventController {
     private final EventService eventService;
 
-    @PostMapping("/regist-event") // 행사 게시글 등록
+    @PostMapping("/regist-event")
     public ResponseEntity<? super RegistEventResponseDto> registEvent(
-        @RequestBody @Valid RegistEventRequestDto requestBody
+            @RequestPart @Valid RegistEventRequestDto requestBody
     ) {
-        ResponseEntity<? super RegistEventResponseDto> response = eventService.registEvent(requestBody);
+        return eventService.registEvent(requestBody);
+    }
+
+
+    @PostMapping("application") // 행사 신청
+    public ResponseEntity<? super ApplicationResponseDto> application(
+            @RequestBody @Valid ApplicationRequestDto requestBody
+    ) {
+        ResponseEntity<? super ApplicationResponseDto> response = eventService.application(requestBody);
         return response;
     }
 
-    @PostMapping("submit-survey") // 행사 신청
-    public ResponseEntity<? super SubmitSurveyResponseDto> submitSurvey(
-            @RequestBody @Valid SubmitSurveyRequestDto requestBody
-    ) {
-        ResponseEntity<? super SubmitSurveyResponseDto> response = eventService.submitSurvey(requestBody);
-        return response;
-    }
-
-    @PostMapping("/remit-event") // 사용자에 따른 토스 or 카카오페이 송금 URL 리디렉션
+    @PostMapping("/remit-redirect") // 사용자에 따른 토스 or 카카오페이 송금 URL 리디렉션
     public ResponseEntity<?> remitRedirect(@RequestBody @Valid RedirectRequestDto requestBody) {
         ResponseEntity<?> response = eventService.getRemitUrl(requestBody);
         return response;
     }
 
-    @GetMapping("/events/active") // 조사 중인 행사 목록 출력
+    // 학생회 구분도 해야함!
+    @GetMapping("/get-active") // 조사 중인 행사 목록 출력
     public ResponseEntity<List<EventEntity>> getActiveEvents() {
         return ResponseEntity.ok(eventService.getCurrentSurveyEvents());
     }
 
     @GetMapping("/submissions/{eventCode}") // 제출된 행사 신청 설문 목록 출력
-    public ResponseEntity<List<SubmitSurveyEntity>> getSubmissionsByEvent(@PathVariable Long eventCode) {
+    public ResponseEntity<List<ApplicationEntity>> getSubmissionsByEvent(@PathVariable Long eventCode) {
         return ResponseEntity.ok(eventService.getSubmissionsByEvent(eventCode));
     }
 
@@ -75,6 +76,5 @@ public class EventController {
     ) {
         List<CalendarResponseDto> events = eventService.getCalendarEventsByYearAndMonth(year, month);
         return ResponseEntity.ok(events);
-}
-    
+    }
 }

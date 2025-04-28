@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubmitSurveyResponseDto {
+public class ApplicationResponseDto {
     private String responseCode;
     private String responseMessage;
 
@@ -27,9 +27,9 @@ public class SubmitSurveyResponseDto {
     private Boolean councilFeePaid;
     private Boolean isPaymentCompleted;
 
-    public static ResponseEntity<SubmitSurveyResponseDto> success(Long applicationId, EventEntity eventCode
+    public static ResponseEntity<ApplicationResponseDto> success(Long applicationId, EventEntity eventCode
             , UserEntity studentNum, Boolean isStudent, Boolean councilFeePaid, Boolean isPaymentCompleted) {
-        SubmitSurveyResponseDto responseBody = new SubmitSurveyResponseDto();
+        ApplicationResponseDto responseBody = new ApplicationResponseDto();
         responseBody.setApplicationId(applicationId);
         responseBody.setEventCode(eventCode);
         responseBody.setStudentNum(studentNum);

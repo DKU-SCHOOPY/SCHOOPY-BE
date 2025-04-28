@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="submit_survey")
-public class SubmitSurveyEntity {
+public class ApplicationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long applicationId;

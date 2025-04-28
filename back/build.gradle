@@ -33,10 +33,14 @@ dependencies {
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+	implementation platform('io.awspring.cloud:spring-cloud-aws-dependencies:3.0.2')
+	implementation 'io.awspring.cloud:spring-cloud-aws-s3'
+	implementation 'software.amazon.awssdk:s3:2.20.117'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
 }
