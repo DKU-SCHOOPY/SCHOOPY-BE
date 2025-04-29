@@ -19,7 +19,7 @@ import lombok.Setter;
 @Table(name="user")
 public class UserEntity {
     @Id
-    @Column(nullable = false, length = 8, columnDefinition = "varchar(8)")
+    @Column(nullable = false)
     private String studentNum;
     
     @Column(nullable = false)
