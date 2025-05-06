@@ -21,6 +21,8 @@ import com.schoopy.back.event.dto.response.RegistEventResponseDto;
 import com.schoopy.back.event.entity.EventEntity;
 import com.schoopy.back.event.repository.EventRepository;
 import com.schoopy.back.event.service.EventService;
+import com.schoopy.back.fcm.dto.FcmMessageDto;
+import com.schoopy.back.fcm.service.FcmService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,6 +40,7 @@ public class EventServiceImplement implements EventService{
     private final EventRepository eventRepository;
     private final ApplicationRepository submitSurveyRepository;
     private final S3Uploader s3Uploader;
+    private final FcmService fcmService;
 
     @Override
     public ResponseEntity<? super RegistEventResponseDto> registEvent(RegistEventRequestDto dto) {
@@ -175,18 +178,31 @@ public class EventServiceImplement implements EventService{
                 return ResponseEntity.badRequest().body(UpdatePaymentStatusResponseDto.updateFail());
             }
             EventEntity event = submit.getEventCode();
+            String token = submit.getUser().getFcmToken();
+            String title, body;
 
             if (dto.isChoice()) {
                 if (submit.getIsPaymentCompleted()) {
                     return ResponseEntity.badRequest().body(UpdatePaymentStatusResponseDto.updateFail()+"이미 승인 완료된 설문입니다.");
                 }
-                submit.setIsPaymentCompleted(false);
+                submit.setIsPaymentCompleted(true);
                 event.setCurrentParticipants(event.getCurrentParticipants() + 1);
+
+                title = event.getEventName() + "신청 승인 완료";
+                body = event.getEventName() + "신청이 승인되었습니다.";
             } else {
                 submitSurveyRepository.delete(submit);
+
+                title = event.getEventName() + "신청 반려";
+                body = event.getEventName() + "행사의 신청이 학생회의 요청으로 인해 거절되었습니다. 자세한 문의사항은 메시지 기능을 이용하여 학생회에 문의하시기 바랍니다.";
             }
             eventRepository.save(event);
             submitSurveyRepository.save(submit);
+
+            if(token != null && !token.isEmpty()){
+                FcmMessageDto fcmMessage = new FcmMessageDto(token, title, body);
+                fcmService.sendMessageTo(fcmMessage);
+            }
 
             return UpdatePaymentStatusResponseDto.success(submit.getIsPaymentCompleted());
         }catch (Exception e) {
