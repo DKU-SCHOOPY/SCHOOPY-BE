@@ -49,6 +49,9 @@ public class UserEntity {
     @Column(nullable = false)
     private String role;
 
+    @Column(nullable = false)
+    private String fcmToken;
+
     
 
 
