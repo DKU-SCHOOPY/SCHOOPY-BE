@@ -1,1 +1,2 @@
 back/src/main/resources/application.properties
+back/src/main/resources/firebase/firebase-service-account.json
