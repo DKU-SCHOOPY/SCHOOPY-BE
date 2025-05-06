@@ -1,4 +1,4 @@
-package com.schoopy.back.fcm.dto;
+package com.schoopy.back.fcm.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
