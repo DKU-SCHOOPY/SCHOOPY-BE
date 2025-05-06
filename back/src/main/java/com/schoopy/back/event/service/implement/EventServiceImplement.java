@@ -21,7 +21,7 @@ import com.schoopy.back.event.dto.response.RegistEventResponseDto;
 import com.schoopy.back.event.entity.EventEntity;
 import com.schoopy.back.event.repository.EventRepository;
 import com.schoopy.back.event.service.EventService;
-import com.schoopy.back.fcm.dto.FcmMessageDto;
+import com.schoopy.back.fcm.dto.request.FcmMessageDto;
 import com.schoopy.back.fcm.service.FcmService;
 
 import lombok.RequiredArgsConstructor;
