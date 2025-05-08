@@ -23,4 +23,4 @@
 | Messaging   | Firebase Cloud Messaging (FCM)           |
 | Build Tool  | Gradle                                   |
 | Hosting     | AWS EC2                                  |
-|--------------------------------------------------------|
+
