@@ -13,4 +13,3 @@ public interface EventRepository extends JpaRepository<EventEntity, Long>{
     @Query("SELECT e FROM EventEntity e WHERE e.surveyStartDate <= CURRENT_DATE AND e.surveyEndDate >= CURRENT_DATE")
     List<EventEntity> findActiveSurveyEvents();
 }
-

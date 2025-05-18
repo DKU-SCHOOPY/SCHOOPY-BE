@@ -21,8 +21,6 @@ import com.schoopy.back.event.dto.response.RegistEventResponseDto;
 import com.schoopy.back.event.entity.EventEntity;
 import com.schoopy.back.event.repository.EventRepository;
 import com.schoopy.back.event.service.EventService;
-import com.schoopy.back.fcm.dto.request.FcmMessageDto;
-import com.schoopy.back.fcm.service.FcmService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,7 +38,6 @@ public class EventServiceImplement implements EventService{
     private final EventRepository eventRepository;
     private final ApplicationRepository submitSurveyRepository;
     private final S3Uploader s3Uploader;
-    private final FcmService fcmService;
 
     @Override
     public ResponseEntity<? super RegistEventResponseDto> registEvent(RegistEventRequestDto dto) {
@@ -169,7 +166,6 @@ public class EventServiceImplement implements EventService{
         }
         return submitSurveyRepository.findByEventCode(event);
     }
-
     @Override
     public ResponseEntity<? super UpdatePaymentStatusResponseDto> updatePaymentStatus(UpdatePaymentStatusRequestDto dto){
         try {
@@ -178,8 +174,6 @@ public class EventServiceImplement implements EventService{
                 return ResponseEntity.badRequest().body(UpdatePaymentStatusResponseDto.updateFail());
             }
             EventEntity event = submit.getEventCode();
-            String token = submit.getUser().getFcmToken();
-            String title, body;
 
             if (dto.isChoice()) {
                 if (submit.getIsPaymentCompleted()) {
@@ -187,22 +181,11 @@ public class EventServiceImplement implements EventService{
                 }
                 submit.setIsPaymentCompleted(true);
                 event.setCurrentParticipants(event.getCurrentParticipants() + 1);
-
-                title = event.getEventName() + "신청 승인 완료";
-                body = event.getEventName() + "신청이 승인되었습니다.";
             } else {
                 submitSurveyRepository.delete(submit);
-
-                title = event.getEventName() + "신청 반려";
-                body = event.getEventName() + "행사의 신청이 학생회의 요청으로 인해 거절되었습니다. 자세한 문의사항은 메시지 기능을 이용하여 학생회에 문의하시기 바랍니다.";
             }
             eventRepository.save(event);
             submitSurveyRepository.save(submit);
-
-            if(token != null && !token.isEmpty()){
-                FcmMessageDto fcmMessage = new FcmMessageDto(token, title, body);
-                fcmService.sendMessageTo(fcmMessage);
-            }
 
             return UpdatePaymentStatusResponseDto.success(submit.getIsPaymentCompleted());
         }catch (Exception e) {
@@ -213,27 +196,27 @@ public class EventServiceImplement implements EventService{
 
     @Override
     public List<CalendarResponseDto> getCalendarEventsByYearAndMonth(
-        @RequestParam(name = "year") int year,
-        @RequestParam(name = "month") int month
+            @RequestParam(name = "year") int year,
+            @RequestParam(name = "month") int month
     ) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
         return eventRepository.findAll().stream()
-            .filter(event -> {
-                if (event.getEventStartDate() == null) return false;
-                java.util.Calendar calendar = java.util.Calendar.getInstance();
-                calendar.setTime(event.getEventStartDate());
-                int eventYear = calendar.get(java.util.Calendar.YEAR);
-                int eventMonth = calendar.get(java.util.Calendar.MONTH) + 1; // 0-based
-                return eventYear == year && eventMonth == month;
-            })
-            .map(event -> new CalendarResponseDto(
-                event.getEventCode(),
-                event.getEventName(),
-                formatter.format(event.getEventStartDate()),
-                formatter.format(event.getEventEndDate())
-            ))
-            .sorted((e1, e2) -> e1.getStart().compareTo(e2.getStart()))
-            .collect(Collectors.toList());
+                .filter(event -> {
+                    if (event.getEventStartDate() == null) return false;
+                    java.util.Calendar calendar = java.util.Calendar.getInstance();
+//                calendar.setTime(event.getEventStartDate());
+                    int eventYear = calendar.get(java.util.Calendar.YEAR);
+                    int eventMonth = calendar.get(java.util.Calendar.MONTH) + 1; // 0-based
+                    return eventYear == year && eventMonth == month;
+                })
+                .map(event -> new CalendarResponseDto(
+                        event.getEventCode(),
+                        event.getEventName(),
+                        formatter.format(event.getEventStartDate()),
+                        formatter.format(event.getEventEndDate())
+                ))
+                .sorted((e1, e2) -> e1.getStart().compareTo(e2.getStart()))
+                .collect(Collectors.toList());
     }
 }

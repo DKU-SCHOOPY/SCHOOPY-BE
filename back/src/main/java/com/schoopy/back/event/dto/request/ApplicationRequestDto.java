@@ -8,17 +8,13 @@ import lombok.Setter;
 @Setter
 public class ApplicationRequestDto {
     @NotNull
-    private String studentNum;
-
+    private String studentNum; // 학번
     @NotNull
-    private Long eventCode;
-
+    private Long eventCode; // 행사 코드
     @NotNull
-    private Boolean isStudent;
-
+    private Boolean isStudent; // 재학생 여부
     @NotNull
-    private Boolean councilFeePaid;
+    private Boolean councilFeePaid; // 학생회비 납부여부
 
-    @NotNull
-    private Boolean isPaymentCompleted;
+    private Boolean isPaymentCompleted; // 행사비용 납부여부
 }

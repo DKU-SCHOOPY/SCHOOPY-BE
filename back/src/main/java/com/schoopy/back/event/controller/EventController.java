@@ -33,8 +33,10 @@ public class EventController {
 
     @PostMapping("/regist-event")
     public ResponseEntity<? super RegistEventResponseDto> registEvent(
-            @RequestPart @Valid RegistEventRequestDto requestBody
+            @ModelAttribute RegistEventRequestDto requestBody
     ) {
+        System.out.println("registEvent() called");
+        System.out.println("dto.eventName = " + requestBody.getEventName());
         return eventService.registEvent(requestBody);
     }
 
@@ -71,8 +73,8 @@ public class EventController {
 
     @GetMapping("/calendar")
     public ResponseEntity<List<CalendarResponseDto>> getCalendarEventsByYearAndMonth(
-        @RequestParam(name = "year") int year,
-        @RequestParam(name = "month") int month
+            @RequestParam(name = "year") int year,
+            @RequestParam(name = "month") int month
     ) {
         List<CalendarResponseDto> events = eventService.getCalendarEventsByYearAndMonth(year, month);
         return ResponseEntity.ok(events);

@@ -34,12 +34,14 @@ public class ChatServiceImplement implements ChatService {
         Long userA = Math.min(senderId, receiverId);
         Long userB = Math.max(senderId, receiverId);
 
-        ChatRoomEntity room = chatRoomRepository
-                .findByUserAAndUserB(userA, userB)
-                .orElseGet(() -> chatRoomRepository.save(ChatRoomEntity.builder()
-                        .userA(userA)
-                        .userB(userB)
-                        .build()));
+        ChatRoomEntity room = chatRoomRepository.findByUserAAndUserB(userA, userB)
+                .orElseGet(() -> {
+                    ChatRoomEntity newRoom = ChatRoomEntity.builder()
+                            .userA(userA)
+                            .userB(userB)
+                            .build();
+                    return chatRoomRepository.save(newRoom);
+                });
 
         ChatMessageEntity message = ChatMessageEntity.builder()
                 .senderId(senderId)
@@ -53,16 +55,18 @@ public class ChatServiceImplement implements ChatService {
     }
 
     @Override
-    public ChatRoomEntity getOrCreateRoom(Long userAId, Long userBId) {
-        Long a = Math.min(userAId, userBId);
-        Long b = Math.max(userAId, userBId);
+    public ChatRoomEntity getOrCreateRoom(Long senderId, Long receiverId) {
+        Long userA = Math.min(senderId, receiverId);
+        Long userB = Math.max(senderId, receiverId);
 
-        return chatRoomRepository
-                .findByUserAAndUserB(a, b)
-                .orElseGet(() -> chatRoomRepository.save(ChatRoomEntity.builder()
-                        .userA(a)
-                        .userB(b)
-                        .build()));
+        return chatRoomRepository.findByUserAAndUserB(userA, userB)
+                .orElseGet(() -> {
+                    ChatRoomEntity room = ChatRoomEntity.builder()
+                            .userA(userA)
+                            .userB(userB)
+                            .build();
+                    return chatRoomRepository.save(room);
+                });
     }
 
     @Override

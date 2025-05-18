@@ -3,6 +3,7 @@ package com.schoopy.back.event.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -19,10 +20,10 @@ public class EventEntity {
 
     private String eventName;
     private String department;
-    private Date surveyStartDate;
-    private Date surveyEndDate;
-    private Date eventStartDate;
-    private Date eventEndDate;
+    private LocalDate surveyStartDate;
+    private LocalDate surveyEndDate;
+    private LocalDate eventStartDate;
+    private LocalDate eventEndDate;
     private int maxParticipants;
     private int currentParticipants;
     @Column(columnDefinition = "LONGTEXT")

@@ -3,8 +3,10 @@ package com.schoopy.back.event.dto.request;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -15,16 +17,21 @@ public class RegistEventRequestDto {
     private String eventName; // 1-1
     @NotNull
     private String department;
-    private Date surveyStartDate; //
-    private Date surveyEndDate;
-    private Date eventStartDate;
-    private Date eventEndDate;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate surveyStartDate;
+
+    private LocalDate surveyEndDate;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate eventStartDate;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate eventEndDate;
+
     private int maxParticipants;
     private int currentParticipants;
     private String eventDescription; // 1-2
     private List<MultipartFile> eventImages;
     private List<String> qrCodeImages;
 }
-
-
-

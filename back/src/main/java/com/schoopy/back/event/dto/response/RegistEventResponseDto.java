@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.schoopy.back.global.dto.ResponseDto;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -25,10 +26,10 @@ public class RegistEventResponseDto extends ResponseDto{
 
     private String eventName;
     private String department;
-    private Date surveyStartDate;
-    private Date surveyEndDate;
-    private Date eventStartDate;
-    private Date eventEndDate;
+    private LocalDate surveyStartDate;
+    private LocalDate surveyEndDate;
+    private LocalDate eventStartDate;
+    private LocalDate eventEndDate;
     private int maxParticipants;
     private int currentParticipants;
     @Column(columnDefinition = "LONGTEXT")
@@ -39,7 +40,7 @@ public class RegistEventResponseDto extends ResponseDto{
     private List<String> QrCodeImages;
 
     public static ResponseEntity<RegistEventResponseDto> success(
-            Long eventCode, String eventName, String department, Date surveyStartDate, Date surveyEndDate, Date eventStartDate, Date eventEndDate,
+            Long eventCode, String eventName, String department, LocalDate surveyStartDate, LocalDate surveyEndDate, LocalDate eventStartDate, LocalDate eventEndDate,
             int maxParticipants, int currentParticipants, String eventDescription, List<String> eventImages, List<String> QrCodeImages
     ) {
         RegistEventResponseDto responseBody = new RegistEventResponseDto();

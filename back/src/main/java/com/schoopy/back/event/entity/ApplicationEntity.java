@@ -28,5 +28,6 @@ public class ApplicationEntity {
 
     private Boolean isStudent;
     private Boolean councilFeePaid;
-    private Boolean isPaymentCompleted;
+    @Column(nullable = false)
+    private Boolean isPaymentCompleted=false;
 }
