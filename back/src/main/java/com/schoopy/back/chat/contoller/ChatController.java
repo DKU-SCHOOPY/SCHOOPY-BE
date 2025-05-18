@@ -22,7 +22,7 @@ public class ChatController {
         return chatService.saveMessage(dto);
     }
 
-    @GetMapping("/room/{roomId}/messages")
+    @GetMapping("/room/{roomId}")
     public ResponseEntity<? super List<ChatMessageResponseDto>> getMessages(@PathVariable Long roomId) {
         return chatService.getMessagesByRoomId(roomId);
     }
