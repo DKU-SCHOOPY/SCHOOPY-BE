@@ -62,29 +62,29 @@ public class FcmServiceImplement implements FcmService{
     }
 
     @Override
-public ResponseEntity<? super DepartmentFcmResponseDto> sendMessageToDepartment(DepartmentFcmRequestDto dto) {
-    List<UserEntity> users = userRepository.findAllByDepartment(dto.getDepartment());
+    public ResponseEntity<? super DepartmentFcmResponseDto> sendMessageToDepartment(DepartmentFcmRequestDto dto) {
+        List<UserEntity> users = userRepository.findAllByDepartment(dto.getDepartment());
 
-    for (UserEntity user : users) {
-        String token = user.getFcmToken();
-        if (token != null && !token.isEmpty()) {
-            Message message = Message.builder()
-                    .setToken(token)
-                    .setNotification(Notification.builder()
-                            .setTitle(dto.getTitle())
-                            .setBody(dto.getBody())
-                            .build())
-                    .build();
+        for (UserEntity user : users) {
+            String token = user.getFcmToken();
+            if (token != null && !token.isEmpty()) {
+                Message message = Message.builder()
+                        .setToken(token)
+                        .setNotification(Notification.builder()
+                                .setTitle(dto.getTitle())
+                                .setBody(dto.getBody())
+                                .build())
+                        .build();
 
-            try {
-                firebaseMessaging.send(message);
-            } catch (FirebaseMessagingException e) {
-                e.printStackTrace();
-                return DepartmentFcmResponseDto.sendFail();
+                try {
+                    firebaseMessaging.send(message);
+                } catch (FirebaseMessagingException e) {
+                    e.printStackTrace();
+                    return DepartmentFcmResponseDto.sendFail();
+                }
             }
         }
-    }
 
-    return DepartmentFcmResponseDto.success();
-}
+        return DepartmentFcmResponseDto.success();
+    }
 }
