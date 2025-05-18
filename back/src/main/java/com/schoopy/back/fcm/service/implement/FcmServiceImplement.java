@@ -54,7 +54,7 @@ public class FcmServiceImplement implements FcmService{
                             .setBody(body)
                             .build())
                     .build();
-            String response = FirebaseMessaging.getInstance().send(message);
+            String response = firebaseMessaging.send(message); // 주입된 Bean을 사용
             System.out.println("Successfully sent message to topic: " + response);
         } catch (FirebaseMessagingException e) {
             e.printStackTrace();
