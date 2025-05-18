@@ -219,4 +219,9 @@ public class EventServiceImplement implements EventService{
                 .sorted((e1, e2) -> e1.getStart().compareTo(e2.getStart()))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<EventEntity> getAllEvents(){
+        return eventRepository.findAll();
+    }
 }
