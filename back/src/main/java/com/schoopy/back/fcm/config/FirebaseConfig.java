@@ -17,7 +17,7 @@ public class FirebaseConfig {
     public FirebaseMessaging firebaseMessaging() throws IOException {
         System.out.println("▶ FirebaseMessaging Bean 생성 시작");
 
-        InputStream serviceAccount = getClass().getClassLoader().getResourceAsStream("firebase/firebase-service-account.json");
+        InputStream serviceAccount = getClass().getClassLoader().getResourceAsStream("firebase-service-account.json");
 
         if (serviceAccount == null) {
             throw new FileNotFoundException("firebase-service-account.json not found in classpath!");
