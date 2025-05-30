@@ -25,9 +25,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Comparator;
 
 @Service
 @RequiredArgsConstructor
@@ -205,26 +208,24 @@ public class EventServiceImplement implements EventService{
             @RequestParam(name = "year") int year,
             @RequestParam(name = "month") int month
     ) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         return eventRepository.findAll().stream()
                 .filter(event -> {
                     if (event.getEventStartDate() == null) return false;
-                    java.util.Calendar calendar = java.util.Calendar.getInstance();
-//                calendar.setTime(event.getEventStartDate());
-                    int eventYear = calendar.get(java.util.Calendar.YEAR);
-                    int eventMonth = calendar.get(java.util.Calendar.MONTH) + 1; // 0-based
-                    return eventYear == year && eventMonth == month;
+                    LocalDate startDate = event.getEventStartDate(); // 이미 LocalDate라면 그대로
+                    return startDate.getYear() == year && startDate.getMonthValue() == month;
                 })
                 .map(event -> new CalendarResponseDto(
                         event.getEventCode(),
                         event.getEventName(),
-                        formatter.format(event.getEventStartDate()),
-                        formatter.format(event.getEventEndDate())
+                        event.getEventStartDate().format(formatter),
+                        event.getEventEndDate().format(formatter)
                 ))
-                .sorted((e1, e2) -> e1.getStart().compareTo(e2.getStart()))
+                .sorted(Comparator.comparing(CalendarResponseDto::getStart))
                 .collect(Collectors.toList());
     }
+
 
     @Override
     public List<EventEntity> getAllEvents(){
