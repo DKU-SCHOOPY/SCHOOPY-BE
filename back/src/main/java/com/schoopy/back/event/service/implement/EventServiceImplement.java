@@ -15,17 +15,16 @@ import com.schoopy.back.user.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import com.schoopy.back.event.dto.request.RegistEventRequestDto;
 import com.schoopy.back.event.dto.response.RegistEventResponseDto;
 import com.schoopy.back.event.entity.EventEntity;
 import com.schoopy.back.event.repository.EventRepository;
 import com.schoopy.back.event.service.EventService;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,7 +59,10 @@ public class EventServiceImplement implements EventService{
             eventEntity.setCurrentParticipants(0);
             eventEntity.setEventDescription(dto.getEventDescription());
             eventEntity.setEventImages(imageUrls);
-            eventEntity.setQrCodeImages(dto.getQrCodeImages());
+            eventEntity.setQr_toss_o(dto.getQr_toss_o());
+            eventEntity.setQr_toss_x(dto.getQr_toss_x());
+            eventEntity.setQr_kakaopay_o(dto.getQr_kakaopay_o());
+            eventEntity.setQr_kakaopay_x(dto.getQr_kakaopay_x());
 
             eventRepository.save(eventEntity);
         } catch (Exception e) {
@@ -79,7 +81,10 @@ public class EventServiceImplement implements EventService{
                 eventEntity.getCurrentParticipants(),
                 eventEntity.getEventDescription(),
                 eventEntity.getEventImages(),
-                eventEntity.getQrCodeImages()
+                eventEntity.getQr_toss_o(),
+                eventEntity.getQr_toss_x(),
+                eventEntity.getQr_kakaopay_o(),
+                eventEntity.getQr_kakaopay_x()
         );
     }
 
@@ -94,8 +99,9 @@ public class EventServiceImplement implements EventService{
             if(user==null || event==null){
                 return ResponseEntity.badRequest().body(ApplicationResponseDto.submitFail());
             }
-            if(submitSurveyRepository.existsByUser_StudentNum(dto.getStudentNum())){
-                return ResponseEntity.badRequest().body(ApplicationResponseDto.submitFail());
+            if(submitSurveyRepository.existsByUser_StudentNumAndEventCode_EventCode(dto.getStudentNum(), dto.getEventCode()))
+            {
+                return ResponseEntity.badRequest().body(ApplicationResponseDto.submitFail()+" 중복신청입니다.");
             }
             submit.setEventCode(event);
             submit.setUser(user);
@@ -114,7 +120,7 @@ public class EventServiceImplement implements EventService{
             ));
         }catch(Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().body(ApplicationResponseDto.submitFail());
+            return ResponseEntity.badRequest().body(ApplicationResponseDto.submitFail()+"예외발생");
         }
     }
 
@@ -125,28 +131,27 @@ public class EventServiceImplement implements EventService{
             EventEntity event = eventRepository.findByEventCode(dto.getEventCode());
 
             if(user==null || event==null){
-                return ResponseEntity.badRequest().body(RedirectResponseDto.redirectFail()+"찾을 수 없는 행사입니다.");
+                return ResponseEntity.badRequest().body(RedirectResponseDto.redirectFail()+"사용자 또는 행사를 찾을 수 없습니다.");
             }
 
             boolean councilFee = user.isCouncilPee();
-            List<String> qrList = event.getQrCodeImages();
-            if(qrList == null || qrList.size() < 4){
-                return ResponseEntity.badRequest().body(RedirectResponseDto.redirectFail()+"QR코드 이미지가 부족합니다.");
-            }
 
             String remitType = dto.getRemitType().toLowerCase();
-            int index;
-
-            if(remitType.equals("toss")) {
-                index = councilFee ? 0 : 1;
-            }else if(remitType.equals("kakaopay")) {
-                index = councilFee ? 2 : 3;
-            }else{
-                return ResponseEntity.badRequest().body(RedirectResponseDto.redirectFail()+"결제수단이 잘못되었습니다.");
+            if(councilFee){
+                if(remitType.equals("toss")){
+                    return ResponseEntity.ok(RedirectResponseDto.success(event.getQr_toss_o()));
+                }else if(remitType.equals("kakaopay")){
+                    return ResponseEntity.ok(RedirectResponseDto.success(event.getQr_toss_x()));
+                }
+            }else if(!councilFee) {
+                if(remitType.equals("toss")){
+                    return ResponseEntity.ok(RedirectResponseDto.success(event.getQr_kakaopay_o()));
+                }else if(remitType.equals("kakaopay")){
+                    return ResponseEntity.ok(RedirectResponseDto.success(event.getQr_kakaopay_x()));
+                }
             }
 
-            String redirectUrl = qrList.get(index);
-            return ResponseEntity.ok(RedirectResponseDto.success(redirectUrl));
+            return ResponseEntity.badRequest().body(RedirectResponseDto.redirectFail()+"URL 반환에 실패하였습니다.");
         }catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body(RedirectResponseDto.redirectFail()+"서버내부에 오류가 발생하였습니다.");
@@ -154,8 +159,9 @@ public class EventServiceImplement implements EventService{
     }
 
     @Override
-    public List<EventEntity> getCurrentSurveyEvents(){
-        return eventRepository.findActiveSurveyEvents();
+    public List<EventEntity> getCurrentSurveyEvents() {
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul")); // 시간대 명시
+        return eventRepository.findActiveSurveyEvents(today);
     }
 
     @Override
@@ -181,11 +187,11 @@ public class EventServiceImplement implements EventService{
                 }
                 submit.setIsPaymentCompleted(true);
                 event.setCurrentParticipants(event.getCurrentParticipants() + 1);
+                submitSurveyRepository.save(submit);
+                eventRepository.save(event);
             } else {
                 submitSurveyRepository.delete(submit);
             }
-            eventRepository.save(event);
-            submitSurveyRepository.save(submit);
 
             return UpdatePaymentStatusResponseDto.success(submit.getIsPaymentCompleted());
         }catch (Exception e) {

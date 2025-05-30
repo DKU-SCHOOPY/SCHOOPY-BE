@@ -12,5 +12,5 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
 
     ApplicationEntity findByApplicationId(Long applicationId);
 
-    boolean existsByUser_StudentNum(String studentNum);
+    boolean existsByUser_StudentNumAndEventCode_EventCode(String studentNum, Long eventCode);
 }

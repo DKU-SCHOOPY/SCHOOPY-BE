@@ -14,24 +14,26 @@ import java.util.List;
 @Setter
 public class RegistEventRequestDto {
     @NotNull
-    private String eventName; // 1-1
+    private String eventName; // 1
     @NotNull
-    private String department;
+    private String department; // 1
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate surveyStartDate;
-
-    private LocalDate surveyEndDate;
-
+    private LocalDate surveyStartDate; // 2
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate eventStartDate;
-
+    private LocalDate surveyEndDate; // 2
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate eventEndDate;
+    private LocalDate eventStartDate; // 2
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate eventEndDate; // 2
 
-    private int maxParticipants;
-    private int currentParticipants;
-    private String eventDescription; // 1-2
-    private List<MultipartFile> eventImages;
-    private List<String> qrCodeImages;
+    private int maxParticipants; // 2
+    private int currentParticipants; // 2
+    private String eventDescription; // 1
+    private List<MultipartFile> eventImages; // 1
+
+    private String qr_toss_o;
+    private String qr_toss_x;
+    private String qr_kakaopay_o;
+    private String qr_kakaopay_x;
 }

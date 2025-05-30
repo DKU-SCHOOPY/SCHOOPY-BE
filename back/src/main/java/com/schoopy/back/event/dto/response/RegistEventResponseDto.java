@@ -36,12 +36,16 @@ public class RegistEventResponseDto extends ResponseDto{
     private String eventDescription;
     @ElementCollection
     private List<String> eventImages;
-    @ElementCollection
-    private List<String> QrCodeImages;
+    private String qr_toss_o;
+    private String qr_toss_x;
+    private String qr_kakaopay_o;
+    private String qr_kakaopay_x;
 
     public static ResponseEntity<RegistEventResponseDto> success(
-            Long eventCode, String eventName, String department, LocalDate surveyStartDate, LocalDate surveyEndDate, LocalDate eventStartDate, LocalDate eventEndDate,
-            int maxParticipants, int currentParticipants, String eventDescription, List<String> eventImages, List<String> QrCodeImages
+            Long eventCode, String eventName, String department, LocalDate surveyStartDate, LocalDate surveyEndDate,
+            LocalDate eventStartDate, LocalDate eventEndDate, int maxParticipants, int currentParticipants,
+            String eventDescription, List<String> eventImages,
+            String qr_toss_o, String qr_toss_x, String qr_kakaopay_o, String qr_kakaopay_x
     ) {
         RegistEventResponseDto responseBody = new RegistEventResponseDto();
         responseBody.setEventCode(eventCode);
@@ -55,7 +59,11 @@ public class RegistEventResponseDto extends ResponseDto{
         responseBody.setCurrentParticipants(currentParticipants);
         responseBody.setEventDescription(eventDescription);
         responseBody.setEventImages(eventImages);
-        responseBody.setQrCodeImages(QrCodeImages);
+        responseBody.setQr_toss_o(qr_toss_o);
+        responseBody.setQr_toss_x(qr_toss_x);
+        responseBody.setQr_kakaopay_o(qr_kakaopay_o);
+        responseBody.setQr_kakaopay_x(qr_kakaopay_x);
+
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
     public static ResponseEntity<ResponseDto> registFail() {

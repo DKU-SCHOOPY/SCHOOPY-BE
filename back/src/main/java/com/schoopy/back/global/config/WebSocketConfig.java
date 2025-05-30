@@ -20,3 +20,5 @@ public class WebSocketConfig implements WebSocketConfigurer {
                 .setAllowedOrigins("*"); // CORS 허용
     }
 }
+
+

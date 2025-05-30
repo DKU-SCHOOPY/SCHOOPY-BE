@@ -17,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApplicationResponseDto {
-    private String responseCode;
-    private String responseMessage;
 
     private Long applicationId;
     private EventEntity eventCode;

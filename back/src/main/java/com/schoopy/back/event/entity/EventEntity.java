@@ -30,6 +30,16 @@ public class EventEntity {
     private String eventDescription;
     @ElementCollection
     private List<String> eventImages;
-    @ElementCollection
-    private List<String> QrCodeImages;
+    private String qr_toss_o;
+    private String qr_toss_x;
+    private String qr_kakaopay_o;
+    private String qr_kakaopay_x;
+
+//    @ElementCollection
+//    @CollectionTable(
+//            name = "event_entity_qr_code_images", // DB에 실제 존재하는 테이블명
+//            joinColumns = @JoinColumn(name = "event_entity_event_code") // FK 컬럼명
+//    )
+//    @Column(name = "qr_code_images") // 컬럼명
+//    private List<String> qrCodeImages;
 }
