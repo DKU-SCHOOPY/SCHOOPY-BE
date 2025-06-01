@@ -12,12 +12,14 @@ import lombok.Getter;
 
 @Getter
 public class SignInResponseDto extends ResponseDto{
+    private int noticeCount;
     private String token;
     private int expirationTime;
     private boolean notice;
 
     private SignInResponseDto (String token, UserEntity user) {
         super();
+        this.noticeCount = user.getNoticeCount();
         this.token = token;
         this.expirationTime = 3600;
 
