@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import com.schoopy.back.global.dto.ResponseDto;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @Getter
