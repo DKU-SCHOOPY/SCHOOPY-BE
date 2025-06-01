@@ -12,4 +12,5 @@ public interface UserService {
     ResponseEntity<? super CheckCertificationResponseDto> checkCertification(CheckCertificationRequestDto dto);
     ResponseEntity<? super SignUpResponseDto> signUp (SignUpRequestDto dto);
     ResponseEntity<? super SignInResponseDto> signIn (SignInRequestDto dto);
+    ResponseEntity<? super MypageResponseDto> printMypage (MypageRequestDto dto);
 }
