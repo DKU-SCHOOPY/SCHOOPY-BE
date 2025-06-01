@@ -60,6 +60,7 @@ public class SecurityConfig {
                 // .requestMatchers("/schoopy/v1/admin/**").hasRole("ADMIN")
                 .requestMatchers("/schoopy/v1/event/**").permitAll()
                     .requestMatchers("/", "/schoopy/v1/chat/**").permitAll()
+                    .requestMatchers("/schoopy/v1/notice/**").permitAll()
                     .requestMatchers("/", "/ws/**").permitAll()
                 .anyRequest().authenticated()
             )
