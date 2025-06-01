@@ -10,6 +10,8 @@ import com.schoopy.back.event.dto.response.UpdatePaymentStatusResponseDto;
 import com.schoopy.back.event.entity.ApplicationEntity;
 import com.schoopy.back.event.repository.ApplicationRepository;
 import com.schoopy.back.global.s3.S3Uploader;
+import com.schoopy.back.notice.entity.NoticeEntity;
+import com.schoopy.back.notice.repository.NoticeRepository;
 import com.schoopy.back.user.entity.UserEntity;
 import com.schoopy.back.user.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +22,13 @@ import com.schoopy.back.event.dto.response.RegistEventResponseDto;
 import com.schoopy.back.event.entity.EventEntity;
 import com.schoopy.back.event.repository.EventRepository;
 import com.schoopy.back.event.service.EventService;
+import com.schoopy.back.fcm.dto.request.FcmMessageDto;
+import com.schoopy.back.fcm.service.FcmService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +43,8 @@ public class EventServiceImplement implements EventService{
     private final EventRepository eventRepository;
     private final ApplicationRepository submitSurveyRepository;
     private final S3Uploader s3Uploader;
+    private final FcmService fcmService;
+    private final NoticeRepository noticeRepository;
 
     @Override
     public ResponseEntity<? super RegistEventResponseDto> registEvent(RegistEventRequestDto dto) {
@@ -176,32 +181,59 @@ public class EventServiceImplement implements EventService{
         return submitSurveyRepository.findByEventCode(event);
     }
     @Override
-    public ResponseEntity<? super UpdatePaymentStatusResponseDto> updatePaymentStatus(UpdatePaymentStatusRequestDto dto){
-        try {
-            ApplicationEntity submit = submitSurveyRepository.findByApplicationId(dto.getApplicationId());
-            if (submit == null) {
-                return ResponseEntity.badRequest().body(UpdatePaymentStatusResponseDto.updateFail());
-            }
-            EventEntity event = submit.getEventCode();
-
-            if (dto.isChoice()) {
-                if (submit.getIsPaymentCompleted()) {
-                    return ResponseEntity.badRequest().body(UpdatePaymentStatusResponseDto.updateFail()+"이미 승인 완료된 설문입니다.");
-                }
-                submit.setIsPaymentCompleted(true);
-                event.setCurrentParticipants(event.getCurrentParticipants() + 1);
-                submitSurveyRepository.save(submit);
-                eventRepository.save(event);
-            } else {
-                submitSurveyRepository.delete(submit);
-            }
-
-            return UpdatePaymentStatusResponseDto.success(submit.getIsPaymentCompleted());
-        }catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body(UpdatePaymentStatusResponseDto.updateFail()+"서버 내부 오류.");
+public ResponseEntity<? super UpdatePaymentStatusResponseDto> updatePaymentStatus(UpdatePaymentStatusRequestDto dto){
+    try {
+        ApplicationEntity submit = submitSurveyRepository.findByApplicationId(dto.getApplicationId());
+        if (submit == null) {
+            return ResponseEntity.badRequest().body(UpdatePaymentStatusResponseDto.updateFail());
         }
+
+        EventEntity event = submit.getEventCode();
+
+        if (dto.isChoice()) {
+            if (submit.getIsPaymentCompleted()) {
+                return ResponseEntity.badRequest().body(UpdatePaymentStatusResponseDto.updateFail() + "이미 승인 완료된 설문입니다.");
+            }
+
+            // 1. 결제 승인 처리
+            submit.setIsPaymentCompleted(true);
+            event.setCurrentParticipants(event.getCurrentParticipants() + 1);
+            submitSurveyRepository.save(submit);
+            eventRepository.save(event);
+
+            // 2. FCM 알림 전송
+            String targetToken = submit.getUser().getFcmToken();
+            if (targetToken != null && !targetToken.isEmpty()) {
+                FcmMessageDto fcmMessageDto = FcmMessageDto.builder()
+                    .targetToken(targetToken)
+                    .title("설문 승인 완료")
+                    .body("이벤트 [" + event.getEventName() + "] 참가가 승인되었습니다.")
+                    .receiver(submit.getUser().getStudentNum()) // NoticeEntity 저장을 위한 용도
+                    .build();
+                fcmService.sendMessageTo(fcmMessageDto);
+
+                // 3. 알림 내역 저장
+                NoticeEntity notice = new NoticeEntity();
+                notice.setSender("event"); // 또는 로그인한 관리자 이메일 등
+                notice.setReciever(submit.getUser().getStudentNum()); // 수신자 학번
+                notice.setTitle("설문 승인 완료");
+                notice.setMessage("이벤트 [" + event.getEventName() + "] 참가가 승인되었습니다.");
+                notice.setCheck(false); // 읽지 않음 상태
+                noticeRepository.save(notice);
+            }
+
+        } else {
+            // 거절 시 신청 삭제
+            submitSurveyRepository.delete(submit);
+        }
+
+        return UpdatePaymentStatusResponseDto.success(submit.getIsPaymentCompleted());
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.badRequest().body(UpdatePaymentStatusResponseDto.updateFail() + "서버 내부 오류.");
     }
+}
+
 
     @Override
     public List<CalendarResponseDto> getCalendarEventsByYearAndMonth(
