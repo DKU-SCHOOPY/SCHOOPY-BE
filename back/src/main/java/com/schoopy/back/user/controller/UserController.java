@@ -59,4 +59,12 @@ public class UserController {
         ResponseEntity<? super SignInResponseDto> response = userService.signIn(requestBody);
         return response;
     }
+
+    @PostMapping("/mypage")
+    public ResponseEntity<? super MypageResponseDto> mypage(
+        @RequestBody @Valid MypageRequestDto requestBody
+    ){
+        ResponseEntity<? super MypageResponseDto> response = userService.printMypage(requestBody);
+        return response;
+    }
 }
