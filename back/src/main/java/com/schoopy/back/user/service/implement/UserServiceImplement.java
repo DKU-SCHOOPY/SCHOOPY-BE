@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.schoopy.back.global.dto.ResponseDto;
 import com.schoopy.back.global.provider.EmailProvider;
 import com.schoopy.back.global.provider.JwtProvider;
+import com.schoopy.back.notice.repository.NoticeRepository;
 import com.schoopy.back.user.dto.request.*;
 import com.schoopy.back.user.dto.response.*;
 import com.schoopy.back.user.entity.CertificationEntity;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImplement implements UserService{
     private final UserRepository userRepository;
     private final CertificationRepository certificationRepository;
+    private final NoticeRepository noticeRepository;
 
     private final JwtProvider jwtProvider;
     private final EmailProvider emailProvider;
@@ -163,6 +165,10 @@ public class UserServiceImplement implements UserService{
             token = jwtProvider.create(studentNum);
 
             String clientFcmToken = dto.getFcmToken();
+
+            int noticeCount = noticeRepository.countByRecieverAndCheckFalse(studentNum);
+            userEntity.setNoticeCount(noticeCount);
+
             if(clientFcmToken != null && !clientFcmToken.isEmpty()){
                 userEntity.setFcmToken(clientFcmToken);
                 userRepository.save(userEntity);
@@ -174,5 +180,16 @@ public class UserServiceImplement implements UserService{
         }
 
         return SignInResponseDto.success(token, userEntity);
+    }
+
+    @Override
+    public ResponseEntity<? super MypageResponseDto> printMypage(MypageRequestDto dto) {
+        UserEntity user = userRepository.findByStudentNum(dto.getStudentNum());
+
+        if(user == null){
+            return ResponseEntity.badRequest().build();
+        }
+
+        return MypageResponseDto.success(user);
     }
 }
