@@ -8,4 +8,5 @@ import com.schoopy.back.notice.entity.NoticeEntity;
 
 public interface NoticeRepository extends JpaRepository<NoticeEntity, Long>{
     List<NoticeEntity> findByReciever(String reciever);
+    int countByRecieverAndCheckFalse(String reciever);
 }
