@@ -12,7 +12,6 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.schoopy.back.fcm.dto.request.DepartmentFcmRequestDto;
 import com.schoopy.back.fcm.dto.request.FcmMessageDto;
 import com.schoopy.back.fcm.dto.response.DepartmentFcmResponseDto;
-import com.schoopy.back.fcm.repository.FcmTokenRepository;
 import com.schoopy.back.fcm.service.FcmService;
 import com.schoopy.back.user.entity.UserEntity;
 import com.schoopy.back.user.repository.UserRepository;
