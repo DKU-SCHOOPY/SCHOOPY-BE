@@ -36,5 +36,5 @@ public class NoticeEntity {
     private String message;
 
     @Column(nullable = false)
-    private boolean check;
+    private boolean read;
 }
