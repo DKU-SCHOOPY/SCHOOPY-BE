@@ -27,9 +27,9 @@ public class NoticeController {
 
         // 읽지 않은 알림을 읽음 처리
         notices.stream()
-            .filter(notice -> !notice.isCheck())
+            .filter(notice -> !notice.isRead())
             .forEach(notice -> {
-                notice.setCheck(true);
+                notice.setRead(true);
                 noticeRepository.save(notice);
             });
 
