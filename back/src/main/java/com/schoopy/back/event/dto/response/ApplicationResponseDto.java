@@ -22,17 +22,15 @@ public class ApplicationResponseDto {
     private EventEntity eventCode;
     private UserEntity studentNum;
     private Boolean isStudent;
-    private Boolean councilFeePaid;
     private Boolean isPaymentCompleted;
 
     public static ResponseEntity<ApplicationResponseDto> success(Long applicationId, EventEntity eventCode
-            , UserEntity studentNum, Boolean isStudent, Boolean councilFeePaid, Boolean isPaymentCompleted) {
+            , UserEntity studentNum, Boolean isStudent, Boolean isPaymentCompleted) {
         ApplicationResponseDto responseBody = new ApplicationResponseDto();
         responseBody.setApplicationId(applicationId);
         responseBody.setEventCode(eventCode);
         responseBody.setStudentNum(studentNum);
         responseBody.setIsStudent(isStudent);
-        responseBody.setCouncilFeePaid(councilFeePaid);
         responseBody.setIsPaymentCompleted(isPaymentCompleted);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);

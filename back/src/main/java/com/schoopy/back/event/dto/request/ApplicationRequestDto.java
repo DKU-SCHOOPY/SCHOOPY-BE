@@ -13,8 +13,6 @@ public class ApplicationRequestDto {
     private Long eventCode; // 행사 코드
     @NotNull
     private Boolean isStudent; // 재학생 여부
-    @NotNull
-    private Boolean councilFeePaid; // 학생회비 납부여부
 
     private Boolean isPaymentCompleted; // 행사비용 납부여부
 }

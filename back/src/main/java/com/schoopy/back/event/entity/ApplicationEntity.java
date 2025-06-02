@@ -27,7 +27,7 @@ public class ApplicationEntity {
     private UserEntity user;
 
     private Boolean isStudent;
-    private Boolean councilFeePaid;
+
     @Column(nullable = false)
     private Boolean isPaymentCompleted=false;
 }

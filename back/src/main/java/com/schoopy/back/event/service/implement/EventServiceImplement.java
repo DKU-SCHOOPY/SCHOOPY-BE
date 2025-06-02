@@ -114,7 +114,6 @@ public class EventServiceImplement implements EventService{
             submit.setEventCode(event);
             submit.setUser(user);
             submit.setIsStudent(dto.getIsStudent());
-            submit.setCouncilFeePaid(dto.getCouncilFeePaid());
 
             submitSurveyRepository.save(submit);
 
@@ -123,7 +122,6 @@ public class EventServiceImplement implements EventService{
                     submit.getEventCode(),
                     submit.getUser(),
                     submit.getIsStudent(),
-                    submit.getCouncilFeePaid(),
                     false
             ));
         }catch(Exception e) {
@@ -149,11 +147,11 @@ public class EventServiceImplement implements EventService{
                 if(remitType.equals("toss")){
                     return ResponseEntity.ok(RedirectResponseDto.success(event.getQr_toss_o()));
                 }else if(remitType.equals("kakaopay")){
-                    return ResponseEntity.ok(RedirectResponseDto.success(event.getQr_toss_x()));
+                    return ResponseEntity.ok(RedirectResponseDto.success(event.getQr_kakaopay_o()));
                 }
             }else if(!councilFee) {
                 if(remitType.equals("toss")){
-                    return ResponseEntity.ok(RedirectResponseDto.success(event.getQr_kakaopay_o()));
+                    return ResponseEntity.ok(RedirectResponseDto.success(event.getQr_toss_x()));
                 }else if(remitType.equals("kakaopay")){
                     return ResponseEntity.ok(RedirectResponseDto.success(event.getQr_kakaopay_x()));
                 }
