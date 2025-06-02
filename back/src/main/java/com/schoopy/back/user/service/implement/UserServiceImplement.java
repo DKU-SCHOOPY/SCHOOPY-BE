@@ -164,15 +164,16 @@ public class UserServiceImplement implements UserService{
 
             token = jwtProvider.create(studentNum);
 
-            String clientFcmToken = dto.getFcmToken();
+            // String clientFcmToken = dto.getFcmToken();
 
-            int noticeCount = noticeRepository.countByRecieverAndReadFalse(studentNum);
+            int noticeCount = noticeRepository.countByRecieverAndReadCheckFalse(studentNum);
             userEntity.setNoticeCount(noticeCount);
 
-            if(clientFcmToken != null && !clientFcmToken.isEmpty()){
-                userEntity.setFcmToken(clientFcmToken);
-                userRepository.save(userEntity);
-            }
+            // if(clientFcmToken != null && !clientFcmToken.isEmpty()){
+            //     userEntity.setFcmToken(clientFcmToken);
+            // }
+            userRepository.save(userEntity);
+
 
         } catch (Exception exception) {
             exception.printStackTrace();

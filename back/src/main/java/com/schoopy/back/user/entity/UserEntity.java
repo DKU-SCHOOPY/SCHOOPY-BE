@@ -49,8 +49,8 @@ public class UserEntity {
     @Column(nullable = false)
     private String role;
 
-    @Column(nullable = false)
-    private String fcmToken;
+    // @Column(nullable = false)
+    // private String fcmToken;
 
     @Column(nullable = false)
     private int noticeCount;

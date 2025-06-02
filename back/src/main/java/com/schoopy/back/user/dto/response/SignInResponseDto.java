@@ -20,8 +20,8 @@ public class SignInResponseDto extends ResponseDto{
     private SignInResponseDto (String token, UserEntity user) {
         super();
         this.noticeCount = user.getNoticeCount();
-        this.token = token;
         this.expirationTime = 3600;
+        this.token = token;
 
     }
 
