@@ -216,7 +216,7 @@ public ResponseEntity<? super UpdatePaymentStatusResponseDto> updatePaymentStatu
                 notice.setReciever(submit.getUser().getStudentNum()); // 수신자 학번
                 notice.setTitle("설문 승인 완료");
                 notice.setMessage("이벤트 [" + event.getEventName() + "] 참가가 승인되었습니다.");
-                notice.setRead(false); // 읽지 않음 상태
+                notice.setReadCheck(false); // 읽지 않음 상태
                 noticeRepository.save(notice);
             }
 
