@@ -67,4 +67,21 @@ public class UserController {
         ResponseEntity<? super MypageResponseDto> response = userService.printMypage(requestBody);
         return response;
     }
+
+    @PostMapping("/change-dept")
+    public ResponseEntity<? super ChangeDeptResponseDto> changeDept(
+        @RequestBody @Valid ChangeDeptRequestDto requestBody
+    ){
+        ResponseEntity<? super ChangeDeptResponseDto> response = userService.changeDept(requestBody);
+        return response;
+    }
+
+    @PostMapping("/change-phone-num")
+    public ResponseEntity<? super ChangePhoeNumResponseDto> changePhoneNum(
+        @RequestBody @Valid ChangePhoneNumRequestDto requestBody
+    ){
+        ResponseEntity<? super ChangePhoeNumResponseDto> response = userService.changePhoneNum(requestBody);
+        return response;
+    }
+    
 }
