@@ -166,7 +166,7 @@ public class UserServiceImplement implements UserService{
 
             String clientFcmToken = dto.getFcmToken();
 
-            int noticeCount = noticeRepository.countByRecieverAndCheckFalse(studentNum);
+            int noticeCount = noticeRepository.countByRecieverAndReadFalse(studentNum);
             userEntity.setNoticeCount(noticeCount);
 
             if(clientFcmToken != null && !clientFcmToken.isEmpty()){
