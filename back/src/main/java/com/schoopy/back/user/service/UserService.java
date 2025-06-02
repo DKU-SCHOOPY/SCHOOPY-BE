@@ -13,4 +13,6 @@ public interface UserService {
     ResponseEntity<? super SignUpResponseDto> signUp (SignUpRequestDto dto);
     ResponseEntity<? super SignInResponseDto> signIn (SignInRequestDto dto);
     ResponseEntity<? super MypageResponseDto> printMypage (MypageRequestDto dto);
+    ResponseEntity<? super ChangeDeptResponseDto> changeDept (ChangeDeptRequestDto dto);
+    ResponseEntity<? super ChangePhoeNumResponseDto> changePhoneNum (ChangePhoneNumRequestDto dto);
 }
