@@ -194,7 +194,7 @@ public class UserServiceImplement implements UserService{
         return MypageResponseDto.success(user);
     }
 
-    @Override
+    @Overrid
     public ResponseEntity<? super ChangeDeptResponseDto> changeDept(ChangeDeptRequestDto dto) {
         UserEntity userEntity = userRepository.findByStudentNum(dto.getStudentNum());
 
