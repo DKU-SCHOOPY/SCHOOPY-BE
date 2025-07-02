@@ -4,6 +4,8 @@ import com.schoopy.back.user.dto.request.SignUpRequestDto;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -21,6 +23,10 @@ import lombok.Setter;
 @Table(name="user")
 public class UserEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, unique = true)
+    private long id;
+
     @Column(nullable = false)
     private String studentNum;
     
@@ -50,9 +56,6 @@ public class UserEntity {
 
     @Column(nullable = false)
     private String role;
-
-    // @Column(nullable = false)
-    // private String fcmToken;
 
     @Column(nullable = false)
     private int noticeCount;
