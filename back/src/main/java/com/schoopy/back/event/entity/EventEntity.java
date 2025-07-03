@@ -15,24 +15,27 @@ import java.util.List;
 public class EventEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long eventCode;
-
-    private String eventName;
-    private String department;
-    private LocalDate surveyStartDate;
-    private LocalDate surveyEndDate;
-    private LocalDate eventStartDate;
-    private LocalDate eventEndDate;
-    private int maxParticipants;
-    private int currentParticipants;
+    private Long eventCode; // event
+    private String eventName; //event
+    private String department; //event
+    private LocalDate eventStartDate; // event
+    private LocalDate eventEndDate; // event
     @Column(columnDefinition = "LONGTEXT")
-    private String eventDescription;
+    private String eventDescription; // event
     @ElementCollection
-    private List<String> eventImages;
-    private String qr_toss_o;
-    private String qr_toss_x;
-    private String qr_kakaopay_o;
-    private String qr_kakaopay_x;
+    private List<String> eventImages; // event
+
+
+
+    private LocalDate surveyStartDate; // form
+    private LocalDate surveyEndDate; // form
+    private int maxParticipants; // form
+    private int currentParticipants; // form
+    //qr_결제방식_학생회비납부여부
+    private String qr_toss_o; // form
+    private String qr_toss_x; // form
+    private String qr_kakaopay_o; // form
+    private String qr_kakaopay_x; // form
 
 //    @ElementCollection
 //    @CollectionTable(
