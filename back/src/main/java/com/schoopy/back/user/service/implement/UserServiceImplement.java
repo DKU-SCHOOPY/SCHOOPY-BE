@@ -224,4 +224,61 @@ public class UserServiceImplement implements UserService{
 
         return ChangePhoeNumResponseDto.success();
     }
+
+    @Override
+    public ResponseEntity<? super LinkSocialResponseDto> linkKakao(String token, String kakaoId) {
+        try {
+            String studentNum = jwtProvider.validate(token.replace("Bearer ", ""));
+            UserEntity user = userRepository.findByStudentNum(studentNum);
+            user.setKakaoId(kakaoId);
+            userRepository.save(user);
+            return LinkSocialResponseDto.kakaoLinkSuccess();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+    }
+
+    @Override
+    public ResponseEntity<? super LinkSocialResponseDto> linkNaver(String token, String naverId) {
+        try {
+            String studentNum = jwtProvider.validate(token.replace("Bearer ", ""));
+            UserEntity user = userRepository.findByStudentNum(studentNum);
+            user.setNaverId(naverId);
+            userRepository.save(user);
+            return LinkSocialResponseDto.naverLinkSuccess();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+    }
+
+    public ResponseEntity<? super SignInResponseDto> socialSignIn(String provider, String socialId) {
+        try {
+            UserEntity user = null;
+
+            if ("kakao".equals(provider)) {
+                user = userRepository.findAll().stream()
+                        .filter(u -> socialId.equals(u.getKakaoId()))
+                        .findFirst().orElse(null);
+            } else if ("naver".equals(provider)) {
+                user = userRepository.findAll().stream()
+                        .filter(u -> socialId.equals(u.getNaverId()))
+                        .findFirst().orElse(null);
+            }
+
+            if (user == null) return SignInResponseDto.signInFailEmail();
+
+            String token = jwtProvider.create(user.getStudentNum());
+
+            int noticeCount = noticeRepository.countByRecieverAndReadCheckFalse(user.getStudentNum());
+            user.setNoticeCount(noticeCount);
+            userRepository.save(user);
+
+            return SignInResponseDto.success(token, user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+    }
 }
