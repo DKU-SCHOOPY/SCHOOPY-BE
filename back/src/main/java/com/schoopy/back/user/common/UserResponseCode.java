@@ -13,4 +13,5 @@ public interface UserResponseCode extends ResponseCode {
     String EMAIL_MISSMATCH = "EM";
     String PASSWORD_MISSMATCH = "PM";
     String PASSWORD_EMPTY = "PE";
+    String UNKNOWN_USER = "UU";
 }
