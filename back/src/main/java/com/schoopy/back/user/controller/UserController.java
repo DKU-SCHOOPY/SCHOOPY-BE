@@ -1,8 +1,11 @@
 package com.schoopy.back.user.controller;
 
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -84,4 +87,27 @@ public class UserController {
         return response;
     }
     
+    @PostMapping("/link-kakao")
+    public ResponseEntity<? super LinkSocialResponseDto> linkKakaoAccount(
+        @RequestHeader("Authorization") String token,
+        @RequestBody Map<String, String> body
+    ) {
+        return userService.linkKakao(token, body.get("kakaoId"));
+    }
+
+    @PostMapping("/link-naver")
+    public ResponseEntity<? super LinkSocialResponseDto> linkNaverAccount(
+        @RequestHeader("Authorization") String token,
+        @RequestBody Map<String, String> body
+    ) {
+        return userService.linkNaver(token, body.get("naverId"));
+    }
+
+    @PostMapping("/social-sign-in")
+    public ResponseEntity<? super SignInResponseDto> socialSignIn(
+        @RequestBody Map<String, String> body) {
+        String provider = body.get("provider"); // "kakao" or "naver"
+        String socialId = body.get("socialId");
+        return userService.socialSignIn(provider, socialId);
+    }
 }
