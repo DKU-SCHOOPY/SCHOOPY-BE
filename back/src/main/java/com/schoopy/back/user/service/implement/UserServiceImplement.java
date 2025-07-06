@@ -6,6 +6,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.schoopy.back.global.dto.ResponseDto;
+import com.schoopy.back.global.helper.KakaoOauthHelper;
+import com.schoopy.back.global.helper.NaverOauthHelper;
 import com.schoopy.back.global.provider.EmailProvider;
 import com.schoopy.back.global.provider.JwtProvider;
 import com.schoopy.back.notice.repository.NoticeRepository;
@@ -28,6 +30,9 @@ public class UserServiceImplement implements UserService{
 
     private final JwtProvider jwtProvider;
     private final EmailProvider emailProvider;
+
+    private final KakaoOauthHelper kakaoOauthHelper;
+    private final NaverOauthHelper naverOauthHelper;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     
@@ -226,13 +231,24 @@ public class UserServiceImplement implements UserService{
     }
 
     @Override
-    public ResponseEntity<? super LinkSocialResponseDto> linkKakao(String token, String kakaoId) {
+    public ResponseEntity<? super SignInResponseDto> naverLogin(String code, String state) {
         try {
-            String studentNum = jwtProvider.validate(token.replace("Bearer ", ""));
-            UserEntity user = userRepository.findByStudentNum(studentNum);
-            user.setKakaoId(kakaoId);
+            // 1. access token 요청
+            String accessToken = naverOauthHelper.getAccessToken(code, state);
+            
+            // 2. 사용자 정보 요청
+            String naverId = naverOauthHelper.getUserIdFromToken(accessToken);
+
+            // 3. 사용자 찾기
+            UserEntity user = userRepository.findByNaverId(naverId);
+            if (user == null) return SignInResponseDto.signInFailEmail();
+
+            // 4. JWT 생성 및 반환
+            String token = jwtProvider.create(user.getStudentNum());
+            user.setNoticeCount(noticeRepository.countByRecieverAndReadCheckFalse(user.getStudentNum()));
             userRepository.save(user);
-            return LinkSocialResponseDto.kakaoLinkSuccess();
+            return SignInResponseDto.success(token, user);
+
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
@@ -240,42 +256,19 @@ public class UserServiceImplement implements UserService{
     }
 
     @Override
-    public ResponseEntity<? super LinkSocialResponseDto> linkNaver(String token, String naverId) {
+    public ResponseEntity<? super SignInResponseDto> kakaoLogin(String code) {
         try {
-            String studentNum = jwtProvider.validate(token.replace("Bearer ", ""));
-            UserEntity user = userRepository.findByStudentNum(studentNum);
-            user.setNaverId(naverId);
-            userRepository.save(user);
-            return LinkSocialResponseDto.naverLinkSuccess();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.databaseError();
-        }
-    }
+            String accessToken = kakaoOauthHelper.getAccessToken(code);
+            String kakaoId = kakaoOauthHelper.getUserIdFromToken(accessToken);
 
-    public ResponseEntity<? super SignInResponseDto> socialSignIn(String provider, String socialId) {
-        try {
-            UserEntity user = null;
-
-            if ("kakao".equals(provider)) {
-                user = userRepository.findAll().stream()
-                        .filter(u -> socialId.equals(u.getKakaoId()))
-                        .findFirst().orElse(null);
-            } else if ("naver".equals(provider)) {
-                user = userRepository.findAll().stream()
-                        .filter(u -> socialId.equals(u.getNaverId()))
-                        .findFirst().orElse(null);
-            }
-
+            UserEntity user = userRepository.findByKakaoId(kakaoId);
             if (user == null) return SignInResponseDto.signInFailEmail();
 
             String token = jwtProvider.create(user.getStudentNum());
-
-            int noticeCount = noticeRepository.countByRecieverAndReadCheckFalse(user.getStudentNum());
-            user.setNoticeCount(noticeCount);
+            user.setNoticeCount(noticeRepository.countByRecieverAndReadCheckFalse(user.getStudentNum()));
             userRepository.save(user);
-
             return SignInResponseDto.success(token, user);
+
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
