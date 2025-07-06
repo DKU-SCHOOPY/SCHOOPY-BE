@@ -86,28 +86,4 @@ public class UserController {
         ResponseEntity<? super ChangePhoeNumResponseDto> response = userService.changePhoneNum(requestBody);
         return response;
     }
-    
-    @PostMapping("/link-kakao")
-    public ResponseEntity<? super LinkSocialResponseDto> linkKakaoAccount(
-        @RequestHeader("Authorization") String token,
-        @RequestBody Map<String, String> body
-    ) {
-        return userService.linkKakao(token, body.get("kakaoId"));
-    }
-
-    @PostMapping("/link-naver")
-    public ResponseEntity<? super LinkSocialResponseDto> linkNaverAccount(
-        @RequestHeader("Authorization") String token,
-        @RequestBody Map<String, String> body
-    ) {
-        return userService.linkNaver(token, body.get("naverId"));
-    }
-
-    @PostMapping("/social-sign-in")
-    public ResponseEntity<? super SignInResponseDto> socialSignIn(
-        @RequestBody Map<String, String> body) {
-        String provider = body.get("provider"); // "kakao" or "naver"
-        String socialId = body.get("socialId");
-        return userService.socialSignIn(provider, socialId);
-    }
 }
