@@ -15,7 +15,6 @@ public interface UserService {
     ResponseEntity<? super MypageResponseDto> printMypage (MypageRequestDto dto);
     ResponseEntity<? super ChangeDeptResponseDto> changeDept (ChangeDeptRequestDto dto);
     ResponseEntity<? super ChangePhoeNumResponseDto> changePhoneNum (ChangePhoneNumRequestDto dto);
-    ResponseEntity<? super LinkSocialResponseDto> linkKakao(String token, String kakaoId);
-    ResponseEntity<? super LinkSocialResponseDto> linkNaver(String token, String naverId);
-    ResponseEntity<? super SignInResponseDto> socialSignIn(String provider, String socialId);
+    ResponseEntity<? super SignInResponseDto> naverLogin(String code, String state);
+    ResponseEntity<? super SignInResponseDto> kakaoLogin(String code);
 }
