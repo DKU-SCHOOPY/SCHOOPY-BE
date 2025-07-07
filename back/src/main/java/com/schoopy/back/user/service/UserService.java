@@ -17,4 +17,6 @@ public interface UserService {
     ResponseEntity<? super ChangePhoeNumResponseDto> changePhoneNum (ChangePhoneNumRequestDto dto);
     ResponseEntity<? super SignInResponseDto> naverLogin(String code, String state);
     ResponseEntity<? super SignInResponseDto> kakaoLogin(String code);
+    ResponseEntity<? super LinkSocialResponseDto> kakaoLink(LinkKakaoRequestDto dto);
+    ResponseEntity<? super LinkSocialResponseDto> naverLink(LinkNaverRequestDto dto);
 }
