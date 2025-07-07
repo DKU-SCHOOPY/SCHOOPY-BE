@@ -274,4 +274,47 @@ public class UserServiceImplement implements UserService{
             return ResponseDto.databaseError();
         }
     }
+
+    @Override
+    public ResponseEntity<? super LinkSocialResponseDto> kakaoLink(LinkKakaoRequestDto dto) {
+        try {
+            String studentNum = dto.getStudentNum();
+            String code = dto.getCode();
+
+            String kakaoId = kakaoOauthHelper.getKakaoUserId(code);
+            UserEntity user = userRepository.findByStudentNum(studentNum);
+            if (user == null) return ResponseDto.databaseError();
+
+            user.setKakaoId(kakaoId);
+            userRepository.save(user);
+
+            return LinkSocialResponseDto.kakaoLinkSuccess();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+    }
+
+    @Override
+    public ResponseEntity<? super LinkSocialResponseDto> naverLink(LinkNaverRequestDto dto) {
+        try {
+            String studentNum = dto.getStudentNum();
+            String code = dto.getCode();
+            String state = dto.getState();
+
+            String naverId = naverOauthHelper.getNaverUserId(code, state);
+            UserEntity user = userRepository.findByStudentNum(studentNum);
+            if (user == null) return ResponseDto.databaseError();
+
+            user.setNaverId(naverId);
+            userRepository.save(user);
+
+            return LinkSocialResponseDto.naverLinkSuccess();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+    }   
 }
