@@ -2,7 +2,6 @@ package com.schoopy.back.global.config;
 
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,6 +10,7 @@ import org.springframework.security.config.annotation.web.configurers.CsrfConfig
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -25,22 +25,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
-@Configurable
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    // @Bean
-    // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    //     http
-    //             .csrf(csrf -> csrf.disable()) // CSRF 비활성화
-    //             .authorizeHttpRequests(auth -> auth
-    //                     .anyRequest().permitAll() // 모든 요청 허용
-    //             );
-    //     return http.build();
-    // }
+    private final DefaultOAuth2UserService oAuth2UserService;
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
@@ -56,14 +46,24 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(request -> request
                 .requestMatchers("/" , "/schoopy/v1/auth/**").permitAll()
+                .requestMatchers("/", "/oauth2/**").permitAll()
                 // .requestMatchers("/schoopy/v1/user/**").hasRole("USER")
                 // .requestMatchers("/schoopy/v1/admin/**").hasRole("ADMIN")
                 .requestMatchers("/schoopy/v1/event/**").permitAll()
-                    .requestMatchers("/", "/schoopy/v1/chat/**").permitAll()
-                    .requestMatchers("/schoopy/v1/notice/**").permitAll()
-                    .requestMatchers("/", "/ws/**").permitAll()
+                .requestMatchers("/", "/schoopy/v1/chat/**").permitAll()
+                .requestMatchers("/schoopy/v1/notice/**").permitAll()
+                .requestMatchers("/", "/ws/**").permitAll()
                 .anyRequest().authenticated()
             )
+            .oauth2Login(oauth2 -> oauth2
+                .redirectionEndpoint(redirection -> 
+                    redirection.baseUri("/oauth2/callback/{registrationId}")
+                )
+                .userInfoEndpoint(userInfo -> 
+                    userInfo.userService(oAuth2UserService)
+                )
+            )
+
             .exceptionHandling(exceptionHandling -> exceptionHandling
                 .authenticationEntryPoint(new FailedAuthenticationEntryPoint())
             )

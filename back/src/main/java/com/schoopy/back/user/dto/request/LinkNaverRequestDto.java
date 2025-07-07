@@ -8,11 +8,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SignInRequestDto {
+public class LinkNaverRequestDto {
+    
+    @NotBlank
+    private String studentNum;  
 
     @NotBlank
-    private String studentNum;
+    private String code;
 
     @NotBlank
-    private String password;
+    private String state;
 }

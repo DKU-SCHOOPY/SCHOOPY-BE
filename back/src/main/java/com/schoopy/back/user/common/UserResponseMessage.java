@@ -13,4 +13,5 @@ public interface UserResponseMessage extends ResponseMessage{
     String EMAIL_MISSMATCH = "email missmatch";
     String PASSWORD_MISSMATCH = "password missmatch";
     String PASSWORD_EMPTY = "password is empty";
+    String UNKNOWN_USER = "unknown user";
 }

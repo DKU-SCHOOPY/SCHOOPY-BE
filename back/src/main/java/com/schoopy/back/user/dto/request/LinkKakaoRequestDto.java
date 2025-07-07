@@ -8,11 +8,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SignInRequestDto {
-
+public class LinkKakaoRequestDto {
+    
     @NotBlank
     private String studentNum;
 
     @NotBlank
-    private String password;
+    private String code;
 }

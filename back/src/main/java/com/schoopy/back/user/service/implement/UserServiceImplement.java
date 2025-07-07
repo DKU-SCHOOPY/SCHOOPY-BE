@@ -6,6 +6,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.schoopy.back.global.dto.ResponseDto;
+import com.schoopy.back.global.helper.KakaoOauthHelper;
+import com.schoopy.back.global.helper.NaverOauthHelper;
 import com.schoopy.back.global.provider.EmailProvider;
 import com.schoopy.back.global.provider.JwtProvider;
 import com.schoopy.back.notice.repository.NoticeRepository;
@@ -28,6 +30,9 @@ public class UserServiceImplement implements UserService{
 
     private final JwtProvider jwtProvider;
     private final EmailProvider emailProvider;
+
+    private final KakaoOauthHelper kakaoOauthHelper;
+    private final NaverOauthHelper naverOauthHelper;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     
@@ -194,7 +199,7 @@ public class UserServiceImplement implements UserService{
         return MypageResponseDto.success(user);
     }
 
-    @Overrid
+    @Override
     public ResponseEntity<? super ChangeDeptResponseDto> changeDept(ChangeDeptRequestDto dto) {
         UserEntity userEntity = userRepository.findByStudentNum(dto.getStudentNum());
 
@@ -224,4 +229,92 @@ public class UserServiceImplement implements UserService{
 
         return ChangePhoeNumResponseDto.success();
     }
+
+    @Override
+    public ResponseEntity<? super SignInResponseDto> naverLogin(String code, String state) {
+        try {
+            // 1. access token 요청
+            String accessToken = naverOauthHelper.getAccessToken(code, state);
+            
+            // 2. 사용자 정보 요청
+            String naverId = naverOauthHelper.getUserIdFromToken(accessToken);
+
+            // 3. 사용자 찾기
+            UserEntity user = userRepository.findByNaverId(naverId);
+            if (user == null) return SignInResponseDto.signInFailEmail();
+
+            // 4. JWT 생성 및 반환
+            String token = jwtProvider.create(user.getStudentNum());
+            user.setNoticeCount(noticeRepository.countByRecieverAndReadCheckFalse(user.getStudentNum()));
+            userRepository.save(user);
+            return SignInResponseDto.success(token, user);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+    }
+
+    @Override
+    public ResponseEntity<? super SignInResponseDto> kakaoLogin(String code) {
+        try {
+            String accessToken = kakaoOauthHelper.getAccessToken(code);
+            String kakaoId = kakaoOauthHelper.getUserIdFromToken(accessToken);
+
+            UserEntity user = userRepository.findByKakaoId(kakaoId);
+            if (user == null) return SignInResponseDto.signInFailEmail();
+
+            String token = jwtProvider.create(user.getStudentNum());
+            user.setNoticeCount(noticeRepository.countByRecieverAndReadCheckFalse(user.getStudentNum()));
+            userRepository.save(user);
+            return SignInResponseDto.success(token, user);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+    }
+
+    @Override
+    public ResponseEntity<? super LinkSocialResponseDto> kakaoLink(LinkKakaoRequestDto dto) {
+        try {
+            String studentNum = dto.getStudentNum();
+            String code = dto.getCode();
+
+            String kakaoId = kakaoOauthHelper.getKakaoUserId(code);
+            UserEntity user = userRepository.findByStudentNum(studentNum);
+            if (user == null) return ResponseDto.databaseError();
+
+            user.setKakaoId(kakaoId);
+            userRepository.save(user);
+
+            return LinkSocialResponseDto.kakaoLinkSuccess();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+    }
+
+    @Override
+    public ResponseEntity<? super LinkSocialResponseDto> naverLink(LinkNaverRequestDto dto) {
+        try {
+            String studentNum = dto.getStudentNum();
+            String code = dto.getCode();
+            String state = dto.getState();
+
+            String naverId = naverOauthHelper.getNaverUserId(code, state);
+            UserEntity user = userRepository.findByStudentNum(studentNum);
+            if (user == null) return ResponseDto.databaseError();
+
+            user.setNaverId(naverId);
+            userRepository.save(user);
+
+            return LinkSocialResponseDto.naverLinkSuccess();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+    }   
 }

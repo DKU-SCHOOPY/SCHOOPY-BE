@@ -83,5 +83,4 @@ public class UserController {
         ResponseEntity<? super ChangePhoeNumResponseDto> response = userService.changePhoneNum(requestBody);
         return response;
     }
-    
 }

@@ -10,4 +10,6 @@ public interface UserRepository extends JpaRepository<UserEntity, String>{
     boolean existsByStudentNum(String studentNum);
     UserEntity findByStudentNum(String studentNum);
     List<UserEntity> findAllByDepartment(String department);
+    UserEntity findByKakaoId(String kakaoId);
+    UserEntity findByNaverId(String naverId);
 }
