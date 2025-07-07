@@ -3,6 +3,7 @@ package com.schoopy.back.global.helper;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -46,5 +47,40 @@ public class NaverOauthHelper {
         Map<String, Object> body = response.getBody();
         Map<String, Object> userInfo = (Map<String, Object>) body.get("response");
         return (String) userInfo.get("id");
+    }
+    
+    public String getNaverUserId(String code, String state) {
+        String tokenUri = "https://nid.naver.com/oauth2.0/token" +
+                "?grant_type=authorization_code" +
+                "&client_id=" + clientId +
+                "&client_secret=" + clientSecret +
+                "&code=" + code +
+                "&state=" + state;
+
+        ResponseEntity<Map<String, Object>> tokenResponse = restTemplate.exchange(
+                tokenUri,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {}
+        );
+        String accessToken = (String) tokenResponse.getBody().get("access_token");
+
+        // 사용자 정보 요청
+        String userInfoUri = "https://openapi.naver.com/v1/nid/me";
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<Map<String, Object>> userInfoResponse = restTemplate.exchange(
+                userInfoUri,
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<>() {}
+        );
+
+        Map<String, Object> userInfo = userInfoResponse.getBody();
+        Map<String, Object> response = (Map<String, Object>) userInfo.get("response");
+
+        return (String) response.get("id");
     }
 }
