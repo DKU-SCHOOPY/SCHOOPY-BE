@@ -3,15 +3,12 @@ package com.schoopy.back.event.controller;
 import com.schoopy.back.event.dto.request.RedirectRequestDto;
 import com.schoopy.back.event.dto.request.ApplicationRequestDto;
 import com.schoopy.back.event.dto.request.UpdatePaymentStatusRequestDto;
-import com.schoopy.back.event.dto.response.ApplicationResponseDto;
-import com.schoopy.back.event.dto.response.UpdatePaymentStatusResponseDto;
+import com.schoopy.back.event.dto.response.*;
 import com.schoopy.back.event.entity.EventEntity;
 import com.schoopy.back.event.entity.ApplicationEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.schoopy.back.event.dto.request.RegistEventRequestDto;
-import com.schoopy.back.event.dto.response.CalendarResponseDto;
-import com.schoopy.back.event.dto.response.RegistEventResponseDto;
 import com.schoopy.back.event.service.EventService;
 
 import jakarta.validation.Valid;
@@ -35,11 +32,13 @@ public class EventController {
     public ResponseEntity<? super RegistEventResponseDto> registEvent(
             @ModelAttribute RegistEventRequestDto requestBody
     ) {
-        System.out.println("registEvent() called");
-        System.out.println("dto.eventName = " + requestBody.getEventName());
-        return eventService.registEvent(requestBody);
+        return ResponseEntity.ok(eventService.registEvent(requestBody));
     }
 
+    @GetMapping("/get-form/{eventCode}")
+    public ResponseEntity<FormResponseDto> getForm(@PathVariable Long eventCode){
+        return eventService.getFormByEventCode(eventCode);
+    }
 
     @PostMapping("application") // 행사 신청
     public ResponseEntity<? super ApplicationResponseDto> application(
@@ -60,6 +59,14 @@ public class EventController {
     public ResponseEntity<List<EventEntity>> getActiveEvents() {
         return ResponseEntity.ok(eventService.getCurrentSurveyEvents());
     }
+
+    @GetMapping("/application/{applicationId}/answers")
+    public ResponseEntity<List<AnswerResponseDto>> getAnswers(
+            @PathVariable Long applicationId
+    ) {
+        return eventService.getAnswersByApplicationId(applicationId);
+    }
+
 
     @GetMapping("/submissions/{eventCode}") // 제출된 행사 신청 설문 목록 출력
     public ResponseEntity<List<ApplicationEntity>> getSubmissionsByEvent(@PathVariable Long eventCode) {

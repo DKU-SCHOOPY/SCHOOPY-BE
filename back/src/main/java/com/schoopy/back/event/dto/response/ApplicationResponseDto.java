@@ -9,30 +9,19 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.eclipse.angus.mail.iap.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class ApplicationResponseDto {
+public class ApplicationResponseDto extends ResponseDto {
+    public ApplicationResponseDto() {
+        super();
+    }
 
-    private Long applicationId;
-    private EventEntity eventCode;
-    private UserEntity studentNum;
-    private Boolean isStudent;
-    private Boolean isPaymentCompleted;
-
-    public static ResponseEntity<ApplicationResponseDto> success(Long applicationId, EventEntity eventCode
-            , UserEntity studentNum, Boolean isStudent, Boolean isPaymentCompleted) {
+    public static ResponseEntity<ApplicationResponseDto> success() {
         ApplicationResponseDto responseBody = new ApplicationResponseDto();
-        responseBody.setApplicationId(applicationId);
-        responseBody.setEventCode(eventCode);
-        responseBody.setStudentNum(studentNum);
-        responseBody.setIsStudent(isStudent);
-        responseBody.setIsPaymentCompleted(isPaymentCompleted);
-
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 

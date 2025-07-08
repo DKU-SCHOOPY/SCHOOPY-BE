@@ -1,18 +1,21 @@
 package com.schoopy.back.event.dto.request;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+import java.util.List;
+
+@Data
 public class ApplicationRequestDto {
-    @NotNull
-    private String studentNum; // 학번
-    @NotNull
-    private Long eventCode; // 행사 코드
-    @NotNull
-    private Boolean isStudent; // 재학생 여부
+    private String studentNum;
+    private Long eventCode;
+    private Boolean isStudent;
 
-    private Boolean isPaymentCompleted; // 행사비용 납부여부
+    private List<AnswerDto> answer;
+
+    @Data
+    public static class AnswerDto {
+        private Long questionId;
+        private String answerText;
+        private List<String> answerList;
+    }
 }
