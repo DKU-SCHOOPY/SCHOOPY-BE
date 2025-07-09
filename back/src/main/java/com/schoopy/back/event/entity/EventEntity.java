@@ -27,15 +27,6 @@ public class EventEntity {
 
 
 
-    private LocalDate surveyStartDate; // form
-    private LocalDate surveyEndDate; // form
-    private int maxParticipants; // form
-    private int currentParticipants; // form
-    //qr_결제방식_학생회비납부여부
-    private String qr_toss_o; // form
-    private String qr_toss_x; // form
-    private String qr_kakaopay_o; // form
-    private String qr_kakaopay_x; // form
 
 //    @ElementCollection
 //    @CollectionTable(

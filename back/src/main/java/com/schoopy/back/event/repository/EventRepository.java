@@ -11,8 +11,4 @@ import java.util.List;
 
 public interface EventRepository extends JpaRepository<EventEntity, Long>{
     EventEntity findByEventCode(Long eventCode);
-
-    @Query("SELECT e FROM EventEntity e WHERE e.surveyStartDate <= :today AND e.surveyEndDate >= :today")
-    List<EventEntity> findActiveSurveyEvents(@Param("today") LocalDate today);
-
 }
