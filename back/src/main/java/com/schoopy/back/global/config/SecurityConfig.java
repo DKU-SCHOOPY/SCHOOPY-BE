@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.configurers.CsrfConfig
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -30,7 +29,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final DefaultOAuth2UserService oAuth2UserService;
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
@@ -54,14 +52,6 @@ public class SecurityConfig {
                 .requestMatchers("/schoopy/v1/notice/**").permitAll()
                 .requestMatchers("/", "/ws/**").permitAll()
                 .anyRequest().authenticated()
-            )
-            .oauth2Login(oauth2 -> oauth2
-                .redirectionEndpoint(redirection -> 
-                    redirection.baseUri("/oauth2/callback/{registrationId}")
-                )
-                .userInfoEndpoint(userInfo -> 
-                    userInfo.userService(oAuth2UserService)
-                )
             )
 
             .exceptionHandling(exceptionHandling -> exceptionHandling
