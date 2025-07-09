@@ -11,7 +11,6 @@ import com.schoopy.back.notice.entity.NoticeEntity;
 import com.schoopy.back.notice.repository.NoticeRepository;
 import com.schoopy.back.user.entity.UserEntity;
 import com.schoopy.back.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -329,11 +328,5 @@ public class EventServiceImplement implements EventService{
                 ))
                 .sorted(Comparator.comparing(CalendarResponseDto::getStart))
                 .collect(Collectors.toList());
-    }
-
-
-    @Override
-    public List<EventEntity> getAllEvents(){
-        return eventRepository.findAll();
     }
 }

@@ -86,9 +86,4 @@ public class EventController {
         List<CalendarResponseDto> events = eventService.getCalendarEventsByYearAndMonth(year, month);
         return ResponseEntity.ok(events);
     }
-
-    @GetMapping("/home") // 홈화면
-    public ResponseEntity<List<EventEntity>> getAllEvents() {
-        return ResponseEntity.ok(eventService.getAllEvents());
-    }
 }

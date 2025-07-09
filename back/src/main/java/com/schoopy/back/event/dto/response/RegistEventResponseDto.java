@@ -2,19 +2,12 @@ package com.schoopy.back.event.dto.response;
 
 import com.schoopy.back.event.common.EventResponseCode;
 import com.schoopy.back.event.common.EventResponseMessage;
-import com.schoopy.back.event.dto.request.RegistEventRequestDto;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.schoopy.back.global.dto.ResponseDto;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Getter
 @Setter

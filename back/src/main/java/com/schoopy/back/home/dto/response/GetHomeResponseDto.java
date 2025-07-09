@@ -1,4 +1,4 @@
-package com.schoopy.back.event.dto.response;
+package com.schoopy.back.home.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
