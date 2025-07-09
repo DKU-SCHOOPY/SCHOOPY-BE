@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.schoopy.back.user.dto.request.LinkKakaoRequestDto;
 import com.schoopy.back.user.dto.request.LinkNaverRequestDto;
-import com.schoopy.back.user.dto.response.ChangePhoeNumResponseDto;
 import com.schoopy.back.user.dto.response.LinkSocialResponseDto;
 import com.schoopy.back.user.dto.response.SignInResponseDto;
 import com.schoopy.back.user.service.UserService;
