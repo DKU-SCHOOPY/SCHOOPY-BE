@@ -232,6 +232,10 @@ public class UserServiceImplement implements UserService{
 
     @Override
     public ResponseEntity<? super SignInResponseDto> naverLogin(String code, String state) {
+
+        UserEntity user;
+        String token;
+
         try {
             // 1. access token 요청
             String accessToken = naverOauthHelper.getAccessToken(code, state);
@@ -240,39 +244,44 @@ public class UserServiceImplement implements UserService{
             String naverId = naverOauthHelper.getUserIdFromToken(accessToken);
 
             // 3. 사용자 찾기
-            UserEntity user = userRepository.findByNaverId(naverId);
+            user = userRepository.findByNaverId(naverId);
             if (user == null) return SignInResponseDto.signInFailEmail();
 
             // 4. JWT 생성 및 반환
-            String token = jwtProvider.create(user.getStudentNum());
+            token = jwtProvider.create(user.getStudentNum());
             user.setNoticeCount(noticeRepository.countByRecieverAndReadCheckFalse(user.getStudentNum()));
             userRepository.save(user);
-            return SignInResponseDto.success(token, user);
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
+
+        return SignInResponseDto.success(token, user);
     }
 
     @Override
     public ResponseEntity<? super SignInResponseDto> kakaoLogin(String code) {
+
+        UserEntity user;
+        String token;
+
         try {
             String accessToken = kakaoOauthHelper.getAccessToken(code);
             String kakaoId = kakaoOauthHelper.getUserIdFromToken(accessToken);
 
-            UserEntity user = userRepository.findByKakaoId(kakaoId);
+            user = userRepository.findByKakaoId(kakaoId);
             if (user == null) return SignInResponseDto.signInFailEmail();
 
-            String token = jwtProvider.create(user.getStudentNum());
+            token = jwtProvider.create(user.getStudentNum());
             user.setNoticeCount(noticeRepository.countByRecieverAndReadCheckFalse(user.getStudentNum()));
             userRepository.save(user);
-            return SignInResponseDto.success(token, user);
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
+
+        return SignInResponseDto.success(token, user);
+
     }
 
     @Override
@@ -287,13 +296,13 @@ public class UserServiceImplement implements UserService{
 
             user.setKakaoId(kakaoId);
             userRepository.save(user);
-
-            return LinkSocialResponseDto.kakaoLinkSuccess();
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
+
+        return LinkSocialResponseDto.kakaoLinkSuccess();
+
     }
 
     @Override
@@ -309,12 +318,11 @@ public class UserServiceImplement implements UserService{
 
             user.setNaverId(naverId);
             userRepository.save(user);
-
-            return LinkSocialResponseDto.naverLinkSuccess();
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
+
+        return LinkSocialResponseDto.naverLinkSuccess();
     }   
 }
