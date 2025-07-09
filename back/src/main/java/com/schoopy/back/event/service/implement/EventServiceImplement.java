@@ -44,7 +44,7 @@ public class EventServiceImplement implements EventService{
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
 
-    @Override // 행사, 폼 내용 저장
+    @Override // 행사, 폼 내용 저장(완료)
     public ResponseEntity<? super RegistEventResponseDto> registEvent(RegistEventRequestDto dto) {
         EventEntity eventEntity = new EventEntity();
 
@@ -101,7 +101,7 @@ public class EventServiceImplement implements EventService{
         return RegistEventResponseDto.success();
     }
 
-    @Override // 폼 내용 전달
+    @Override // 폼 내용 전달(완료)
     public ResponseEntity<FormResponseDto> getFormByEventCode(Long eventCode) {
         try {
             FormEntity form = formRepository.findByEvent_EventCode(eventCode);
@@ -136,7 +136,7 @@ public class EventServiceImplement implements EventService{
         }
     }
 
-    @Override // 사용자 응답 저장
+    @Override // 사용자 응답 저장(완료)
     public ResponseEntity<? super ApplicationResponseDto> application(ApplicationRequestDto dto) {
         try{
             UserEntity user = userRepository.findByStudentNum(dto.getStudentNum());
@@ -179,7 +179,7 @@ public class EventServiceImplement implements EventService{
         }
     }
 
-    @Override
+    @Override // 결제 url 반환(완료)
     public ResponseEntity<?> getRemitUrl(RedirectRequestDto dto) {
         try{
             UserEntity user = userRepository.findByStudentNum(dto.getStudentNum());
@@ -213,13 +213,13 @@ public class EventServiceImplement implements EventService{
         }
     }
 
-    @Override
+    @Override // 조사 중인 폼 반환(완료)
     public List<EventEntity> getCurrentSurveyEvents() {
         LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul")); // 시간대 명시
         return formRepository.findActiveSurveyEvents(today);
     }
 
-    @Override
+    @Override // 설문 내용 출력(완료)
     public ResponseEntity<List<AnswerResponseDto>> getAnswersByApplicationId(Long applicationId) {
         try {
             ApplicationEntity application = submitSurveyRepository.findById(applicationId).orElse(null);

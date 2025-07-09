@@ -30,13 +30,14 @@ public class RegistEventRequestDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate surveyEndDate; // 2
     private int maxParticipants; // 2
-    private int currentParticipants; // 2
+    private int currentParticipants;
     private String qr_toss_o;
     private String qr_toss_x;
     private String qr_kakaopay_o;
     private String qr_kakaopay_x;
 
     private List<QuestionDto> questions;
+
     @Getter
     @Setter
     public static class QuestionDto{
