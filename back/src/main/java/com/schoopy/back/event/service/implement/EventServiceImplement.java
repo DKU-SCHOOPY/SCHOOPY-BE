@@ -324,7 +324,8 @@ public class EventServiceImplement implements EventService{
                         event.getEventCode(),
                         event.getEventName(),
                         event.getEventStartDate().format(formatter),
-                        event.getEventEndDate().format(formatter)
+                        event.getEventEndDate().format(formatter),
+                        event.getDepartment()
                 ))
                 .sorted(Comparator.comparing(CalendarResponseDto::getStart))
                 .collect(Collectors.toList());
