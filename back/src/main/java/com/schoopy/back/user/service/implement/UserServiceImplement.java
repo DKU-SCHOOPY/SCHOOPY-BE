@@ -238,7 +238,7 @@ public class UserServiceImplement implements UserService{
 
         try {
             // 1. access token 요청
-            String accessToken = naverOauthHelper.getAccessToken(code, state);
+            String accessToken = naverOauthHelper.getAccessToken(code, state, "http://localhost:3000/oauth2/authorization/naver");
             
             // 2. 사용자 정보 요청
             String naverId = naverOauthHelper.getUserIdFromToken(accessToken);
@@ -266,7 +266,7 @@ public class UserServiceImplement implements UserService{
         String token;
 
         try {
-            String accessToken = kakaoOauthHelper.getAccessToken(code);
+            String accessToken = kakaoOauthHelper.getAccessToken(code, "http://localhost:3000/oauth2/authorization/kakao");
             String kakaoId = kakaoOauthHelper.getUserIdFromToken(accessToken);
 
             user = userRepository.findByKakaoId(kakaoId);
@@ -290,7 +290,7 @@ public class UserServiceImplement implements UserService{
             String studentNum = dto.getStudentNum();
             String code = dto.getCode();
 
-            String kakaoId = kakaoOauthHelper.getKakaoUserId(code);
+            String kakaoId = kakaoOauthHelper.getKakaoUserId(code, "http://localhost:3000/oauth2/authorization/kakao/link");
             UserEntity user = userRepository.findByStudentNum(studentNum);
             if (user == null) return ResponseDto.databaseError();
 
@@ -312,7 +312,7 @@ public class UserServiceImplement implements UserService{
             String code = dto.getCode();
             String state = dto.getState();
 
-            String naverId = naverOauthHelper.getNaverUserId(code, state);
+            String naverId = naverOauthHelper.getNaverUserId(code, state, "http://localhost:3000/oauth2/authorization/naver/link");
             UserEntity user = userRepository.findByStudentNum(studentNum);
             if (user == null) return ResponseDto.databaseError();
 

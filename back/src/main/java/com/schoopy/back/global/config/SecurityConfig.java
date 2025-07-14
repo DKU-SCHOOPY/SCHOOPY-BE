@@ -44,7 +44,7 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(request -> request
                 .requestMatchers("/" , "/schoopy/v1/auth/**").permitAll()
-                .requestMatchers("/", "/oauth2/**").permitAll()
+                .requestMatchers("/", "/schoopy/v1/oauth/**").permitAll()
                 // .requestMatchers("/schoopy/v1/user/**").hasRole("USER")
                 // .requestMatchers("/schoopy/v1/admin/**").hasRole("ADMIN")
                 .requestMatchers("/schoopy/v1/event/**").permitAll()

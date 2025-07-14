@@ -16,13 +16,10 @@ public class KakaoOauthHelper {
     @Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
     private String clientSecret;
 
-    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
-    private String redirectUri;
-
     private final RestTemplate restTemplate = new RestTemplate();
 
-    // ✅ 액세스 토큰만 반환
-    public String getAccessToken(String code) {
+    // ✅ redirectUri를 파라미터로 받도록 변경
+    public String getAccessToken(String code, String redirectUri) {
         String tokenUri = "https://kauth.kakao.com/oauth/token";
 
         HttpHeaders headers = new HttpHeaders();
@@ -45,7 +42,6 @@ public class KakaoOauthHelper {
         return (String) tokenResponse.getBody().get("access_token");
     }
 
-    // ✅ 액세스 토큰 기반으로 사용자 ID 반환
     public String getUserIdFromToken(String accessToken) {
         String userInfoUri = "https://kapi.kakao.com/v2/user/me";
 
@@ -61,12 +57,12 @@ public class KakaoOauthHelper {
         );
 
         Map<String, Object> userInfo = userInfoResponse.getBody();
-        return String.valueOf(userInfo.get("id")); // Long 타입을 문자열로 변환
+        return String.valueOf(userInfo.get("id"));
     }
 
-    // ✅ code로부터 직접 사용자 ID까지 가져오는 단축 메서드
-    public String getKakaoUserId(String code) {
-        String accessToken = getAccessToken(code);
+    // ✅ redirectUri를 함께 받아서 전달
+    public String getKakaoUserId(String code, String redirectUri) {
+        String accessToken = getAccessToken(code, redirectUri);
         return getUserIdFromToken(accessToken);
     }
 }
