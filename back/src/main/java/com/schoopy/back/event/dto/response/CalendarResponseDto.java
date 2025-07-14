@@ -12,4 +12,5 @@ public class CalendarResponseDto {
     private String title;
     private String start;
     private String end;
+    private String department;
 }
