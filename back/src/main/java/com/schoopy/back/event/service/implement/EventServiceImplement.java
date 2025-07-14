@@ -16,8 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.schoopy.back.event.dto.request.RegistEventRequestDto;
 import com.schoopy.back.event.service.EventService;
-// import com.schoopy.back.fcm.dto.request.FcmMessageDto;
-// import com.schoopy.back.fcm.service.FcmService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,7 +35,6 @@ public class EventServiceImplement implements EventService{
     private final EventRepository eventRepository;
     private final ApplicationRepository submitSurveyRepository;
     private final S3Uploader s3Uploader;
-    // private final FcmService fcmService;
     private final NoticeRepository noticeRepository;
     private final FormRepository formRepository;
     private final QuestionRepository questionRepository;
@@ -283,17 +280,6 @@ public class EventServiceImplement implements EventService{
                 notice.setMessage("이벤트 [" + event.getEventName() + "] 참가가 승인되었습니다.");
                 notice.setReadCheck(false); // 읽지 않음 상태
                 noticeRepository.save(notice);
-            // 2. FCM 알림 전송
-            // String targetToken = submit.getUser().getFcmToken();
-            // if (targetToken != null && !targetToken.isEmpty()) {
-            //     FcmMessageDto fcmMessageDto = FcmMessageDto.builder()
-            //         .targetToken(targetToken)
-            //         .title("설문 승인 완료")
-            //         .body("이벤트 [" + event.getEventName() + "] 참가가 승인되었습니다.")
-            //         .receiver(submit.getUser().getStudentNum()) // NoticeEntity 저장을 위한 용도
-            //         .build();
-            //     fcmService.sendMessageTo(fcmMessageDto);
-            // }
 
         } else {
             // 거절 시 신청 삭제
