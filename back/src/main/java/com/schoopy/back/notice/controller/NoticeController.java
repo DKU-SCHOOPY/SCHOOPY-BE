@@ -1,5 +1,7 @@
 package com.schoopy.back.notice.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,10 +19,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController
 @RequestMapping("/schoopy/v1/notice")
 @RequiredArgsConstructor
+@Tag(name="Notice", description = "알림 관련 API")
 public class NoticeController {
     private final NoticeRepository noticeRepository;
 
     @GetMapping("/{studentId}")
+    @Operation(summary = "알림 조회", description = "저장된 알림을 불러옵니다.")
     public ResponseEntity<List<NoticeEntity>> getNotices(@PathVariable("studentId") String studentId) {
         // studentId는 학번 (reciever 필드에 저장되어 있다고 가정)
         List<NoticeEntity> notices = noticeRepository.findByReciever(studentId);
