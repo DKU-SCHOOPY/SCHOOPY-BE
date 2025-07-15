@@ -1,5 +1,7 @@
 package com.schoopy.back.user.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,10 +22,12 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/schoopy/v1/oauth")
+@Tag(name="OAuth", description = "소셜 로그인 관련 API")
 public class OAuthController {
     private final UserService userService;
 
     @GetMapping("/naver/callback")
+    @Operation(summary = "네이버콜백", description = "네이버콜백설명")
     public ResponseEntity<? super SignInResponseDto> naverCallback(
         @RequestParam("code") String code,
         @RequestParam("state") String state
@@ -32,6 +36,7 @@ public class OAuthController {
     }
 
     @GetMapping("/kakao/callback")
+    @Operation(summary = "카카오콜백", description = "카카오콜백 설명")
     public ResponseEntity<? super SignInResponseDto> kakaoCallback(
         @RequestParam("code") String code
     ) {
@@ -39,6 +44,7 @@ public class OAuthController {
     }
 
     @PostMapping("/kakao/link")
+    @Operation(summary = "카카오링크", description = "카카오링크 설명")
     public ResponseEntity<? super LinkSocialResponseDto> kakaoLink(
         @RequestBody @Valid LinkKakaoRequestDto requestBody
     ) {
@@ -47,6 +53,7 @@ public class OAuthController {
     }
 
     @PostMapping("/naver/link")
+    @Operation(summary = "네이버링크", description = "네이버링크 설명")
     public ResponseEntity<? super LinkSocialResponseDto> naverLink(
         @RequestBody @Valid LinkNaverRequestDto requestBody
     ) {

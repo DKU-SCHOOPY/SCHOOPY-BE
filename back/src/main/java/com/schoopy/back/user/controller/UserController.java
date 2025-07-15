@@ -1,5 +1,7 @@
 package com.schoopy.back.user.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,11 +18,13 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/schoopy/v1/auth")
+@Tag(name="User", description = "사용자 관련 API")
 public class UserController {
 
     private final UserService userService;
 
     @PostMapping("/email-check")
+    @Operation(summary = "이메일 확인", description = "이메일 확인")
     public ResponseEntity<? super EmailCheckResponseDto> emailCheck (
         @RequestBody @Valid EmailCheckRequestDto requestBody
     ) {
@@ -29,6 +33,7 @@ public class UserController {
     }
     
     @PostMapping("/email-certification")
+    @Operation(summary = "이메일 인증", description = "이메일 인증")
     public  ResponseEntity<? super EmailCertificationResponseDto> emailCertification (
         @RequestBody @Valid EmailCertificationRequestDto requestBody
         ) {
@@ -37,6 +42,7 @@ public class UserController {
         }
 
     @PostMapping("/check-certification")
+    @Operation(summary = "확인 인증", description = "확인 인증")
     public ResponseEntity<? super CheckCertificationResponseDto> checkCertification (
         @RequestBody @Valid CheckCertificationRequestDto requestBody
     ) {
@@ -45,6 +51,7 @@ public class UserController {
     }
     
     @PostMapping("/sign-up")
+    @Operation(summary = "가입", description = "회원가입")
     public ResponseEntity<? super SignUpResponseDto> signUp(
         @RequestBody @Valid SignUpRequestDto requestBody
     ) {
@@ -53,6 +60,7 @@ public class UserController {
     }
 
     @PostMapping("/sign-in")
+    @Operation(summary = "로그인", description = "로그인")
     public ResponseEntity<? super SignInResponseDto> signIn(
         @RequestBody @Valid SignInRequestDto requestBody
     ) {
@@ -61,6 +69,7 @@ public class UserController {
     }
 
     @PostMapping("/mypage")
+    @Operation(summary = "마이페이지", description = "내 정보 조회")
     public ResponseEntity<? super MypageResponseDto> mypage(
         @RequestBody @Valid MypageRequestDto requestBody
     ){
@@ -69,6 +78,7 @@ public class UserController {
     }
 
     @PostMapping("/change-dept")
+    @Operation(summary = "학과 변경", description = "학과 변경")
     public ResponseEntity<? super ChangeDeptResponseDto> changeDept(
         @RequestBody @Valid ChangeDeptRequestDto requestBody
     ){
@@ -77,6 +87,7 @@ public class UserController {
     }
 
     @PostMapping("/change-phone-num")
+    @Operation(summary = "전화번호 변경", description = "전화번호 변경")
     public ResponseEntity<? super ChangePhoeNumResponseDto> changePhoneNum(
         @RequestBody @Valid ChangePhoneNumRequestDto requestBody
     ){
