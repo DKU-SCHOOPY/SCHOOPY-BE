@@ -21,6 +21,8 @@ jobs:
 
     - name: Build with Gradle
       run: ./gradlew clean build
+      working-directory: back
+
 
     - name: Deploy via SCP
       env:
