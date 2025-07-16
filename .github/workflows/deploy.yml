@@ -19,10 +19,13 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
 
+    - name: Grant execute permission to Gradle Wrapper
+      run: chmod +x gradlew
+      working-directory: back
+
     - name: Build with Gradle
       run: ./gradlew clean build
       working-directory: back
-
 
     - name: Deploy via SCP
       env:
@@ -32,6 +35,6 @@ jobs:
       run: |
         echo "$PRIVATE_KEY" > key.pem
         chmod 600 key.pem
-        scp -i key.pem build/libs/back-0.0.1-SNAPSHOT.jar $USER@$HOST:/home/ubuntu/.ssh/SCHOOPY-BE/back/build/libs/
+        scp -i key.pem back/build/libs/back-0.0.1-SNAPSHOT.jar $USER@$HOST:/home/ubuntu/.ssh/SCHOOPY-BE/back/build/libs/
         ssh -i key.pem $USER@$HOST "bash /home/ubuntu/.ssh/SCHOOPY-BE/back/build/libs/restart.sh"
         rm -f key.pem
