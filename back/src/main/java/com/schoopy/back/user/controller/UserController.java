@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.schoopy.back.user.dto.request.*;
 import com.schoopy.back.user.dto.response.*;
 import com.schoopy.back.user.service.UserService;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
