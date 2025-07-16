@@ -50,6 +50,7 @@ public class SecurityConfig {
                 .requestMatchers("/schoopy/v1/event/**").permitAll()
                 .requestMatchers("/", "/schoopy/v1/chat/**").permitAll()
                 .requestMatchers("/schoopy/v1/notice/**").permitAll()
+                .requestMatchers("/schoopy/v1/home/**").permitAll()
                 .requestMatchers("/", "/ws/**").permitAll()
                     .requestMatchers(
                             "/swagger-ui/**",
