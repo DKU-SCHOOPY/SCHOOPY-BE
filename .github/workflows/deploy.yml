@@ -27,7 +27,7 @@ jobs:
       run: ./gradlew clean build
       working-directory: back
 
-      
+
     - name: Deploy via SCP
       env:
         PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
@@ -36,6 +36,7 @@ jobs:
       run: |
         echo "$PRIVATE_KEY" > key.pem
         chmod 600 key.pem
+        ssh -v -i key.pem -o StrictHostKeyChecking=no $USER@$HOST "echo connected"
         scp -i key.pem -o StrictHostKeyChecking=no back/build/libs/back-0.0.1-SNAPSHOT.jar $USER@$HOST:/home/ubuntu/.ssh/SCHOOPY-BE/back/build/libs/
         ssh -i key.pem -o StrictHostKeyChecking=no $USER@$HOST "bash /home/ubuntu/.ssh/SCHOOPY-BE/back/build/libs/restart.sh"
         rm -f key.pem
