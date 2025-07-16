@@ -30,7 +30,7 @@ public class HomeController {
         return ResponseEntity.ok(homeService.getAllEvents());
     }
 
-    @PostMapping("/getEvent")
+    @PostMapping("/get-event")
     public ResponseEntity<? super GetEventInformationResponseDto> getEventInformation(
         @RequestBody @Valid GetEventInformationRequestDto requestBody
     ) {
