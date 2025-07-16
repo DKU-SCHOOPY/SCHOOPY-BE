@@ -27,6 +27,7 @@ jobs:
       run: ./gradlew clean build
       working-directory: back
 
+      
     - name: Deploy via SCP
       env:
         PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
