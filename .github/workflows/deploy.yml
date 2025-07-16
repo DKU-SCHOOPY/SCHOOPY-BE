@@ -3,7 +3,7 @@ name: Deploy to Server
 on:
   push:
     branches:
-      - main  # main 브랜치에 push 될 때만 작동
+      - main  # main 브랜치에 push 될 때만 실행
 
 jobs:
   deploy:
@@ -73,7 +73,6 @@ jobs:
         secret-key=${{ secrets.JWT_SECRET_KEY }}
         openai.api.key=${{ secrets.OPENAI_API_KEY }}
         EOF
-        
 
     - name: Grant execute permission to Gradle Wrapper
       run: chmod +x gradlew
@@ -83,7 +82,7 @@ jobs:
       run: ./gradlew clean build
       working-directory: back
 
-    - name: Deploy via SCP
+    - name: Deploy JAR and restart.sh to EC2 and execute
       env:
         PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
         HOST: ${{ secrets.EC2_HOST }}
@@ -91,7 +90,16 @@ jobs:
       run: |
         echo "$PRIVATE_KEY" > key.pem
         chmod 600 key.pem
-        ssh -v -i key.pem -o StrictHostKeyChecking=no $USER@$HOST "echo connected"
-        scp -i key.pem -o StrictHostKeyChecking=no back/build/libs/back-0.0.1-SNAPSHOT.jar $USER@$HOST:/home/ubuntu/.ssh/SCHOOPY-BE/back/build/libs/
-        ssh -i key.pem -o StrictHostKeyChecking=no $USER@$HOST "bash /home/ubuntu/.ssh/SCHOOPY-BE/back/script/restart.sh"
+
+        # EC2 연결 테스트
+        ssh -o StrictHostKeyChecking=no -i key.pem $USER@$HOST "echo Connected to EC2"
+
+        # JAR & restart.sh 복사
+        scp -o StrictHostKeyChecking=no -i key.pem back/build/libs/back-0.0.1-SNAPSHOT.jar $USER@$HOST:/home/ubuntu/schoopy/
+        scp -o StrictHostKeyChecking=no -i key.pem back/script/restart.sh $USER@$HOST:/home/ubuntu/schoopy/
+        ssh -o StrictHostKeyChecking=no -i key.pem $USER@$HOST "chmod +x /home/ubuntu/schoopy/restart.sh"
+
+        # 애플리케이션 재시작
+        ssh -o StrictHostKeyChecking=no -i key.pem $USER@$HOST "bash /home/ubuntu/schoopy/restart.sh"
+
         rm -f key.pem
