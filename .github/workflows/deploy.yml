@@ -21,6 +21,7 @@ jobs:
         distribution: 'temurin'
 
     - name: Create application.properties from secrets
+      working-directory: back
       run: |
         mkdir -p src/main/resources
         cat <<EOF > src/main/resources/application.properties
