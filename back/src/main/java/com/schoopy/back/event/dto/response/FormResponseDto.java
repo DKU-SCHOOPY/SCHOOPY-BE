@@ -16,4 +16,8 @@ public class FormResponseDto {
     private Integer maxParticipants;
     private Integer currentParticipants;
     private List<QuestionResponseDto> questions;
+    private String qr_toss_o; // form
+    private String qr_toss_x; // form
+    private String qr_kakaopay_o; // form
+    private String qr_kakaopay_x; // form
 }
