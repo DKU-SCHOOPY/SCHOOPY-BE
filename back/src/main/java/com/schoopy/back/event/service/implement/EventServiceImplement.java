@@ -105,6 +105,7 @@ public class EventServiceImplement implements EventService{
                 return ResponseEntity.notFound().build();
             }
 
+            //질문 리스트화
             List<QuestionResponseDto> questions = form.getQuestions().stream()
                     .map(q -> QuestionResponseDto.builder()
                             .questionId(q.getQuestionId())
@@ -116,6 +117,7 @@ public class EventServiceImplement implements EventService{
                             .build()
                     ).toList();
 
+            // 응답 DTO 구성
             FormResponseDto responseDto = FormResponseDto.builder()
                     .formId(form.getFormId())
                     .surveyStartDate(form.getSurveyStartDate())
@@ -123,6 +125,10 @@ public class EventServiceImplement implements EventService{
                     .maxParticipants(form.getMaxParticipants())
                     .currentParticipants(form.getCurrentParticipants())
                     .questions(questions)
+                    .qr_toss_o(form.getQr_toss_o())
+                    .qr_toss_x(form.getQr_toss_x())
+                    .qr_kakaopay_o(form.getQr_kakaopay_o())
+                    .qr_kakaopay_x(form.getQr_kakaopay_x())
                     .build();
 
             return ResponseEntity.ok(responseDto);
@@ -209,10 +215,10 @@ public class EventServiceImplement implements EventService{
         }
     }
 
-    @Override // 조사 중인 폼 반환(완료)
-    public List<EventEntity> getCurrentSurveyEvents() {
-        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul")); // 시간대 명시
-        return formRepository.findActiveSurveyEvents(today);
+    @Override
+    public List<ActiveEventResponseDto> getCurrentSurveyEvents() {
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        return formRepository.findActiveSurveySummaries(today);
     }
 
     @Override // 설문 내용 출력(완료)

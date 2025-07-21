@@ -6,6 +6,7 @@ import com.schoopy.back.event.dto.request.UpdatePaymentStatusRequestDto;
 import com.schoopy.back.event.dto.response.*;
 import com.schoopy.back.event.entity.EventEntity;
 import com.schoopy.back.event.entity.ApplicationEntity;
+import com.schoopy.back.event.entity.FormEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
@@ -62,11 +63,12 @@ public class EventController {
     }
 
     // 학생회 구분도 해야함!
-    @GetMapping("/get-active") // 조사 중인 행사 목록 출력
-    @Operation(summary = "신청 가능 행사 확인", description = "현재 신청 받고 있는 행사를 출력합니다.")
-    public ResponseEntity<List<EventEntity>> getActiveEvents() {
+    @GetMapping("/get-active")
+    @Operation(summary = "신청 가능 행사 확인", description = "현재 신청 받고 있는 행사 요약 정보를 출력합니다.")
+    public ResponseEntity<List<ActiveEventResponseDto>> getActiveEvents() {
         return ResponseEntity.ok(eventService.getCurrentSurveyEvents());
     }
+
 
     @GetMapping("/application/{applicationId}/answers")
     @Operation(summary = "폼 응답 내용 조회", description = "사용자가 폼 질문에 응답한 내용을 출력합니다.")

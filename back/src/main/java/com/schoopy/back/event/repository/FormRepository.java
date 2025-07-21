@@ -1,5 +1,6 @@
 package com.schoopy.back.event.repository;
 
+import com.schoopy.back.event.dto.response.ActiveEventResponseDto;
 import com.schoopy.back.event.entity.EventEntity;
 import com.schoopy.back.event.entity.FormEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,7 +13,22 @@ import java.util.List;
 public interface FormRepository extends JpaRepository<FormEntity, Long> {
     FormEntity findByEvent_EventCode(Long eventCode);
 
-    @Query("SELECT f.event FROM FormEntity f WHERE f.surveyStartDate <= :today AND f.surveyEndDate >= :today")
-    List<EventEntity> findActiveSurveyEvents(@Param("today") LocalDate today);
+    @Query("""
+    SELECT new com.schoopy.back.event.dto.response.ActiveEventResponseDto(
+        e.eventCode,
+        e.eventName,
+        e.department,
+        f.formId,
+        f.surveyStartDate,
+        f.surveyEndDate,
+        f.maxParticipants,
+        f.currentParticipants
+    )
+    FROM FormEntity f
+    JOIN f.event e
+    WHERE f.surveyStartDate <= :today AND f.surveyEndDate >= :today
+""")
+    List<ActiveEventResponseDto> findActiveSurveySummaries(@Param("today") LocalDate today);
+
 
 }

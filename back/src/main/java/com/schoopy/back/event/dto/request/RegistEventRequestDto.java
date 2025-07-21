@@ -44,7 +44,7 @@ public class RegistEventRequestDto {
         private String questionText;
         private String questionType;
         private List<String> choices;
-        private boolean isRequired;
-        private boolean isMultiple;
+        private boolean required;
+        private boolean multiple;
     }
 }
