@@ -4,4 +4,6 @@ public interface ResponseMessage {
     String SUCCESS = "success";
     String DATABASE_ERROR = "database error";
     String VALIDATION_FAIL = "validation failed";
+    String OAUTH_ERROR = "OAuth error";
+    String BAD_REQUEST = "bad request";
 }
