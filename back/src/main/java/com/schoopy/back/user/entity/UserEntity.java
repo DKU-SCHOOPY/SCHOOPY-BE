@@ -71,7 +71,7 @@ public class UserEntity {
         this.gender = dto.getGender();
         this.birthDay = dto.getBirthDay();
         this.phoneNum = dto.getPhoneNum();
-        this.role = "USER";
+        this.role = "STUDENT"; // Default role for new users
         this.councilPee = false;
     }
 }
