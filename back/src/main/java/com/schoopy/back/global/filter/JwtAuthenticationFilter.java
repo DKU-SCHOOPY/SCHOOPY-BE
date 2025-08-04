@@ -75,7 +75,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             // 사용자 역할 가져오기
             String role = userEntity.getRole();
             List<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority(role));
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
 
             // Spring Security Context 설정
             SecurityContext securityContext = SecurityContextHolder.createEmptyContext();

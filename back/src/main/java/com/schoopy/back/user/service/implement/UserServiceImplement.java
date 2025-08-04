@@ -168,7 +168,7 @@ public class UserServiceImplement implements UserService{
             boolean isMatched = passwordEncoder.matches(password, encodedPassword);
             if (!isMatched) return SignInResponseDto.signInFailPassword();
 
-            token = jwtProvider.create(studentNum);
+            token = jwtProvider.create(studentNum, userEntity.getRole());
 
             int noticeCount = noticeRepository.countByRecieverAndReadCheckFalse(studentNum);
             userEntity.setNoticeCount(noticeCount);
@@ -246,7 +246,7 @@ public class UserServiceImplement implements UserService{
             if (user == null) return SignInResponseDto.signInFailEmail();
 
             // 4. JWT 생성 및 반환
-            token = jwtProvider.create(user.getStudentNum());
+            token = jwtProvider.create(user.getStudentNum(), user.getRole());
             user.setNoticeCount(noticeRepository.countByRecieverAndReadCheckFalse(user.getStudentNum()));
             userRepository.save(user);
         } catch (Exception e) {
@@ -270,7 +270,7 @@ public class UserServiceImplement implements UserService{
             user = userRepository.findByKakaoId(kakaoId);
             if (user == null) return SignInResponseDto.signInFailEmail();
 
-            token = jwtProvider.create(user.getStudentNum());
+            token = jwtProvider.create(user.getStudentNum(), user.getRole());
             user.setNoticeCount(noticeRepository.countByRecieverAndReadCheckFalse(user.getStudentNum()));
             userRepository.save(user);
         } catch (Exception e) {
