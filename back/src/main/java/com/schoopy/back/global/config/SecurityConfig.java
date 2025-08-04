@@ -43,15 +43,15 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(request -> request
-                .requestMatchers("/" , "/schoopy/v1/auth/**").permitAll()
-                .requestMatchers("/", "/schoopy/v1/oauth/**").permitAll()
+                .requestMatchers("/" , "/schoopy/v1/auth/**").hasAnyRole("STUDENT", "COUNCIL")
+                .requestMatchers("/", "/schoopy/v1/oauth/**").hasAnyRole("STUDENT", "COUNCIL")
                 // .requestMatchers("/schoopy/v1/user/**").hasRole("USER")
                 // .requestMatchers("/schoopy/v1/admin/**").hasRole("ADMIN")
-                .requestMatchers("/schoopy/v1/event/**").permitAll()
-                .requestMatchers("/schoopy/v1/home/**").permitAll()
-                .requestMatchers("/", "/schoopy/v1/chat/**").permitAll()
-                .requestMatchers("/schoopy/v1/notice/**").permitAll()
-                .requestMatchers("/", "/ws/**").permitAll()
+                .requestMatchers("/schoopy/v1/event/**").hasAnyRole("STUDENT", "COUNCIL")
+                .requestMatchers("/schoopy/v1/home/**").hasAnyRole("STUDENT", "COUNCIL")
+                .requestMatchers("/", "/schoopy/v1/chat/**").hasAnyRole("STUDENT", "COUNCIL")
+                .requestMatchers("/schoopy/v1/notice/**").hasAnyRole("STUDENT", "COUNCIL")
+                .requestMatchers("/", "/ws/**").hasAnyRole("STUDENT", "COUNCIL")
                     .requestMatchers(
                             "/swagger-ui/**",
                             "/swagger-ui.html",
@@ -59,7 +59,7 @@ public class SecurityConfig {
                             "/v3/api-docs/**",
                             "/swagger-resources/**",
                             "/webjars/**"
-                    ).permitAll()
+                    ).hasAnyRole("STUDENT", "COUNCIL")
                 .anyRequest().authenticated()
             )
 
