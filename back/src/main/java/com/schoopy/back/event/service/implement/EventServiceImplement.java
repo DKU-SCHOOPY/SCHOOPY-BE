@@ -11,6 +11,11 @@ import com.schoopy.back.notice.entity.NoticeEntity;
 import com.schoopy.back.notice.repository.NoticeRepository;
 import com.schoopy.back.user.entity.UserEntity;
 import com.schoopy.back.user.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
+
+import org.apache.http.HttpStatus;
+import org.hibernate.Hibernate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,15 +23,19 @@ import com.schoopy.back.event.dto.request.RegistEventRequestDto;
 import com.schoopy.back.event.service.EventService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Comparator;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EventServiceImplement implements EventService{
@@ -40,32 +49,62 @@ public class EventServiceImplement implements EventService{
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
 
+    @Transactional
     @Override // 행사, 폼 내용 저장(완료)
     public ResponseEntity<? super RegistEventResponseDto> registEvent(RegistEventRequestDto dto) {
-        EventEntity eventEntity = new EventEntity();
-
-        try {
+        try{
             // 1. 이미지 업로드
-            List<String> imageUrls = new ArrayList<>();
-            if (dto.getEventImages() != null && !dto.getEventImages().isEmpty()) {
-                for (MultipartFile file : dto.getEventImages()) {
-                    String url = s3Uploader.upload(file, "event-images");
-                    imageUrls.add(url);
+            List<String> imageUrls = uploadImages(dto.getEventImages());
+        
+            // 2. 이벤트 정보 저장
+            EventEntity eventEntity = saveEvent(dto, imageUrls);
+            
+            // 3. 폼 내용 저장
+            FormEntity form = saveForm(dto, eventEntity);
+
+            // 4. 질문 리스트 저장
+            saveQuestions(dto.getQuestions(), form);
+
+            return RegistEventResponseDto.success();
+        }catch (Exception e) {
+            return RegistEventResponseDto.registFail();
+        }
+    }
+    //이미지 업로드 및 예외처리
+    private List<String> uploadImages(List<MultipartFile> files) {
+        List<String> urls = new ArrayList<>();
+        if(files != null && !files.isEmpty()){
+            for(MultipartFile file : files) {
+                try{
+                    urls.add(s3Uploader.upload(file, "event-images"));
+                } catch(Exception e) {
+                    log.error("이미지 업로드 실패 - 파일명: {}", file.getOriginalFilename(), e);
+                    throw new RuntimeException("이미지 업로드 실패", e);
                 }
             }
-
-            // 2. 이벤트 정보 저장
+        }
+        return urls;
+    }
+    //이벤트 정보 저장 및 예외처리
+    private EventEntity saveEvent(RegistEventRequestDto dto, List<String> imageUrls) {
+        try {
+            EventEntity eventEntity = new EventEntity();
             eventEntity.setEventName(dto.getEventName());
             eventEntity.setDepartment(dto.getDepartment());
             eventEntity.setEventStartDate(dto.getEventStartDate());
             eventEntity.setEventEndDate(dto.getEventEndDate());
             eventEntity.setEventDescription(dto.getEventDescription());
             eventEntity.setEventImages(imageUrls);
-            eventRepository.save(eventEntity);
-
-            // 3. 폼 내용 저장
+            return eventRepository.save(eventEntity);
+        } catch (Exception e) {
+            log.error("이벤트 저장 실패", e);
+            throw new RuntimeException("이벤트 저장 실패", e);
+        }
+    }
+    // 폼 내용 저장 및 예외처리
+    private FormEntity saveForm(RegistEventRequestDto dto, EventEntity eventEntity) {
+        try {
             FormEntity form = new FormEntity();
-
             form.setEvent(eventEntity);
             form.setSurveyStartDate(dto.getSurveyStartDate());
             form.setSurveyEndDate(dto.getSurveyEndDate());
@@ -75,49 +114,61 @@ public class EventServiceImplement implements EventService{
             form.setQr_toss_x(dto.getQr_toss_x());
             form.setQr_kakaopay_o(dto.getQr_kakaopay_o());
             form.setQr_kakaopay_x(dto.getQr_kakaopay_x());
-            formRepository.save(form);
-
-            // 4. 질문 리스트 저장
-            if(dto.getQuestions() != null){
-                for(RegistEventRequestDto.QuestionDto questionDto : dto.getQuestions()){
-                    QuestionEntity question = new QuestionEntity();
-                    question.setForm(form);
-                    question.setQuestionText(questionDto.getQuestionText());
-                    question.setQuestionType(QuestionEntity.QuestionType.valueOf(questionDto.getQuestionType()));
-                    question.setChoices(questionDto.getChoices());
-                    question.setRequired(questionDto.isRequired());
-                    question.setMultiple(questionDto.isMultiple());
-                    questionRepository.save(question);
-                }
-            }
+            return formRepository.save(form);
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body(RegistEventResponseDto.registFail());
+            log.error("폼 저장 실패", e);
+            throw new RuntimeException("폼 저장 실패", e);
         }
-        return RegistEventResponseDto.success();
+    }
+    // 질문 리스트 저장 및 예외처리
+    private void saveQuestions(List<RegistEventRequestDto.QuestionDto> questions, FormEntity form) {
+        if (questions == null || questions.isEmpty()) return;
+
+        for (RegistEventRequestDto.QuestionDto questionDto : questions) {
+            try {
+                QuestionEntity question = new QuestionEntity();
+                question.setForm(form);
+                question.setQuestionText(questionDto.getQuestionText());
+                question.setQuestionType(QuestionEntity.QuestionType.valueOf(questionDto.getQuestionType()));
+                question.setChoices(questionDto.getChoices());
+                question.setRequired(questionDto.isRequired());
+                question.setMultiple(questionDto.isMultiple());
+                questionRepository.save(question);
+            } catch (IllegalArgumentException e) {
+                log.error("질문 타입 변환 실패: {}", questionDto.getQuestionType(), e);
+                throw new RuntimeException("질문 타입이 올바르지 않습니다.", e);
+            } catch (Exception e) {
+                log.error("질문 저장 실패: {}", questionDto.getQuestionText(), e);
+                throw new RuntimeException("질문 저장 실패", e);
+            }
+        }
     }
 
-    @Override // 폼 내용 전달(완료)
-    public ResponseEntity<FormResponseDto> getFormByEventCode(Long eventCode) {
+
+    @Override // 행사 폼 내용 전달(완료)
+    public ResponseEntity<? super FormResponseDto> getFormByEventCode(Long eventCode) {
         try {
             FormEntity form = formRepository.findByEvent_EventCode(eventCode);
-            if(form==null) {
-                return ResponseEntity.notFound().build();
+            if (form == null) {
+                return FormResponseDto.formNotFound();
             }
 
-            //질문 리스트화
-            List<QuestionResponseDto> questions = form.getQuestions().stream()
-                    .map(q -> QuestionResponseDto.builder()
-                            .questionId(q.getQuestionId())
-                            .questionText(q.getQuestionText())
-                            .questionType(q.getQuestionType().name())
-                            .isRequired(q.isRequired())
-                            .isMultiple(q.isMultiple())
-                            .choices(q.getChoices())
-                            .build()
-                    ).toList();
+            List<QuestionResponseDto> questions;
+            try {
+                questions = form.getQuestions().stream()
+                        .map(q -> QuestionResponseDto.builder()
+                                .questionId(q.getQuestionId())
+                                .questionText(q.getQuestionText())
+                                .questionType(q.getQuestionType().name())
+                                .isRequired(q.isRequired())
+                                .isMultiple(q.isMultiple())
+                                .choices(q.getChoices())
+                                .build()
+                        ).toList();
+            } catch (Exception e) {
+                return FormResponseDto.getFail();
+            }
 
-            // 응답 DTO 구성
             FormResponseDto responseDto = FormResponseDto.builder()
                     .formId(form.getFormId())
                     .surveyStartDate(form.getSurveyStartDate())
@@ -132,11 +183,12 @@ public class EventServiceImplement implements EventService{
                     .build();
 
             return ResponseEntity.ok(responseDto);
-        } catch(Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
+
+        } catch (Exception e) {
+            return FormResponseDto.getFail();
         }
     }
+
 
     @Override // 사용자 응답 저장(완료)
     public ResponseEntity<? super ApplicationResponseDto> application(ApplicationRequestDto dto) {
@@ -145,11 +197,11 @@ public class EventServiceImplement implements EventService{
             EventEntity event = eventRepository.findByEventCode(dto.getEventCode());
             if(user==null || event==null){
                 //없는 사용자 혹은 이벤트에 접근
-                return ResponseEntity.badRequest().body(ApplicationResponseDto.submitFail()+"존재하지 않는 사용자 혹은 행사입니다.");
+                return ApplicationResponseDto.notFound();
             }
             if(submitSurveyRepository.existsByUser_StudentNumAndEventCode_EventCode(dto.getStudentNum(), dto.getEventCode())) {
                 //중복 신청
-                return ResponseEntity.badRequest().body(ApplicationResponseDto.submitFail()+" 중복신청입니다.");
+                return ResponseEntity.badRequest().body(ApplicationResponseDto.duplication());
             }
 
             ApplicationEntity submit = new ApplicationEntity();
@@ -176,10 +228,10 @@ public class EventServiceImplement implements EventService{
 
             return ApplicationResponseDto.success();
         }catch(Exception e) {
-            e.printStackTrace();
-            return ApplicationResponseDto.databaseError();
+            return ApplicationResponseDto.submitFail();
         }
     }
+
 
     @Override // 결제 url 반환(완료)
     public ResponseEntity<?> getRemitUrl(RedirectRequestDto dto) {
@@ -187,13 +239,19 @@ public class EventServiceImplement implements EventService{
             UserEntity user = userRepository.findByStudentNum(dto.getStudentNum());
             EventEntity event = eventRepository.findByEventCode(dto.getEventCode());
             FormEntity form = formRepository.findByEvent_EventCode(dto.getEventCode());
-            if(user==null || event==null){
-                return ResponseEntity.badRequest().body(RedirectResponseDto.redirectFail()+"사용자 또는 행사를 찾을 수 없습니다.");
+            if(user==null){
+                return ResponseEntity.badRequest().body(RedirectResponseDto.redirectFail()+"존재하지 않는 사용자입니다.");
+            }else if(event==null){
+                return ResponseEntity.badRequest().body(RedirectResponseDto.redirectFail()+"존재하지 않는 행사입니다.");
             }
 
             boolean councilFee = user.isCouncilPee();
 
             String remitType = dto.getRemitType().toLowerCase();
+            if(!(remitType.equals("toss")||remitType.equals("kakaopay"))){
+                return ResponseEntity.badRequest().body(RedirectResponseDto.redirectFail()+"비정상적인 결제 요청입니다.");
+            }
+
             if(councilFee){
                 if(remitType.equals("toss")){
                     return ResponseEntity.ok(RedirectResponseDto.success(form.getQr_toss_o()));
@@ -211,11 +269,12 @@ public class EventServiceImplement implements EventService{
             return ResponseEntity.badRequest().body(RedirectResponseDto.redirectFail()+"URL 반환에 실패하였습니다.");
         }catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().body(RedirectResponseDto.redirectFail()+"서버내부에 오류가 발생하였습니다.");
+            return ResponseEntity.badRequest().body(RedirectResponseDto.redirectFail()+"알 수 없는오류가 발생하였습니다.");
         }
     }
 
-    @Override
+
+    @Override // 현재 모집 중인 행사 출력(완료)
     public List<ActiveEventResponseDto> getCurrentSurveyEvents() {
         LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
         return formRepository.findActiveSurveySummaries(today);
@@ -223,6 +282,9 @@ public class EventServiceImplement implements EventService{
 
     @Override // 설문 내용 출력(완료)
     public ResponseEntity<List<AnswerResponseDto>> getAnswersByApplicationId(Long applicationId) {
+        if (applicationId == null || applicationId <= 0) {
+            return ResponseEntity.badRequest().body(Collections.emptyList());
+        }
         try {
             ApplicationEntity application = submitSurveyRepository.findById(applicationId).orElse(null);
             if (application == null) {
@@ -230,9 +292,15 @@ public class EventServiceImplement implements EventService{
             }
 
             List<AnswerEntity> answers = answerRepository.findByApplication_ApplicationId(applicationId);
+            if (answers.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
 
             List<AnswerResponseDto> response = answers.stream().map(answer -> {
                 QuestionEntity question = answer.getQuestion();
+                if (question == null) {
+                    return new AnswerResponseDto(null, "질문 정보 없음", answer.getAnswerText(), answer.getAnswerList());
+                }
                 return new AnswerResponseDto(
                         question.getQuestionId(),
                         question.getQuestionText(),
@@ -248,7 +316,8 @@ public class EventServiceImplement implements EventService{
         }
     }
 
-    @Override
+
+    @Override // 행사에 제출된 설문 목록 출력(완료)
     public List<ApplicationEntity> getSubmissionsByEvent(Long eventCode){
         EventEntity event = eventRepository.findByEventCode(eventCode);
         if(event == null) {
@@ -257,28 +326,38 @@ public class EventServiceImplement implements EventService{
         return submitSurveyRepository.findByEventCode(event);
     }
 
-    @Override
+    @Override // 행사 승인/반려(완료)
     public ResponseEntity<? super UpdatePaymentStatusResponseDto> updatePaymentStatus(UpdatePaymentStatusRequestDto dto){
-    try {
-        ApplicationEntity submit = submitSurveyRepository.findByApplicationId(dto.getApplicationId());
-        if (submit == null) {
-            return ResponseEntity.badRequest().body(UpdatePaymentStatusResponseDto.updateFail());
+        if (dto == null || dto.getApplicationId() == null) {
+        return ResponseEntity.badRequest().body(UpdatePaymentStatusResponseDto.updateFail() + "잘못된 요청입니다.");
         }
-
-        EventEntity event = submit.getEventCode();
-
-        if (dto.isChoice()) {
-            if (submit.getIsPaymentCompleted()) {
-                return ResponseEntity.badRequest().body(UpdatePaymentStatusResponseDto.updateFail() + "이미 승인 완료된 설문입니다.");
+        
+        try {
+            ApplicationEntity submit = submitSurveyRepository.findByApplicationId(dto.getApplicationId());
+            if (submit == null) {
+                return ResponseEntity.badRequest().body(UpdatePaymentStatusResponseDto.updateFail()+"존재하지 않는 폼입니다.");
             }
-            FormEntity form = formRepository.findByEvent_EventCode(event.getEventCode());
-            // 1. 결제 승인 처리
-            submit.setIsPaymentCompleted(true);
-            form.setCurrentParticipants(form.getCurrentParticipants() + 1);
-            submitSurveyRepository.save(submit);
-            formRepository.save(form);
 
-            // 3. 알림 내역 저장
+            EventEntity event = submit.getEventCode();
+            if (event == null) {
+                return ResponseEntity.badRequest().body(UpdatePaymentStatusResponseDto.updateFail() + "존재하지 않는 행사입니다.");
+            }
+            if (dto.isChoice()) {
+                if (submit.getIsPaymentCompleted()) {
+                    return ResponseEntity.badRequest().body(UpdatePaymentStatusResponseDto.updateFail() + "이미 승인 완료된 설문입니다.");
+                }
+                FormEntity form = formRepository.findByEvent_EventCode(event.getEventCode());
+                if (form == null) {
+                    return ResponseEntity.badRequest().body(UpdatePaymentStatusResponseDto.updateFail() + "존재하지 않는 폼입니다.");
+                }
+
+                // 1. 결제 승인 처리
+                submit.setIsPaymentCompleted(true);
+                form.setCurrentParticipants(form.getCurrentParticipants() + 1);
+                submitSurveyRepository.save(submit);
+                formRepository.save(form);
+
+                // 3. 알림 내역 저장
                 NoticeEntity notice = new NoticeEntity();
                 notice.setSender("event"); // 또는 로그인한 관리자 이메일 등
                 notice.setReciever(submit.getUser().getStudentNum()); // 수신자 학번
@@ -286,18 +365,20 @@ public class EventServiceImplement implements EventService{
                 notice.setMessage("이벤트 [" + event.getEventName() + "] 참가가 승인되었습니다.");
                 notice.setReadCheck(false); // 읽지 않음 상태
                 noticeRepository.save(notice);
+            } else {
+                // 거절 시 신청 삭제
+                if (submit.getAnswers() != null) {
+                    Hibernate.initialize(submit.getAnswers());
+                    submitSurveyRepository.delete(submit);
+                }
+            }
 
-        } else {
-            // 거절 시 신청 삭제
-            submitSurveyRepository.delete(submit);
+            return UpdatePaymentStatusResponseDto.success(submit.getIsPaymentCompleted());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(UpdatePaymentStatusResponseDto.updateFail() + "서버 내부 오류.");
         }
-
-        return UpdatePaymentStatusResponseDto.success(submit.getIsPaymentCompleted());
-    } catch (Exception e) {
-        e.printStackTrace();
-        return ResponseEntity.badRequest().body(UpdatePaymentStatusResponseDto.updateFail() + "서버 내부 오류.");
     }
-}
 
     @Override
     public List<CalendarResponseDto> getCalendarEventsByYearAndMonth(

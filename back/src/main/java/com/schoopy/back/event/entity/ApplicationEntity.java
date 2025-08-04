@@ -1,5 +1,8 @@
 package com.schoopy.back.event.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.schoopy.back.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,4 +33,7 @@ public class ApplicationEntity {
 
     @Column(nullable = false)
     private Boolean isPaymentCompleted=false;
+
+    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AnswerEntity> answers = new ArrayList<>();
 }
