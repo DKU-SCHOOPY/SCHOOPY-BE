@@ -16,6 +16,7 @@ public class SignInResponseDto extends ResponseDto{
     private String token;
     private int expirationTime;
     private String studentNum;
+    private String role;
 
     private SignInResponseDto (String token, UserEntity user) {
         super();
@@ -23,6 +24,7 @@ public class SignInResponseDto extends ResponseDto{
         this.expirationTime = 3600;
         this.token = token;
         this.studentNum = user.getStudentNum();
+        this.role = user.getRole();
 
     }
 
