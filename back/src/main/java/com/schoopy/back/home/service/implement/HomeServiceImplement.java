@@ -28,12 +28,18 @@ public class HomeServiceImplement implements HomeService{
     @Override
     public ResponseEntity<? super GetEventInformationResponseDto> getEventInformation(
             GetEventInformationRequestDto dto) {
-        EventEntity event = eventRepository.findByEventCode(dto.getEventCode());
+        EventEntity event;
+        
+        try {
+            event = eventRepository.findByEventCode(dto.getEventCode());
 
-        if(event == null) {
+            if(event == null) {
+                return ResponseDto.badRequest();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
             return ResponseDto.databaseError();
-        }
-
+        }    
         return GetEventInformationResponseDto.success(event);
     }
     
