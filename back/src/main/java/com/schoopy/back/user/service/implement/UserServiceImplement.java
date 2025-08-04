@@ -5,6 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.schoopy.back.global.dto.OAuthHelplerResponseDto;
 import com.schoopy.back.global.dto.ResponseDto;
 import com.schoopy.back.global.helper.KakaoOauthHelper;
 import com.schoopy.back.global.helper.NaverOauthHelper;
@@ -169,14 +170,9 @@ public class UserServiceImplement implements UserService{
 
             token = jwtProvider.create(studentNum);
 
-            // String clientFcmToken = dto.getFcmToken();
-
             int noticeCount = noticeRepository.countByRecieverAndReadCheckFalse(studentNum);
             userEntity.setNoticeCount(noticeCount);
 
-            // if(clientFcmToken != null && !clientFcmToken.isEmpty()){
-            //     userEntity.setFcmToken(clientFcmToken);
-            // }
             userRepository.save(userEntity);
 
 
@@ -192,9 +188,9 @@ public class UserServiceImplement implements UserService{
     public ResponseEntity<? super MypageResponseDto> printMypage(MypageRequestDto dto) {
         UserEntity user = userRepository.findByStudentNum(dto.getStudentNum());
 
-        if(user == null){
+        if(user == null)
             return ResponseDto.databaseError();
-        }
+        
 
         return MypageResponseDto.success(user);
     }
@@ -202,6 +198,7 @@ public class UserServiceImplement implements UserService{
     @Override
     public ResponseEntity<? super ChangeDeptResponseDto> changeDept(ChangeDeptRequestDto dto) {
         UserEntity userEntity = userRepository.findByStudentNum(dto.getStudentNum());
+        if (userEntity == null) return ResponseDto.badRequest();
 
         try {
             userEntity.setDepartment(dto.getDepartment());
@@ -218,6 +215,7 @@ public class UserServiceImplement implements UserService{
     @Override
     public ResponseEntity<? super ChangePhoeNumResponseDto> changePhoneNum(ChangePhoneNumRequestDto dto) {
         UserEntity userEntity = userRepository.findByStudentNum(dto.getStudentNum());
+        if (userEntity == null) return ResponseDto.badRequest();
         try {
             userEntity.setPhoneNum(dto.getPhoneNum());
             userRepository.save(userEntity);
@@ -290,7 +288,12 @@ public class UserServiceImplement implements UserService{
             String studentNum = dto.getStudentNum();
             String code = dto.getCode();
 
+            if(studentNum == null || studentNum.isEmpty() || code == null || code.isEmpty()) {
+                return ResponseDto.badRequest();
+            }   
+
             String kakaoId = kakaoOauthHelper.getKakaoUserId(code, "https://schoopy.vercel.app/oauth2/authorization/kakao/link");
+            if (kakaoId == null || kakaoId.isEmpty()) return OAuthHelplerResponseDto.oAuthError();
             UserEntity user = userRepository.findByStudentNum(studentNum);
             if (user == null) return ResponseDto.databaseError();
 
@@ -312,7 +315,12 @@ public class UserServiceImplement implements UserService{
             String code = dto.getCode();
             String state = dto.getState();
 
+            if(studentNum == null || studentNum.isEmpty() || code == null || code.isEmpty() || state == null || state.isEmpty()) {
+                return ResponseDto.badRequest();
+            }
+
             String naverId = naverOauthHelper.getNaverUserId(code, state, "https://schoopy.vercel.app/oauth2/authorization/naver/link");
+            if (naverId == null || naverId.isEmpty()) return OAuthHelplerResponseDto.oAuthError();
             UserEntity user = userRepository.findByStudentNum(studentNum);
             if (user == null) return ResponseDto.databaseError();
 
