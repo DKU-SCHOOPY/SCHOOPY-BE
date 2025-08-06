@@ -4,9 +4,7 @@ import com.schoopy.back.event.dto.request.RedirectRequestDto;
 import com.schoopy.back.event.dto.request.ApplicationRequestDto;
 import com.schoopy.back.event.dto.request.UpdatePaymentStatusRequestDto;
 import com.schoopy.back.event.dto.response.*;
-import com.schoopy.back.event.entity.EventEntity;
 import com.schoopy.back.event.entity.ApplicationEntity;
-import com.schoopy.back.event.entity.FormEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +40,7 @@ public class EventController {
 
     @GetMapping("/get-form/{eventCode}")
     @Operation(summary = "폼 내용 조회", description = "폼을 구성하기 위한 내용을 불러옵니다.")
-    public ResponseEntity<FormResponseDto> getForm(@PathVariable Long eventCode){
+    public ResponseEntity<? super FormResponseDto> getForm(@PathVariable Long eventCode){
         return eventService.getFormByEventCode(eventCode);
     }
 

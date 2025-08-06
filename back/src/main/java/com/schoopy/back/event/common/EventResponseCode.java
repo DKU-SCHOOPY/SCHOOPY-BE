@@ -7,4 +7,8 @@ public interface EventResponseCode extends ResponseCode{
     String SUBMIT_FAIL = "SF";
     String REDIRECT_FAIL = "RDF";
     String UPDATE_FAIL = "UF";
+    String NOT_FOUND = "NF";
+    String GET_FAIL = "FG";
+    String DUPLICATION = "DP";
+    String BAD_IMAGES = "BI";
 }
