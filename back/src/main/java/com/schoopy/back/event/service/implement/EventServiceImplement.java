@@ -14,7 +14,6 @@ import com.schoopy.back.user.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 
-import org.apache.http.HttpStatus;
 import org.hibernate.Hibernate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
