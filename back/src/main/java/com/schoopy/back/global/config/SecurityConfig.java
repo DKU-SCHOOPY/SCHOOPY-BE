@@ -43,8 +43,8 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(request -> request
-                .requestMatchers("/" , "/schoopy/v1/auth/**").hasAnyRole("STUDENT", "COUNCIL")
-                .requestMatchers("/", "/schoopy/v1/oauth/**").hasAnyRole("STUDENT", "COUNCIL")
+                .requestMatchers("/" , "/schoopy/v1/auth/**").permitAll()
+                .requestMatchers("/", "/schoopy/v1/oauth/**").permitAll()
                 // .requestMatchers("/schoopy/v1/user/**").hasRole("USER")
                 // .requestMatchers("/schoopy/v1/admin/**").hasRole("ADMIN")
                 .requestMatchers("/schoopy/v1/event/**").hasAnyRole("STUDENT", "COUNCIL")
