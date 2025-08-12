@@ -28,6 +28,7 @@ jobs:
         spring.application.name=back
 
         server.port=8080
+        server.forward-headers-strategy=native
         base-url=http://52.78.213.185:8080/schoopy/v1
 
         spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
@@ -46,7 +47,6 @@ jobs:
         spring.mail.properties.mail.smtp.from=${{ secrets.MAIL_USERNAME }}
         spring.mail.properties.mail.debug=true
 
-        
         cloud.aws.credentials.accessKey=${{ secrets.AWS_ACCESS_KEY }}
         cloud.aws.credentials.secretKey=${{ secrets.AWS_SECRET_KEY }}
         cloud.aws.region.static=ap-northeast-2
