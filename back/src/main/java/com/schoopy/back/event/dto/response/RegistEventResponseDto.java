@@ -18,7 +18,7 @@ public class RegistEventResponseDto extends ResponseDto{
         RegistEventResponseDto responseBody = new RegistEventResponseDto();
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
-    public static ResponseEntity<ResponseDto> registFail() {
+    public static ResponseEntity<? super RegistEventResponseDto> registFail() {
         ResponseDto responseBody = new ResponseDto(EventResponseCode.REGIST_FAIL, EventResponseMessage.REGIST_FAIL);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
     }
