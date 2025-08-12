@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 public class ChatRoomResponseDto {
     private Long id;
-    private Long userA;
-    private Long userB;
+    private String userA;
+    private String userB;
 
     public ChatRoomResponseDto(ChatRoomEntity entity) {
         this.id = entity.getId();

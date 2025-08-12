@@ -2,7 +2,7 @@ package com.schoopy.back.chat.contoller;
 
 import com.schoopy.back.chat.dto.request.ChatMessageRequestDto;
 import com.schoopy.back.chat.dto.response.ChatMessageResponseDto;
-import com.schoopy.back.chat.dto.response.ChatRoomResponseDto;
+import com.schoopy.back.chat.dto.response.ChatRoomListItemResponseDto;
 import com.schoopy.back.chat.service.ChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,8 +33,8 @@ public class ChatController {
     }
 
     @GetMapping("/rooms/{userId}")
-    @Operation(summary = "채팅방 목록 출력", description = "사용자가 속한 채팅방의 목록을 출력합니다.")
-    public ResponseEntity<? super List<ChatRoomResponseDto>> getUserRooms(@PathVariable Long userId) {
+    @Operation(summary = "채팅방 목록 출력", description = "상대 이름/최근 메시지 포함")
+    public ResponseEntity<? super List<ChatRoomListItemResponseDto>> getUserRooms(@PathVariable String userId) {
         return chatService.getChatRoomsByUserId(userId);
     }
 }
