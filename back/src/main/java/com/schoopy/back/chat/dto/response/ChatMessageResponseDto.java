@@ -7,8 +7,8 @@ import lombok.Getter;
 public class ChatMessageResponseDto {
 
     private Long id;
-    private Long senderId;
-    private Long receiverId;
+    private String senderId;
+    private String receiverId;
     private String content;
     private Long roomId;
 

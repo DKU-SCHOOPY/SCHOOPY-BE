@@ -1,5 +1,6 @@
 package com.schoopy.back.user.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,5 @@ public interface UserRepository extends JpaRepository<UserEntity, String>{
     List<UserEntity> findAllByDepartment(String department);
     UserEntity findByKakaoId(String kakaoId);
     UserEntity findByNaverId(String naverId);
+    List<UserEntity> findByStudentNumIn(Collection<String> studentNums);
 }

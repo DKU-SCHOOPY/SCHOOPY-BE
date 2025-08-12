@@ -2,17 +2,24 @@ package com.schoopy.back.chat.service.implement;
 
 import com.schoopy.back.chat.dto.request.ChatMessageRequestDto;
 import com.schoopy.back.chat.dto.response.ChatMessageResponseDto;
-import com.schoopy.back.chat.dto.response.ChatRoomResponseDto;
+import com.schoopy.back.chat.dto.response.ChatRoomListItemResponseDto;
 import com.schoopy.back.chat.entity.ChatMessageEntity;
 import com.schoopy.back.chat.entity.ChatRoomEntity;
 import com.schoopy.back.chat.repository.ChatMessageRepository;
 import com.schoopy.back.chat.repository.ChatRoomRepository;
 import com.schoopy.back.chat.service.ChatService;
+import com.schoopy.back.user.entity.UserEntity;
+import com.schoopy.back.user.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,18 +28,21 @@ public class ChatServiceImplement implements ChatService {
 
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public ResponseEntity<? super ChatMessageResponseDto> saveMessage(ChatMessageRequestDto dto) {
-        Long senderId = dto.getSenderId();
-        Long receiverId = dto.getReceiverId();
+        String senderId = dto.getSenderId();
+        String receiverId = dto.getReceiverId();
 
         if (senderId.equals(receiverId)) {
             throw new IllegalArgumentException("자기 자신에게 메시지를 보낼 수 없습니다.");
         }
 
-        Long userA = Math.min(senderId, receiverId);
-        Long userB = Math.max(senderId, receiverId);
+        // 문자열 기준 정렬(학생번호가 동일 자리수라면 lexicographical == numerical)
+        String userA = senderId.compareTo(receiverId) < 0 ? senderId : receiverId;
+        String userB = senderId.compareTo(receiverId) < 0 ? receiverId : senderId;
 
         ChatRoomEntity room = chatRoomRepository.findByUserAAndUserB(userA, userB)
                 .orElseGet(() -> {
@@ -55,18 +65,14 @@ public class ChatServiceImplement implements ChatService {
     }
 
     @Override
-    public ChatRoomEntity getOrCreateRoom(Long senderId, Long receiverId) {
-        Long userA = Math.min(senderId, receiverId);
-        Long userB = Math.max(senderId, receiverId);
+    public ChatRoomEntity getOrCreateRoom(String senderId, String receiverId) {
+        String userA = senderId.compareTo(receiverId) < 0 ? senderId : receiverId;
+        String userB = senderId.compareTo(receiverId) < 0 ? receiverId : senderId;
 
         return chatRoomRepository.findByUserAAndUserB(userA, userB)
-                .orElseGet(() -> {
-                    ChatRoomEntity room = ChatRoomEntity.builder()
-                            .userA(userA)
-                            .userB(userB)
-                            .build();
-                    return chatRoomRepository.save(room);
-                });
+                .orElseGet(() -> chatRoomRepository.save(
+                        ChatRoomEntity.builder().userA(userA).userB(userB).build()
+                ));
     }
 
     @Override
@@ -79,11 +85,42 @@ public class ChatServiceImplement implements ChatService {
     }
 
     @Override
-    public ResponseEntity<? super List<ChatRoomResponseDto>> getChatRoomsByUserId(Long userId) {
-        List<ChatRoomEntity> rooms = chatRoomRepository.findByUserAOrUserB(userId, userId);
-        List<ChatRoomResponseDto> response = rooms.stream()
-                .map(ChatRoomResponseDto::new)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(response);
+    public ResponseEntity<? super List<ChatRoomListItemResponseDto>> getChatRoomsByUserId(String myId) {
+        // 내가 속한 방들
+        List<ChatRoomEntity> rooms = chatRoomRepository.findByUserAOrUserB(myId, myId);
+        if (rooms.isEmpty()) return ResponseEntity.ok(List.of());
+
+        // 상대 학번 집합
+        Set<String> counterpartIds = rooms.stream()
+                .map(r -> r.getUserA().equals(myId) ? r.getUserB() : r.getUserA())
+                .collect(Collectors.toSet());
+
+        // 한 번에 사용자 조회 -> Map<학번, 이름>
+        Map<String, String> nameById = userRepository.findByStudentNumIn(counterpartIds).stream()
+                .collect(Collectors.toMap(UserEntity::getStudentNum, UserEntity::getName));
+
+        // DTO 구성 (최근 메시지 포함)
+        List<ChatRoomListItemResponseDto> list = rooms.stream().map(room -> {
+            String counterpartId = room.getUserA().equals(myId) ? room.getUserB() : room.getUserA();
+
+            ChatMessageEntity last = chatMessageRepository
+                    .findTop1ByRoom_IdOrderByCreatedAtDesc(room.getId());
+
+            return new ChatRoomListItemResponseDto(
+                    room.getId(),
+                    counterpartId,
+                    nameById.getOrDefault(counterpartId, "(탈퇴한 사용자)"),
+                    last != null ? last.getContent() : null,
+                    last != null ? last.getCreatedAt() : null
+            );
+        }).collect(Collectors.toList());
+
+        // 최근 대화순 정렬(옵션)
+        list.sort(Comparator.comparing(
+                ChatRoomListItemResponseDto::getLastMessageAt,
+                Comparator.nullsLast(Comparator.naturalOrder())
+        ).reversed());
+
+        return ResponseEntity.ok(list);
     }
 }

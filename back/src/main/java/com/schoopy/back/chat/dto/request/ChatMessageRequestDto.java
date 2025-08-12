@@ -8,10 +8,10 @@ import lombok.Setter;
 @Setter
 public class ChatMessageRequestDto {
     @NotNull
-    private Long senderId;
+    private String senderId;
 
     @NotNull
-    private Long receiverId;
+    private String receiverId;
 
     @NotNull
     private String message;

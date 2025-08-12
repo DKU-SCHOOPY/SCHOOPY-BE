@@ -15,6 +15,6 @@ public class ChatRoomEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userA;
-    private Long userB;
+    private String userA;
+    private String userB;
 }
