@@ -10,17 +10,12 @@ import java.util.List;
 
 import com.schoopy.back.event.entity.EventEntity;
 import com.schoopy.back.event.entity.FormEntity;
-import com.schoopy.back.event.repository.EventRepository;
-import com.schoopy.back.event.repository.FormRepository;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetHomeResponseDto {
-
-    private EventRepository eventRespository;
-    private FormRepository formRepository;
 
     private Long eventCode;
     private String eventName;
@@ -33,18 +28,18 @@ public class GetHomeResponseDto {
     private String eventDescription;
     private List<String> eventImages;
 
-    public GetHomeResponseDto(Long eventCode) {
-        EventEntity event = eventRespository.findByEventCode(eventCode);
-        FormEntity form = formRepository.findByEvent_EventCode(eventCode);
-        this.eventCode = event.getEventCode();
-        this.eventName = event.getEventName();
-        this.department = event.getDepartment();
-        this.serveyStartDate = form.getSurveyStartDate();
-        this.serveyEndDate = form.getSurveyEndDate();
-        this.eventStartDate = event.getEventStartDate();
-        this.eventEndDate = event.getEventEndDate();
-        this.maxParticipant = form.getMaxParticipants();
-        this.eventDescription = event.getEventDescription();
-        this.eventImages = event.getEventImages();
+    public static GetHomeResponseDto from(EventEntity event, FormEntity form) {
+        GetHomeResponseDto dto = new GetHomeResponseDto();
+        dto.setEventCode(event.getEventCode());
+        dto.setEventName(event.getEventName());
+        dto.setDepartment(event.getDepartment());
+        dto.setServeyStartDate(form.getSurveyStartDate());
+        dto.setServeyEndDate(form.getSurveyEndDate());
+        dto.setEventStartDate(event.getEventStartDate());
+        dto.setEventEndDate(event.getEventEndDate());
+        dto.setMaxParticipant(form.getMaxParticipants());
+        dto.setEventDescription(event.getEventDescription());
+        dto.setEventImages(event.getEventImages()); // 필드 타입(List<String>)에 맞게 유지
+        return dto;
     }
 }
