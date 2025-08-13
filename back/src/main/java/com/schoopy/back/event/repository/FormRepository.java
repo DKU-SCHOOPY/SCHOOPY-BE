@@ -1,7 +1,6 @@
 package com.schoopy.back.event.repository;
 
 import com.schoopy.back.event.dto.response.ActiveEventResponseDto;
-import com.schoopy.back.event.entity.EventEntity;
 import com.schoopy.back.event.entity.FormEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
