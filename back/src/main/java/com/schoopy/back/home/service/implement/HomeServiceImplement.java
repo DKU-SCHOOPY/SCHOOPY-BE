@@ -6,7 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.schoopy.back.event.entity.EventEntity;
+import com.schoopy.back.event.entity.FormEntity;
 import com.schoopy.back.event.repository.EventRepository;
+import com.schoopy.back.event.repository.FormRepository;
 import com.schoopy.back.global.dto.ResponseDto;
 import com.schoopy.back.home.dto.request.GetEventInformationRequestDto;
 import com.schoopy.back.home.dto.response.GetEventInformationResponseDto;
@@ -20,16 +22,18 @@ import lombok.RequiredArgsConstructor;
 public class HomeServiceImplement implements HomeService{
 
     private final EventRepository eventRepository;
+    private final FormRepository formRepository;
 
     @Override
-    public List<GetHomeResponseDto> home(){
-
-        
+    public List<GetHomeResponseDto> home() {
         return eventRepository.findAll().stream()
-                .map(event -> new GetHomeResponseDto(
-                        event.getEventCode()))
-                .toList();
+            .map(event -> {
+                FormEntity form = formRepository.findByEvent_EventCode(event.getEventCode());
+                return GetHomeResponseDto.from(event, form);
+            })
+            .toList();
     }
+
 
     @Override
     public ResponseEntity<? super GetEventInformationResponseDto> getEventInformation(
