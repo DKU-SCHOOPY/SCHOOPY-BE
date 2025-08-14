@@ -39,18 +39,20 @@ public class HomeServiceImplement implements HomeService{
     public ResponseEntity<? super GetEventInformationResponseDto> getEventInformation(
             GetEventInformationRequestDto dto) {
         EventEntity event;
-        
+        FormEntity form;
+
         try {
             event = eventRepository.findByEventCode(dto.getEventCode());
+            form = formRepository.findByEvent_EventCode(dto.getEventCode());
 
-            if(event == null) {
+            if(event == null || form == null) {
                 return ResponseDto.badRequest();
             }
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }    
-        return GetEventInformationResponseDto.success(event);
+        return GetEventInformationResponseDto.success(event, form);
     }
     
     
