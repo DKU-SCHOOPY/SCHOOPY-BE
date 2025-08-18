@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .requestMatchers("/schoopy/v1/home/**").hasAnyRole("STUDENT", "COUNCIL")
                 .requestMatchers("/", "/schoopy/v1/chat/**").hasAnyRole("STUDENT", "COUNCIL")
                 .requestMatchers("/schoopy/v1/notice/**").hasAnyRole("STUDENT", "COUNCIL")
-                .requestMatchers("/", "/ws/**").hasAnyRole("STUDENT", "COUNCIL")
+                .requestMatchers("/", "/ws/**").permitAll()
                     .requestMatchers(
                             "/swagger-ui/**",
                             "/swagger-ui.html",
