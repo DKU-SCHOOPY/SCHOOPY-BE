@@ -46,6 +46,8 @@ jobs:
         spring.mail.properties.mail.smtp.from=${{ secrets.MAIL_USERNAME }}
         spring.mail.properties.mail.debug=true
 
+        spring.cloud.aws.credentials.access-key=${{ secrets.AWS_ACCESS_KEY }}
+        spring.cloud.aws.credentials.secret-key=${{ secrets.AWS_SECRET_KEY }}
         cloud.aws.credentials.accessKey=${{ secrets.AWS_ACCESS_KEY }}
         cloud.aws.credentials.secretKey=${{ secrets.AWS_SECRET_KEY }}
         cloud.aws.region.static=ap-northeast-2
