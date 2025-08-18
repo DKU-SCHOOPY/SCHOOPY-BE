@@ -236,7 +236,7 @@ public class UserServiceImplement implements UserService{
 
         try {
             // 1. access token 요청
-            String accessToken = naverOauthHelper.getAccessToken(code, state, "https://schoopy.vercel.app/oauth2/authorization/naver");
+            String accessToken = naverOauthHelper.getAccessToken(code, state, "https://www.schoopy.co.kr/oauth2/authorization/naver");
             
             // 2. 사용자 정보 요청
             String naverId = naverOauthHelper.getUserIdFromToken(accessToken);
@@ -264,7 +264,7 @@ public class UserServiceImplement implements UserService{
         String token;
 
         try {
-            String accessToken = kakaoOauthHelper.getAccessToken(code, "https://schoopy.vercel.app/oauth2/authorization/kakao");
+            String accessToken = kakaoOauthHelper.getAccessToken(code, "https://www.schoopy.co.kr/oauth2/authorization/kakao");
             String kakaoId = kakaoOauthHelper.getUserIdFromToken(accessToken);
 
             user = userRepository.findByKakaoId(kakaoId);
@@ -292,7 +292,7 @@ public class UserServiceImplement implements UserService{
                 return ResponseDto.badRequest();
             }   
 
-            String kakaoId = kakaoOauthHelper.getKakaoUserId(code, "https://schoopy.vercel.app/oauth2/authorization/kakao/link");
+            String kakaoId = kakaoOauthHelper.getKakaoUserId(code, "https://www.schoopy.co.kr/oauth2/authorization/kakao/link");
             if (kakaoId == null || kakaoId.isEmpty()) return OAuthHelplerResponseDto.oAuthError();
             UserEntity user = userRepository.findByStudentNum(studentNum);
             if (user == null) return ResponseDto.databaseError();
@@ -319,7 +319,7 @@ public class UserServiceImplement implements UserService{
                 return ResponseDto.badRequest();
             }
 
-            String naverId = naverOauthHelper.getNaverUserId(code, state, "https://schoopy.vercel.app/oauth2/authorization/naver/link");
+            String naverId = naverOauthHelper.getNaverUserId(code, state, "https://www.schoopy.co.kr/oauth2/authorization/naver/link");
             if (naverId == null || naverId.isEmpty()) return OAuthHelplerResponseDto.oAuthError();
             UserEntity user = userRepository.findByStudentNum(studentNum);
             if (user == null) return ResponseDto.databaseError();
