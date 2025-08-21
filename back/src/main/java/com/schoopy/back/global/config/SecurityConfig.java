@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
@@ -45,6 +46,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(request -> request
                 .requestMatchers("/" , "/schoopy/v1/auth/**").permitAll()
                 .requestMatchers("/", "/schoopy/v1/oauth/**").permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/schoopy/v1/event/**").hasAnyRole("STUDENT", "COUNCIL")
                 .requestMatchers("/schoopy/v1/home/**").hasAnyRole("STUDENT", "COUNCIL")
                 .requestMatchers("/", "/schoopy/v1/chat/**").hasAnyRole("STUDENT", "COUNCIL")
@@ -76,9 +78,9 @@ public class SecurityConfig {
         corsConfiguration.addAllowedOrigin("https://www.schoopy.co.kr");
         corsConfiguration.addAllowedOrigin("https://api.schoopy.co.kr");
 
-        corsConfiguration.addAllowedOriginPattern("*");   // 모든 HTTP 메서드 허용
         corsConfiguration.addAllowedMethod("*");          // 모든 HTTP 메서드 허용
         corsConfiguration.addAllowedHeader("*");   // 모든 헤더 허용
+
         corsConfiguration.setAllowCredentials(true); // JWT, 세션 쿠키 전달 허용
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
