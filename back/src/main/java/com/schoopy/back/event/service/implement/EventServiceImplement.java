@@ -64,10 +64,12 @@ public class EventServiceImplement implements EventService{
             // 4. 질문 리스트 저장
             saveQuestions(dto.getQuestions(), form);
 
-            return RegistEventResponseDto.success();
         }catch (Exception e) {
+            e.printStackTrace();
             return RegistEventResponseDto.registFail();
         }
+
+        return RegistEventResponseDto.success();
     }
     //이미지 업로드 및 예외처리
     private List<String> uploadImages(List<MultipartFile> files) {
@@ -86,24 +88,26 @@ public class EventServiceImplement implements EventService{
     }
     //이벤트 정보 저장 및 예외처리
     private EventEntity saveEvent(RegistEventRequestDto dto, List<String> imageUrls) {
+        EventEntity eventEntity = new EventEntity();
         try {
-            EventEntity eventEntity = new EventEntity();
             eventEntity.setEventName(dto.getEventName());
             eventEntity.setDepartment(dto.getDepartment());
             eventEntity.setEventStartDate(dto.getEventStartDate());
             eventEntity.setEventEndDate(dto.getEventEndDate());
             eventEntity.setEventDescription(dto.getEventDescription());
             eventEntity.setEventImages(imageUrls);
-            return eventRepository.save(eventEntity);
         } catch (Exception e) {
             log.error("이벤트 저장 실패", e);
             throw new RuntimeException("이벤트 저장 실패", e);
         }
+        
+        return eventRepository.save(eventEntity);
+
     }
     // 폼 내용 저장 및 예외처리
     private FormEntity saveForm(RegistEventRequestDto dto, EventEntity eventEntity) {
+        FormEntity form = new FormEntity();
         try {
-            FormEntity form = new FormEntity();
             form.setEvent(eventEntity);
             form.setSurveyStartDate(dto.getSurveyStartDate());
             form.setSurveyEndDate(dto.getSurveyEndDate());
@@ -113,19 +117,19 @@ public class EventServiceImplement implements EventService{
             form.setQr_toss_x(dto.getQr_toss_x());
             form.setQr_kakaopay_o(dto.getQr_kakaopay_o());
             form.setQr_kakaopay_x(dto.getQr_kakaopay_x());
-            return formRepository.save(form);
         } catch (Exception e) {
             log.error("폼 저장 실패", e);
             throw new RuntimeException("폼 저장 실패", e);
         }
+        return formRepository.save(form);
     }
     // 질문 리스트 저장 및 예외처리
     private void saveQuestions(List<RegistEventRequestDto.QuestionDto> questions, FormEntity form) {
         if (questions == null || questions.isEmpty()) return;
 
         for (RegistEventRequestDto.QuestionDto questionDto : questions) {
+            QuestionEntity question = new QuestionEntity();
             try {
-                QuestionEntity question = new QuestionEntity();
                 question.setForm(form);
                 question.setQuestionText(questionDto.getQuestionText());
                 question.setQuestionType(QuestionEntity.QuestionType.valueOf(questionDto.getQuestionType()));
@@ -146,8 +150,8 @@ public class EventServiceImplement implements EventService{
 
     @Override // 행사 폼 내용 전달(완료)
     public ResponseEntity<? super FormResponseDto> getFormByEventCode(Long eventCode) {
+        FormEntity form = formRepository.findByEvent_EventCode(eventCode);
         try {
-            FormEntity form = formRepository.findByEvent_EventCode(eventCode);
             if (form == null) {
                 return FormResponseDto.formNotFound();
             }
