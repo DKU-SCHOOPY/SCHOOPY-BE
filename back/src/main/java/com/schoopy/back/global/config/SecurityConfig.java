@@ -45,24 +45,21 @@ public class SecurityConfig {
             .authorizeHttpRequests(request -> request
                 .requestMatchers("/" , "/schoopy/v1/auth/**").permitAll()
                 .requestMatchers("/", "/schoopy/v1/oauth/**").permitAll()
-                // .requestMatchers("/schoopy/v1/user/**").hasRole("USER")
-                // .requestMatchers("/schoopy/v1/admin/**").hasRole("ADMIN")
                 .requestMatchers("/schoopy/v1/event/**").hasAnyRole("STUDENT", "COUNCIL")
                 .requestMatchers("/schoopy/v1/home/**").hasAnyRole("STUDENT", "COUNCIL")
                 .requestMatchers("/", "/schoopy/v1/chat/**").hasAnyRole("STUDENT", "COUNCIL")
                 .requestMatchers("/schoopy/v1/notice/**").hasAnyRole("STUDENT", "COUNCIL")
                 .requestMatchers("/", "/ws/**").permitAll()
-                    .requestMatchers(
-                            "/swagger-ui/**",
-                            "/swagger-ui.html",
-                            "/v3/api-docs",
-                            "/v3/api-docs/**",
-                            "/swagger-resources/**",
-                            "/webjars/**"
-                    ).hasAnyRole("STUDENT", "COUNCIL")
+                .requestMatchers(
+                        "/swagger-ui/**",
+                        "/swagger-ui.html",
+                        "/v3/api-docs",
+                        "/v3/api-docs/**",
+                        "/swagger-resources/**",
+                        "/webjars/**"
+                ).hasAnyRole("STUDENT", "COUNCIL")
                 .anyRequest().authenticated()
             )
-
             .exceptionHandling(exceptionHandling -> exceptionHandling
                 .authenticationEntryPoint(new FailedAuthenticationEntryPoint())
             )
@@ -73,18 +70,21 @@ public class SecurityConfig {
     
     @Bean
     protected CorsConfigurationSource corsConfigurationSource() {
-        
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.addAllowedOrigin("*");
-        corsConfiguration.addAllowedMethod("*");
-        corsConfiguration.addAllowedHeader("*");
+
+        // 배포 환경에 맞게 Origin 명시
+        corsConfiguration.addAllowedOrigin("https://www.schoopy.co.kr");
+        corsConfiguration.addAllowedOrigin("https://api.schoopy.co.kr");
+
+        corsConfiguration.addAllowedMethod("*");   // 모든 HTTP 메서드 허용
+        corsConfiguration.addAllowedHeader("*");   // 모든 헤더 허용
+        corsConfiguration.setAllowCredentials(true); // JWT, 세션 쿠키 전달 허용
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
-        
+
         return source;
     }
-
 }
 
 class FailedAuthenticationEntryPoint implements AuthenticationEntryPoint {
