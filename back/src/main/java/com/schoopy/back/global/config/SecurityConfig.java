@@ -76,7 +76,8 @@ public class SecurityConfig {
         corsConfiguration.addAllowedOrigin("https://www.schoopy.co.kr");
         corsConfiguration.addAllowedOrigin("https://api.schoopy.co.kr");
 
-        corsConfiguration.addAllowedMethod("*");   // 모든 HTTP 메서드 허용
+        corsConfiguration.addAllowedOriginPattern("*");   // 모든 HTTP 메서드 허용
+        corsConfiguration.addAllowedMethod("*");          // 모든 HTTP 메서드 허용
         corsConfiguration.addAllowedHeader("*");   // 모든 헤더 허용
         corsConfiguration.setAllowCredentials(true); // JWT, 세션 쿠키 전달 허용
 
