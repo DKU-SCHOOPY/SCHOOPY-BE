@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
-@RequestMapping("/schoopy/v1/notice")
+@RequestMapping("/notice")
 @RequiredArgsConstructor
 @Tag(name="Notice", description = "알림 관련 API")
 public class NoticeController {

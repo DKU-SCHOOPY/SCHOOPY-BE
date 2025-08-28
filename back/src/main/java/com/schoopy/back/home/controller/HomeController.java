@@ -20,12 +20,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/schoopy/v1/home")
+@RequestMapping("/home")
 public class HomeController {
 
     private final HomeService homeService;
 
-    @GetMapping("/home") // 홈화면
+    @GetMapping("/feedback") // 홈화면
     public ResponseEntity<List<GetHomeResponseDto>> home() {
         return ResponseEntity.ok(homeService.home());
     }

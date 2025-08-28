@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/schoopy/v1/chat")
+@RequestMapping("/chat")
 @RequiredArgsConstructor
 @Tag(name="Chatting", description = "채팅 관련 API")
 public class ChatController {

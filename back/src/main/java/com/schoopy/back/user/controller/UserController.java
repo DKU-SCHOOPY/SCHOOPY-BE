@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/schoopy/v1/auth")
+@RequestMapping("/auth")
 @Tag(name="User", description = "사용자 관련 API")
 public class UserController {
 
@@ -64,33 +64,6 @@ public class UserController {
         @RequestBody @Valid SignInRequestDto requestBody
     ) {
         ResponseEntity<? super SignInResponseDto> response = userService.signIn(requestBody);
-        return response;
-    }
-
-    @PostMapping("/mypage")
-    @Operation(summary = "마이페이지", description = "내 정보 조회")
-    public ResponseEntity<? super MypageResponseDto> mypage(
-        @RequestBody @Valid MypageRequestDto requestBody
-    ){
-        ResponseEntity<? super MypageResponseDto> response = userService.printMypage(requestBody);
-        return response;
-    }
-
-    @PostMapping("/change-dept")
-    @Operation(summary = "학과 변경", description = "학과 변경")
-    public ResponseEntity<? super ChangeDeptResponseDto> changeDept(
-        @RequestBody @Valid ChangeDeptRequestDto requestBody
-    ){
-        ResponseEntity<? super ChangeDeptResponseDto> response = userService.changeDept(requestBody);
-        return response;
-    }
-
-    @PostMapping("/change-phone-num")
-    @Operation(summary = "전화번호 변경", description = "전화번호 변경")
-    public ResponseEntity<? super ChangePhoeNumResponseDto> changePhoneNum(
-        @RequestBody @Valid ChangePhoneNumRequestDto requestBody
-    ){
-        ResponseEntity<? super ChangePhoeNumResponseDto> response = userService.changePhoneNum(requestBody);
         return response;
     }
 }
