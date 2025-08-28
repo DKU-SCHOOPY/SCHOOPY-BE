@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class NoticeController {
     private final NoticeRepository noticeRepository;
 
-    @GetMapping("/{studentId}")
+    @GetMapping("/all/{studentId}")
     @Operation(summary = "알림 조회", description = "저장된 알림을 불러옵니다.")
     public ResponseEntity<List<NoticeEntity>> getNotices(@PathVariable("studentId") String studentId) {
         // studentId는 학번 (reciever 필드에 저장되어 있다고 가정)

@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/schoopy/v1/oauth")
+@RequestMapping("/oauth")
 @Tag(name="OAuth", description = "소셜 로그인 관련 API")
 public class OAuthController {
     private final UserService userService;
