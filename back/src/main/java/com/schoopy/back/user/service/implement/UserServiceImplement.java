@@ -185,50 +185,6 @@ public class UserServiceImplement implements UserService{
     }
 
     @Override
-    public ResponseEntity<? super MypageResponseDto> printMypage(MypageRequestDto dto) {
-        UserEntity user = userRepository.findByStudentNum(dto.getStudentNum());
-
-        if(user == null)
-            return ResponseDto.databaseError();
-        
-
-        return MypageResponseDto.success(user);
-    }
-
-    @Override
-    public ResponseEntity<? super ChangeDeptResponseDto> changeDept(ChangeDeptRequestDto dto) {
-        UserEntity userEntity = userRepository.findByStudentNum(dto.getStudentNum());
-        if (userEntity == null) return ResponseDto.badRequest();
-
-        try {
-            userEntity.setDepartment(dto.getDepartment());
-            userRepository.save(userEntity);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.databaseError();
-        }
-
-        return ChangeDeptResponseDto.success();
-    }
-
-    @Override
-    public ResponseEntity<? super ChangePhoeNumResponseDto> changePhoneNum(ChangePhoneNumRequestDto dto) {
-        UserEntity userEntity = userRepository.findByStudentNum(dto.getStudentNum());
-        if (userEntity == null) return ResponseDto.badRequest();
-        try {
-            userEntity.setPhoneNum(dto.getPhoneNum());
-            userRepository.save(userEntity);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.databaseError();
-        }
-
-        return ChangePhoeNumResponseDto.success();
-    }
-
-    @Override
     public ResponseEntity<? super SignInResponseDto> naverLogin(String code, String state) {
 
         UserEntity user;
