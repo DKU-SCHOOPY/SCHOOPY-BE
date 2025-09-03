@@ -1,5 +1,7 @@
 package com.schoopy.back.notice.entity;
 
+import com.schoopy.back.user.entity.UserEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,10 +26,10 @@ public class NoticeEntity {
     private long noticeId;
 
     @Column(nullable = false)
-    private String sender;
+    private UserEntity sender;
 
     @Column(nullable = false)
-    private String reciever;
+    private UserEntity reciever;
 
     @Column(nullable = false)
     private String title;
@@ -36,5 +38,18 @@ public class NoticeEntity {
     private String message;
 
     @Column(nullable = false)
+    private boolean isPresident;
+
+    @Column(nullable = false)
     private boolean readCheck;
+
+
+
+    public NoticeEntity(UserEntity sender, UserEntity reciever, String title, String message, boolean isPresident) {
+        this.sender = sender;
+        this.reciever = reciever;
+        this.title = title;
+        this.message = message;
+        this.readCheck = false;
+    }
 }
