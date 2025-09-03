@@ -9,7 +9,9 @@ import com.schoopy.back.event.repository.*;
 import com.schoopy.back.global.s3.S3Uploader;
 import com.schoopy.back.notice.entity.NoticeEntity;
 import com.schoopy.back.notice.repository.NoticeRepository;
+import com.schoopy.back.user.entity.PresidentEntity;
 import com.schoopy.back.user.entity.UserEntity;
+import com.schoopy.back.user.repository.PresidentRepository;
 import com.schoopy.back.user.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -47,6 +49,7 @@ public class EventServiceImplement implements EventService{
     private final FormRepository formRepository;
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
+    private final PresidentRepository presidentRepository;
 
     @Transactional
     @Override // 행사, 폼 내용 저장(완료)
@@ -228,6 +231,13 @@ public class EventServiceImplement implements EventService{
                     answerRepository.save(answer);
                 }
             }
+            String title = "행사 신청";
+            String message = user.getName() + "학생이 [" + event.getEventName() + "] 행사를 신청했습니다.";
+            String department = event.getDepartment();
+            PresidentEntity president = presidentRepository.findByDepartment(department);
+            UserEntity presidentUser = userRepository.findByStudentNum(president.getStudentNum());
+            NoticeEntity notice = new NoticeEntity(user, presidentUser, title, message, true);
+            noticeRepository.save(notice);
 
             return ApplicationResponseDto.success();
         }catch(Exception e) {
@@ -361,12 +371,13 @@ public class EventServiceImplement implements EventService{
                 formRepository.save(form);
 
                 // 3. 알림 내역 저장
-                NoticeEntity notice = new NoticeEntity();
-                notice.setSender("event"); // 또는 로그인한 관리자 이메일 등
-                notice.setReciever(submit.getUser().getStudentNum()); // 수신자 학번
-                notice.setTitle("설문 승인 완료");
-                notice.setMessage("이벤트 [" + event.getEventName() + "] 참가가 승인되었습니다.");
-                notice.setReadCheck(false); // 읽지 않음 상태
+
+                UserEntity user = submit.getUser();
+                PresidentEntity president = presidentRepository.findByDepartment(event.getDepartment());
+                UserEntity presidentUser = userRepository.findByStudentNum(president.getStudentNum());
+                String title = "행사 신청 승인 완료";
+                String message = "행사 [" + event.getEventName() + "] 신청이 승인되었습니다.";
+                NoticeEntity notice = new NoticeEntity(presidentUser, user, title, message, false);
                 noticeRepository.save(notice);
             } else {
                 // 거절 시 신청 삭제
@@ -374,6 +385,14 @@ public class EventServiceImplement implements EventService{
                     Hibernate.initialize(submit.getAnswers());
                     submitSurveyRepository.delete(submit);
                 }
+
+                UserEntity user = submit.getUser();
+                PresidentEntity president = presidentRepository.findByDepartment(event.getDepartment());
+                UserEntity presidentUser = userRepository.findByStudentNum(president.getStudentNum());
+                String title = "행사 신청 반려";
+                String message = "행사 [" + event.getEventName() + "] 신청이 반려되었습니다.";
+                NoticeEntity notice = new NoticeEntity(presidentUser, user, title, message, false);
+                noticeRepository.save(notice);
             }
 
             return UpdatePaymentStatusResponseDto.success(submit.getIsPaymentCompleted());
