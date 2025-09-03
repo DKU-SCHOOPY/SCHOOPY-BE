@@ -16,4 +16,5 @@ public interface UserService {
     ResponseEntity<? super SignInResponseDto> kakaoLogin(String code);
     ResponseEntity<? super LinkSocialResponseDto> kakaoLink(LinkKakaoRequestDto dto);
     ResponseEntity<? super LinkSocialResponseDto> naverLink(LinkNaverRequestDto dto);
+    ResponseEntity<? super ElectResponseDto> elect(ElectRequestDto dto);
 }

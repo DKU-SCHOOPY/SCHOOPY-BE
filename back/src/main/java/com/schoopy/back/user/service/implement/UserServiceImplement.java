@@ -15,8 +15,10 @@ import com.schoopy.back.notice.repository.NoticeRepository;
 import com.schoopy.back.user.dto.request.*;
 import com.schoopy.back.user.dto.response.*;
 import com.schoopy.back.user.entity.CertificationEntity;
+import com.schoopy.back.user.entity.PresidentEntity;
 import com.schoopy.back.user.entity.UserEntity;
 import com.schoopy.back.user.repository.CertificationRepository;
+import com.schoopy.back.user.repository.PresidentRepository;
 import com.schoopy.back.user.repository.UserRepository;
 import com.schoopy.back.user.service.UserService;
 
@@ -28,6 +30,7 @@ public class UserServiceImplement implements UserService{
     private final UserRepository userRepository;
     private final CertificationRepository certificationRepository;
     private final NoticeRepository noticeRepository;
+    private final PresidentRepository presidentRepository; 
 
     private final JwtProvider jwtProvider;
     private final EmailProvider emailProvider;
@@ -289,4 +292,22 @@ public class UserServiceImplement implements UserService{
 
         return LinkSocialResponseDto.naverLinkSuccess();
     }   
+
+    @Override
+    public ResponseEntity<? super ElectResponseDto> elect(ElectRequestDto dto) {
+        try {
+            String department = dto.getDepartment();
+            String studentNum = dto.getStudentNum();
+
+            PresidentEntity president = presidentRepository.findByDepartment(department);
+            president.setStudentNum(studentNum);
+
+            presidentRepository.save(president);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return ElectResponseDto.success();
+    }
 }
