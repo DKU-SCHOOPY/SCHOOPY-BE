@@ -2,42 +2,74 @@ package com.schoopy.back.notice.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.schoopy.back.notice.entity.NoticeEntity;
-import com.schoopy.back.notice.repository.NoticeRepository;
+import com.schoopy.back.notice.dto.request.*;
+import com.schoopy.back.notice.dto.response.*;
+import com.schoopy.back.notice.service.NoticeService;
 
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/notice")
 @RequiredArgsConstructor
 @Tag(name="Notice", description = "알림 관련 API")
 public class NoticeController {
-    private final NoticeRepository noticeRepository;
+    private final NoticeService noticeService;
 
-    @GetMapping("/all/{studentId}")
+    @PostMapping("/student/check")
     @Operation(summary = "알림 조회", description = "저장된 알림을 불러옵니다.")
-    public ResponseEntity<List<NoticeEntity>> getNotices(@PathVariable("studentId") String studentId) {
-        // studentId는 학번 (reciever 필드에 저장되어 있다고 가정)
-        List<NoticeEntity> notices = noticeRepository.findByReciever(studentId);
-
-        // 읽지 않은 알림을 읽음 처리
-        notices.stream()
-            .filter(notice -> !notice.isReadCheck())
-            .forEach(notice -> {
-                notice.setReadCheck(true);
-                noticeRepository.save(notice);
-            });
-
-        return ResponseEntity.ok(notices);
+    public ResponseEntity<? super StudentNoticeCheckResponseDto> studentNoticeCheck(
+        @RequestBody @Valid StudentNoticeCheckRequestDto requestBody
+    ) {
+        ResponseEntity<? super StudentNoticeCheckResponseDto> response = noticeService.checkStudentNotices(requestBody);
+        return response;
     }
 
+    @PostMapping("/council/check")
+    public ResponseEntity<? super CouncilNoticeCheckResponseDto> councilNoticeCheck(
+        @RequestBody @Valid CouncilNoticeCheckRequestDto requestBody
+    ) {
+        ResponseEntity<? super CouncilNoticeCheckResponseDto> response = noticeService.checkCouncilNotices(requestBody);
+        return response;
+    }
+
+    @PostMapping("all/readAll")
+    public ResponseEntity<? super ReadAllNoticeResponseDto> readAllNotices(
+        @RequestBody @Valid ReadAllNoticeRequestDto requestBody
+    ) {
+        ResponseEntity<? super ReadAllNoticeResponseDto> response = noticeService.readAllNotices(requestBody);
+        return response;
+    }
+
+    @PostMapping("all/read")
+    public ResponseEntity<? super ReadNoticeResponseDto> readNotice(
+        @RequestBody @Valid ReadNoticeRequestDto requestBody
+    ) {
+        ResponseEntity<? super ReadNoticeResponseDto> response = noticeService.readNotice(requestBody);
+        return response;    
+    }
+
+    @PostMapping("all/justRead")
+    public ResponseEntity<? super JustReadResponseDto> justRead(
+        @RequestBody @Valid JustReadRequestDto requestBody
+    ) {
+        ResponseEntity<? super JustReadResponseDto> response = noticeService.justRead(requestBody);
+        return response;
+    }
+
+    @PostMapping("all/delete")
+    public ResponseEntity<? super DeleteNoticeResponseDto> deleteNotice(
+        @RequestBody @Valid DeleteNoticeRequestDto requestBody
+    ) {
+        ResponseEntity<? super DeleteNoticeResponseDto> response = noticeService.deleteNotice(requestBody);
+        return response;
+    }
 }

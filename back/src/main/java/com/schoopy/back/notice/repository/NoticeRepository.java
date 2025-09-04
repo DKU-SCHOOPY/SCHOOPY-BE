@@ -5,8 +5,10 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.schoopy.back.notice.entity.NoticeEntity;
+import com.schoopy.back.user.entity.UserEntity;
 
 public interface NoticeRepository extends JpaRepository<NoticeEntity, Long>{
-    List<NoticeEntity> findByReciever(String reciever);
-    int countByRecieverAndReadCheckFalse(String reciever);
+    List<NoticeEntity> findByReceiverAndIsPresident(UserEntity reciever, boolean isPresident);
+    int countByReceiverAndReadCheck(UserEntity reciever, boolean readCheck);
+    NoticeEntity findByNoticeId(long noticeId);
 }

@@ -173,7 +173,7 @@ public class UserServiceImplement implements UserService{
 
             token = jwtProvider.create(studentNum, userEntity.getRole());
 
-            int noticeCount = noticeRepository.countByRecieverAndReadCheckFalse(studentNum);
+            int noticeCount = noticeRepository.countByReceiverAndReadCheck(userEntity, false);
             userEntity.setNoticeCount(noticeCount);
 
             userRepository.save(userEntity);
@@ -206,7 +206,7 @@ public class UserServiceImplement implements UserService{
 
             // 4. JWT 생성 및 반환
             token = jwtProvider.create(user.getStudentNum(), user.getRole());
-            user.setNoticeCount(noticeRepository.countByRecieverAndReadCheckFalse(user.getStudentNum()));
+            user.setNoticeCount(noticeRepository.countByReceiverAndReadCheck(user, false));
             userRepository.save(user);
         } catch (Exception e) {
             e.printStackTrace();
@@ -230,7 +230,7 @@ public class UserServiceImplement implements UserService{
             if (user == null) return SignInResponseDto.signInFailEmail();
 
             token = jwtProvider.create(user.getStudentNum(), user.getRole());
-            user.setNoticeCount(noticeRepository.countByRecieverAndReadCheckFalse(user.getStudentNum()));
+            user.setNoticeCount(noticeRepository.countByReceiverAndReadCheck(user, false));
             userRepository.save(user);
         } catch (Exception e) {
             e.printStackTrace();
