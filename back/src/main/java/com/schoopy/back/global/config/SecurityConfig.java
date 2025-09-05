@@ -63,7 +63,7 @@ public class SecurityConfig {
                         "/v3/api-docs/**",
                         "/swagger-resources/**",
                         "/webjars/**"
-                ).hasAnyRole("STUDENT", "COUNCIL")
+                ).permitAll()
                 .anyRequest().authenticated()
             )
             .exceptionHandling(exceptionHandling -> exceptionHandling
