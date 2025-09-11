@@ -1,5 +1,6 @@
 package com.schoopy.back.home.service.implement;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -27,12 +28,14 @@ public class HomeServiceImplement implements HomeService{
     @Override
     public List<GetHomeResponseDto> home() {
         return eventRepository.findAll().stream()
+            .sorted(Comparator.comparing(EventEntity::getEventCode).reversed())
             .map(event -> {
                 FormEntity form = formRepository.findByEvent_EventCode(event.getEventCode());
                 return GetHomeResponseDto.from(event, form);
             })
             .toList();
     }
+
 
 
     @Override
