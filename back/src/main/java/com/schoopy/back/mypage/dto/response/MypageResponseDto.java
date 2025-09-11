@@ -16,6 +16,8 @@ public class MypageResponseDto extends ResponseDto{
     private String department;
     private String birthDay;
     private String phoneNum;
+    private boolean kakaoLogin;
+    private boolean naverLogin;
 
     private MypageResponseDto(UserEntity user) {
         super();
@@ -24,6 +26,16 @@ public class MypageResponseDto extends ResponseDto{
         this.department = user.getDepartment();
         this.birthDay = user.getBirthDay();
         this.phoneNum = user.getPhoneNum();
+        if(user.getKakaoId() != null) {
+            this.kakaoLogin = true;
+        } else {
+            this.kakaoLogin = false;
+        }
+        if(user.getNaverId() != null) {
+            this.naverLogin = true;
+        } else {
+            this.naverLogin = false;
+        }
     }
 
     public static ResponseEntity<MypageResponseDto> success(UserEntity user) {
