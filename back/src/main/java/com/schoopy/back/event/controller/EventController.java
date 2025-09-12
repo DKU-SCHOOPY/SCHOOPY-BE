@@ -18,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -97,4 +95,11 @@ public class EventController {
         List<CalendarResponseDto> events = eventService.getCalendarEventsByYearAndMonth(year, month);
         return ResponseEntity.ok(events);
     }
+
+    @GetMapping("/council/{eventCode}/export-data")
+    @Operation(summary = "행사 신청내역(엑셀용 데이터)", description = "엑셀 생성을 위한 JSON 스키마와 데이터 반환")
+    public ResponseEntity<ExportExcelDataResponseDto> exportData(@PathVariable Long eventCode) {
+        return eventService.exportApplicationsData(eventCode);
+    }
+
 }

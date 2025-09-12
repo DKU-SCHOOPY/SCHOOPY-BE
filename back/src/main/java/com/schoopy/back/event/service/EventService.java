@@ -19,4 +19,5 @@ public interface EventService {
     ResponseEntity<? super UpdatePaymentStatusResponseDto> updatePaymentStatus(UpdatePaymentStatusRequestDto dto);
     List<CalendarResponseDto> getCalendarEventsByYearAndMonth(int year, int month);
     ResponseEntity<? super FormResponseDto> getFormByEventCode(Long eventCode);
+    ResponseEntity<ExportExcelDataResponseDto> exportApplicationsData(Long eventCode);
 }

@@ -175,6 +175,9 @@ public class EventServiceImplement implements EventService{
                 return FormResponseDto.getFail();
             }
 
+            String eventName = (form.getEvent() != null && form.getEvent().getEventName() != null)
+                ? form.getEvent().getEventName()
+                : "";
             FormResponseDto responseDto = FormResponseDto.builder()
                     .formId(form.getFormId())
                     .surveyStartDate(form.getSurveyStartDate())
@@ -186,6 +189,7 @@ public class EventServiceImplement implements EventService{
                     .qr_toss_x(form.getQr_toss_x())
                     .qr_kakaopay_o(form.getQr_kakaopay_o())
                     .qr_kakaopay_x(form.getQr_kakaopay_x())
+                    .eventName(eventName)
                     .build();
 
             return ResponseEntity.ok(responseDto);
@@ -425,4 +429,84 @@ public class EventServiceImplement implements EventService{
                 .sorted(Comparator.comparing(CalendarResponseDto::getStart))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public ResponseEntity<ExportExcelDataResponseDto> exportApplicationsData(Long eventCode) {
+        // 행사/폼 존재 확인
+        EventEntity event = eventRepository.findByEventCode(eventCode);
+        if (event == null) return ResponseEntity.badRequest().build();
+
+        FormEntity form = formRepository.findByEvent_EventCode(eventCode);
+        if (form == null) return ResponseEntity.badRequest().build();
+
+        // 질문 정렬(표시 순서 고정: questionId 오름차순)
+        List<QuestionEntity> questions = new ArrayList<>(form.getQuestions());
+        questions.sort(Comparator.comparing(QuestionEntity::getQuestionId));
+
+        // 신청 + 답변 fetch join
+        List<ApplicationEntity> apps = submitSurveyRepository.findWithAnswersByEventCode(eventCode);
+
+        // 질문별 빠른 검색용: idx 맵
+        java.util.Map<Long, Integer> qIndex = new java.util.HashMap<>();
+        for (int i = 0; i < questions.size(); i++) {
+            qIndex.put(questions.get(i).getQuestionId(), i);
+        }
+
+        // 행 구성
+        List<ExportExcelDataResponseDto.ExportSubmissionRowDto> rows = new ArrayList<>();
+        for (ApplicationEntity app : apps) {
+            com.schoopy.back.user.entity.UserEntity u = app.getUser();
+
+            List<String> answers = new ArrayList<>(Collections.nCopies(questions.size(), ""));
+
+            if (app.getAnswers() != null) {
+                for (AnswerEntity ans : app.getAnswers()) {
+                    QuestionEntity q = ans.getQuestion();
+                    if (q == null || q.getQuestionId() == null) continue;
+                    Integer idx = qIndex.get(q.getQuestionId());
+                    if (idx == null) continue;
+
+                    String cell = "";
+                    if (ans.getAnswerList() != null && !ans.getAnswerList().isEmpty()) {
+                        cell = String.join(", ", ans.getAnswerList());
+                    } else if (ans.getAnswerText() != null) {
+                        cell = ans.getAnswerText();
+                    }
+                    answers.set(idx, cell);
+                }
+            }
+
+            rows.add(ExportExcelDataResponseDto.ExportSubmissionRowDto.builder()
+                .studentNum(safe(u != null ? u.getStudentNum() : null))
+                .name(safe(u != null ? u.getName() : null))
+                .department(safe(u != null ? u.getDepartment() : null))
+                .birthDay(u != null && u.getBirthDay() != null ? u.getBirthDay().toString() : "")
+                .gender(safe(u != null ? u.getGender() : null))
+                .phoneNum(safe(u != null ? u.getPhoneNum() : null))
+                .councilPee(u != null && u.isCouncilPee())
+                .answers(answers)
+                .build()
+            );
+        }
+
+        // 질문 DTO
+        List<ExportExcelDataResponseDto.ExportQuestionDto> questionDtos = questions.stream()
+            .map(q -> ExportExcelDataResponseDto.ExportQuestionDto.builder()
+                .questionId(q.getQuestionId())
+                .questionText(q.getQuestionText())
+                .build()
+            ).collect(Collectors.toList());
+
+        ExportExcelDataResponseDto body = ExportExcelDataResponseDto.builder()
+            .eventCode(event.getEventCode())
+            .eventName(event.getEventName())
+            .questions(questionDtos)
+            .rows(rows)
+            .build();
+
+        return ResponseEntity.ok(body);
+    }
+
+    private static String safe(String s) { return s == null ? "" : s; }
+
 }

@@ -28,6 +28,8 @@ public class FormResponseDto extends ResponseDto{
     private String qr_kakaopay_o; // form
     private String qr_kakaopay_x; // form
 
+    private String eventName;
+
     public static ResponseEntity<ResponseDto> formNotFound() {
         ResponseDto responseBody = new ResponseDto(EventResponseCode.NOT_FOUND, EventResponseMessage.NOT_FOUND);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseBody);
