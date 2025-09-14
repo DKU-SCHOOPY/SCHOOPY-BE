@@ -46,10 +46,10 @@ jobs:
         spring.mail.properties.mail.smtp.from=${{ secrets.MAIL_USERNAME }}
         spring.mail.properties.mail.debug=true
 
-        cloud.aws.credentials.access-key=${{ secrets.AWS_ACCESS_KEY }}
-        cloud.aws.credentials.secret-key=${{ secrets.AWS_SECRET_KEY }}
-        cloud.aws.region.static=ap-northeast-2
-        cloud.aws.s3.bucket=${{ secrets.AWS_BUCKET }}
+        spring.cloud.aws.credentials.access-key=${{ secrets.AWS_ACCESS_KEY }}
+        spring.cloud.aws.credentials.secret-key=${{ secrets.AWS_SECRET_KEY }}
+        spring.cloud.aws.region.static=ap-northeast-2
+        spring.cloud.aws.s3.bucket=${{ secrets.AWS_BUCKET }}
 
         spring.security.oauth2.client.registration.kakao.client-id=${{ secrets.KAKAO_CLIENT_ID }}
         spring.security.oauth2.client.registration.kakao.client-secret=${{ secrets.KAKAO_CLIENT_SECRET }}
