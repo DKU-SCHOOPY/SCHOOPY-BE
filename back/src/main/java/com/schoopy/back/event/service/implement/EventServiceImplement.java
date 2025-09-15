@@ -395,9 +395,9 @@ public class EventServiceImplement implements EventService{
                 UserEntity presidentUser = userRepository.findByStudentNum(president.getStudentNum());
                 String title = "행사 신청 반려";
                 String message = "";
-                if (dto.getReaseon() != null && !dto.getReaseon().isEmpty()) {
+                if (dto.getReason() != null && !dto.getReason().isEmpty()) {
                     message += "행사 [" + event.getEventName() + "] 신청이 반려되었습니다.\n";
-                    message += " 사유: " + dto.getReaseon();
+                    message += " 사유: " + dto.getReason();
                 }else{
                     message += "행사 [" + event.getEventName() + "] 신청이 반려되었습니다.\n";
                     message += "자세한 내용은 학생회에 채팅으로 문의바랍니다.";
