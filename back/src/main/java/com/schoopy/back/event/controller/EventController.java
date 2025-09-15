@@ -96,10 +96,15 @@ public class EventController {
         return ResponseEntity.ok(events);
     }
 
+    @GetMapping("council/{department}/get-event")
+    @Operation(summary = "행사 목록", description="학생회 주관 행사 목록을 출력")
+    public ResponseEntity<EventListResponseDto> getEventList(@PathVariable String department){
+        return eventService.getEventList(department);
+    }
+
     @GetMapping("/council/{eventCode}/export-data")
     @Operation(summary = "행사 신청내역(엑셀용 데이터)", description = "엑셀 생성을 위한 JSON 스키마와 데이터 반환")
     public ResponseEntity<ExportExcelDataResponseDto> exportData(@PathVariable Long eventCode) {
         return eventService.exportApplicationsData(eventCode);
     }
-
 }
