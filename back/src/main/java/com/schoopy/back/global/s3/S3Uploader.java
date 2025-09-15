@@ -26,6 +26,7 @@ public class S3Uploader {
                 .bucket(bucket)
                 .key(fileName)
                 .contentType(file.getContentType())
+                .acl("public-read") // 👈 추가!
                 .build();
 
         s3Client.putObject(putObjectRequest, software.amazon.awssdk.core.sync.RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
