@@ -20,4 +20,5 @@ public interface EventService {
     List<CalendarResponseDto> getCalendarEventsByYearAndMonth(int year, int month);
     ResponseEntity<? super FormResponseDto> getFormByEventCode(Long eventCode);
     ResponseEntity<ExportExcelDataResponseDto> exportApplicationsData(Long eventCode);
+    ResponseEntity<EventListResponseDto> getEventList(String department);
 }

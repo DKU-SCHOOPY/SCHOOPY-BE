@@ -439,6 +439,30 @@ public class EventServiceImplement implements EventService{
     }
 
     @Override
+    public ResponseEntity<EventListResponseDto> getEventList(String department) {
+        if (department == null || department.isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        var entities = eventRepository.findByDepartmentOrderByEventStartDateDesc(department);
+
+        var items = entities.stream()
+                .map(e -> EventListResponseDto.EventSummaryDto.builder()
+                        .eventCode(e.getEventCode())
+                        .eventName(e.getEventName())
+                        .eventStartDate(e.getEventStartDate())
+                        .eventEndDate(e.getEventEndDate())
+                        .build())
+                .collect(Collectors.toList());
+
+        var body = EventListResponseDto.builder()
+                .department(department)
+                .events(items)
+                .build();
+
+        return ResponseEntity.ok(body);
+    }
+    @Override
     public ResponseEntity<ExportExcelDataResponseDto> exportApplicationsData(Long eventCode) {
         // 행사/폼 존재 확인
         EventEntity event = eventRepository.findByEventCode(eventCode);
