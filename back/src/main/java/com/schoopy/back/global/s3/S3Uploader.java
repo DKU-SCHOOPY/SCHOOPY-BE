@@ -16,7 +16,7 @@ public class S3Uploader {
 
     private final S3Client s3Client;
 
-    @Value("${spring.cloud.aws.s3.bucket}")
+    @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     public String upload(MultipartFile file, String dirName) throws IOException {
