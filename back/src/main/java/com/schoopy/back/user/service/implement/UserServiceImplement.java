@@ -310,4 +310,21 @@ public class UserServiceImplement implements UserService{
 
         return ElectResponseDto.success();
     }
+
+    @Override
+    public ResponseEntity<? super CheckDepartmentForCouncilResponseDto> checkDepartmentForCouncil(
+            CheckDepartmentForCouncilRequestDto dto) {
+                String studentNum = dto.getStudentNum();
+                String department;
+                PresidentEntity president;
+                try {
+                    president = presidentRepository.findByStudentNum(studentNum);
+                    department = president.getDepartment();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return ResponseDto.databaseError();
+                }
+
+                return CheckDepartmentForCouncilResponseDto.success(department);
+        }
 }
