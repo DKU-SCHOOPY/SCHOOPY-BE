@@ -22,7 +22,7 @@ public class FormEntity {
     private Long formId;
 
     @OneToOne
-    @JoinColumn(name="event_id")
+    @JoinColumn(name="event_code")
     private EventEntity event;
 
     private LocalDate surveyStartDate; // form
