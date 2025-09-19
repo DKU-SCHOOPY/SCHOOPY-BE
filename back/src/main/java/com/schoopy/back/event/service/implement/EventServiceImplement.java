@@ -55,18 +55,23 @@ public class EventServiceImplement implements EventService{
     @Override // 행사, 폼 내용 저장(완료)
     public ResponseEntity<? super RegistEventResponseDto> registEvent(RegistEventRequestDto dto) {
         try{
-            // 1. 이미지 업로드
-            List<String> imageUrls = uploadImages(dto.getEventImages());
-        
-            // 2. 이벤트 정보 저장
-            EventEntity eventEntity = saveEvent(dto, imageUrls);
-            
-            // 3. 폼 내용 저장
-            FormEntity form = saveForm(dto, eventEntity);
 
-            // 4. 질문 리스트 저장
-            saveQuestions(dto.getQuestions(), form);
+            EventEntity eventEntity;
+                // 1. 이미지 업로드
+            if(dto.getEventImages() != null) {
+                List<String> imageUrls = uploadImages(dto.getEventImages());
 
+                eventEntity = saveEvent(dto, imageUrls);
+            }else{
+                // 2. 이벤트 정보 저장
+                eventEntity = saveEvent(dto);
+            }
+            if(dto.getMaxParticipants() > 0) {
+                // 3. 폼 내용 저장
+                FormEntity form = saveForm(dto, eventEntity);
+                // 4. 질문 리스트 저장
+                saveQuestions(dto.getQuestions(), form);
+            }
         }catch (Exception e) {
             e.printStackTrace();
             return RegistEventResponseDto.registFail();
@@ -99,6 +104,24 @@ public class EventServiceImplement implements EventService{
             eventEntity.setEventEndDate(dto.getEventEndDate());
             eventEntity.setEventDescription(dto.getEventDescription());
             eventEntity.setEventImages(imageUrls);
+        } catch (Exception e) {
+            log.error("이벤트 저장 실패", e);
+            throw new RuntimeException("이벤트 저장 실패", e);
+        }
+        
+        return eventRepository.save(eventEntity);
+
+    }
+
+    //이벤트 정보 저장 및 예외처리
+    private EventEntity saveEvent(RegistEventRequestDto dto) {
+        EventEntity eventEntity = new EventEntity();
+        try {
+            eventEntity.setEventName(dto.getEventName());
+            eventEntity.setDepartment(dto.getDepartment());
+            eventEntity.setEventStartDate(dto.getEventStartDate());
+            eventEntity.setEventEndDate(dto.getEventEndDate());
+            eventEntity.setEventDescription(dto.getEventDescription());
         } catch (Exception e) {
             log.error("이벤트 저장 실패", e);
             throw new RuntimeException("이벤트 저장 실패", e);
