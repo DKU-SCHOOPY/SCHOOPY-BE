@@ -66,4 +66,13 @@ public class UserController {
         ResponseEntity<? super SignInResponseDto> response = userService.signIn(requestBody);
         return response;
     }
+
+    @PostMapping("/department-check")
+    @Operation(summary = "학과 확인", description = "학과 확인")
+    public ResponseEntity<? super CheckDepartmentForCouncilResponseDto> checkDepartmentForCouncil(
+        @RequestBody @Valid CheckDepartmentForCouncilRequestDto requestBody
+    ) {
+        ResponseEntity<? super CheckDepartmentForCouncilResponseDto> response = userService.checkDepartmentForCouncil(requestBody);
+        return response;
+    }
 }
