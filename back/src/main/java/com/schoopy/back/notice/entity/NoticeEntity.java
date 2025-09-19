@@ -15,7 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity(name="notice")
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,11 +28,11 @@ public class NoticeEntity {
     private long noticeId;
 
     @ManyToOne
-    @JoinColumn(name = "sender_id", nullable = false) 
+    @JoinColumn(name = "sender_id", referencedColumnName = "student_num", nullable = false) 
     private UserEntity sender;
 
     @ManyToOne
-    @JoinColumn(name = "receiver_id", nullable = false)
+    @JoinColumn(name = "receiver_id", referencedColumnName = "student_num", nullable = false)
     private UserEntity receiver;
 
     @Column(nullable = false)
