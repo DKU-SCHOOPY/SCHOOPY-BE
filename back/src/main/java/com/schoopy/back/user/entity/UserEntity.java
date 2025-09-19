@@ -21,7 +21,7 @@ import lombok.Setter;
 @Table(name="user")
 public class UserEntity {
     @Id
-    @Column(nullable = false)
+    @Column(name = "student_num", nullable = false)
     private String studentNum;
     
     @Column(nullable = false)
