@@ -17,4 +17,5 @@ public interface UserService {
     ResponseEntity<? super LinkSocialResponseDto> kakaoLink(LinkKakaoRequestDto dto);
     ResponseEntity<? super LinkSocialResponseDto> naverLink(LinkNaverRequestDto dto);
     ResponseEntity<? super ElectResponseDto> elect(ElectRequestDto dto);
+    ResponseEntity<? super CheckDepartmentForCouncilResponseDto> checkDepartmentForCouncil(CheckDepartmentForCouncilRequestDto dto);
 }
