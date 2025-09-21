@@ -3,12 +3,16 @@ package com.schoopy.back.chat.service.implement;
 import com.schoopy.back.chat.dto.request.ChatMessageRequestDto;
 import com.schoopy.back.chat.dto.response.ChatMessageResponseDto;
 import com.schoopy.back.chat.dto.response.ChatRoomListItemResponseDto;
+import com.schoopy.back.chat.dto.response.CouncilContactListResponseDto;
+import com.schoopy.back.chat.dto.response.CouncilContactResponseDto;
 import com.schoopy.back.chat.entity.ChatMessageEntity;
 import com.schoopy.back.chat.entity.ChatRoomEntity;
 import com.schoopy.back.chat.repository.ChatMessageRepository;
 import com.schoopy.back.chat.repository.ChatRoomRepository;
 import com.schoopy.back.chat.service.ChatService;
+import com.schoopy.back.user.entity.PresidentEntity;
 import com.schoopy.back.user.entity.UserEntity;
+import com.schoopy.back.user.repository.PresidentRepository;
 import com.schoopy.back.user.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -29,6 +33,7 @@ public class ChatServiceImplement implements ChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
+    private final PresidentRepository presidentRepository;
 
     @Override
     @Transactional
@@ -122,5 +127,59 @@ public class ChatServiceImplement implements ChatService {
         ).reversed());
 
         return ResponseEntity.ok(list);
+    }
+
+    @Override
+    public ResponseEntity<? super CouncilContactListResponseDto> getCouncilContactsForStudent(String studentNum) {
+        UserEntity student = userRepository.findByStudentNum(studentNum);
+        if (student == null) return ResponseEntity.notFound().build();
+
+        // 중복 방지 + 입력 순서 보존
+        var contacts = new java.util.LinkedHashMap<String, CouncilContactResponseDto>();
+
+        PresidentEntity deptPresident = presidentRepository.findByDepartment(student.getDepartment());
+        if (deptPresident != null) {
+            UserEntity u = userRepository.findByStudentNum(deptPresident.getStudentNum());
+            if (u != null) {
+                contacts.put(u.getStudentNum(),
+                    CouncilContactResponseDto.builder()
+                        .presidentStudentNum(u.getStudentNum())
+                        .presidentName(u.getName())
+                        .department(deptPresident.getDepartment()) // ← 부서 세팅
+                        .build()
+                );
+            }
+        }
+
+        String fixedStudentNum = "32203027";
+        UserEntity fixedUser = userRepository.findByStudentNum(fixedStudentNum);
+        if (fixedUser != null) {
+            String fixedDept = null;
+            try {
+                PresidentEntity fixedPres = presidentRepository.findByStudentNum(fixedStudentNum);
+                if (fixedPres != null) fixedDept = fixedPres.getDepartment();
+            } catch (Exception ignored) {}
+
+            if (fixedDept == null) {
+                // fallback: 테이블에 없다면 고정 문자열
+                fixedDept = "SW융합대학학생회";
+            }
+
+            contacts.put(fixedUser.getStudentNum(),
+                CouncilContactResponseDto.builder()
+                    .presidentStudentNum(fixedUser.getStudentNum())
+                    .presidentName(fixedUser.getName())
+                    .department(fixedDept) // ← 부서 세팅
+                    .build()
+            );
+        }
+
+        if (contacts.isEmpty()) return ResponseEntity.notFound().build();
+
+        var body = CouncilContactListResponseDto.builder()
+                .contacts(new java.util.ArrayList<>(contacts.values()))
+                .build();
+
+        return ResponseEntity.ok(body);
     }
 }
