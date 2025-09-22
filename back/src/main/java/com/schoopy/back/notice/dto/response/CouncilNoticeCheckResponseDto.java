@@ -20,13 +20,9 @@ public class CouncilNoticeCheckResponseDto extends ResponseDto{
         super();
         this.notices = notices;
     }
-
-    private CouncilNoticeCheckResponseDto () {
-        super();
-    }
-
+    
     public static ResponseEntity<CouncilNoticeCheckResponseDto> success(List<NoticeEntity> notices) {
-        CouncilNoticeCheckResponseDto responseBody = new CouncilNoticeCheckResponseDto();
+        CouncilNoticeCheckResponseDto responseBody = new CouncilNoticeCheckResponseDto(notices);
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 
