@@ -44,6 +44,13 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(request -> request
+                .requestMatchers(
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**",
+                    "/swagger-resources/**",
+                    "/webjars/**"
+                ).permitAll()
+                .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                 .requestMatchers("/" , "/auth/**").permitAll()
                 .requestMatchers("/", "/oauth/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
@@ -71,6 +78,7 @@ public class SecurityConfig {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
 
         // 배포 환경에 맞게 Origin 명시
+        corsConfiguration.addAllowedOrigin("https://schoopy.co.kr");
         corsConfiguration.addAllowedOrigin("https://www.schoopy.co.kr");
         corsConfiguration.addAllowedOrigin("https://api.schoopy.co.kr");
 

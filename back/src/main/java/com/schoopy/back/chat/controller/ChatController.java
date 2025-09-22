@@ -33,15 +33,15 @@ public class ChatController {
         return chatService.getMessagesByRoomId(roomId);
     }
 
-    @GetMapping("/rooms/{userId}")
+    @GetMapping("/council/rooms/{userId}")
     @Operation(summary = "채팅방 목록 출력", description = "상대 이름/최근 메시지 포함")
     public ResponseEntity<? super List<ChatRoomListItemResponseDto>> getUserRooms(@PathVariable String userId) {
         return chatService.getChatRoomsByUserId(userId);
     }
 
-    @GetMapping("/council/contacts/{studentNum}")
+    @GetMapping("/student/contacts/{studentNum}")
     @Operation(summary = "내 학과 + 고정 회장 조회",
-               description = "학생 학번 기준으로 학과 회장과 이건희를 함께 반환")
+               description = "학생 학번 기준으로 학과 회장과 SW융합대학학생회를 함께 반환")
     public ResponseEntity<? super CouncilContactListResponseDto> getCouncilContacts(@PathVariable String studentNum) {
         return chatService.getCouncilContactsForStudent(studentNum);
     }
