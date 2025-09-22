@@ -9,6 +9,8 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Getter
 @Setter
@@ -22,6 +24,7 @@ public class QuestionEntity {
 
     @ManyToOne
     @JoinColumn(name="form_Id")
+    @JsonBackReference
     private FormEntity form;
 
     private String questionText; // 질문 내용
