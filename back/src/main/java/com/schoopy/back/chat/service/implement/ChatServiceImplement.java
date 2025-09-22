@@ -154,7 +154,7 @@ public class ChatServiceImplement implements ChatService {
                         .presidentStudentNum(u.getStudentNum())
                         .presidentName(u.getName())
                         .department(deptPresident.getDepartment())
-                        .roomId(findExistingRoomId(student.getStudentNum(), u.getStudentNum());
+                        .roomId(findExistingRoomId(student.getStudentNum(), u.getStudentNum()))
                         .build()
                 );
             }
@@ -179,7 +179,7 @@ public class ChatServiceImplement implements ChatService {
                     .presidentStudentNum(fixedUser.getStudentNum())
                     .presidentName(fixedUser.getName())
                     .department(fixedDept) // ← 부서 세팅
-                    .roomId(findExistingRoomId(student.getStudentNum(), fixedUser.getStudentNum()));
+                    .roomId(findExistingRoomId(student.getStudentNum(), fixedUser.getStudentNum()))
                     .build()
             );
         }
