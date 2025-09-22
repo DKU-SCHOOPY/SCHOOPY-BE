@@ -86,7 +86,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             securityContext.setAuthentication(authenticationToken);
             SecurityContextHolder.setContext(securityContext);
 
-        } catch (Exception e) {
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            // 예외 처리: 토큰이 만료된 경우
+            response.setContentType("application/json");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"code\": \"TOKEN_EXPIRED\", \"message\": \"Token has expired.\"}");
+            return;
+        }catch (Exception e) {
             // 예외 처리: JWT 처리 중 오류 발생 시
             e.printStackTrace(); // 로그 출력 추가
             response.setContentType("application/json");
