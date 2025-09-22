@@ -13,4 +13,5 @@ public class CouncilContactResponseDto {
     private String department;
     private String presidentStudentNum;
     private String presidentName;
+    private Long roomId;
 }

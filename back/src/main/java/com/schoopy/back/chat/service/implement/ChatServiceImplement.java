@@ -129,6 +129,14 @@ public class ChatServiceImplement implements ChatService {
         return ResponseEntity.ok(list);
     }
 
+    private Long findExistingRoomId(String a, String b){
+        String userA = a.compareTo(b) < 0 ? a:b;
+        String userB = a.compareTo(b) < 0 ? b:a;
+        return chatRoomRepository.findByUserAAndUserB(userA, userB)
+            .map(ChatRoomEntity::getId) 
+            .orElse(null);
+    }
+
     @Override
     public ResponseEntity<? super CouncilContactListResponseDto> getCouncilContactsForStudent(String studentNum) {
         UserEntity student = userRepository.findByStudentNum(studentNum);
@@ -145,7 +153,8 @@ public class ChatServiceImplement implements ChatService {
                     CouncilContactResponseDto.builder()
                         .presidentStudentNum(u.getStudentNum())
                         .presidentName(u.getName())
-                        .department(deptPresident.getDepartment()) // ← 부서 세팅
+                        .department(deptPresident.getDepartment())
+                        .roomId(findExistingRoomId(student.getStudentNum(), u.getStudentNum());
                         .build()
                 );
             }
@@ -170,6 +179,7 @@ public class ChatServiceImplement implements ChatService {
                     .presidentStudentNum(fixedUser.getStudentNum())
                     .presidentName(fixedUser.getName())
                     .department(fixedDept) // ← 부서 세팅
+                    .roomId(findExistingRoomId(student.getStudentNum(), fixedUser.getStudentNum()));
                     .build()
             );
         }
