@@ -3,6 +3,7 @@ package com.schoopy.back.chat.service;
 import com.schoopy.back.chat.dto.request.ChatMessageRequestDto;
 import com.schoopy.back.chat.dto.response.ChatMessageResponseDto;
 import com.schoopy.back.chat.dto.response.ChatRoomListItemResponseDto;
+import com.schoopy.back.chat.dto.response.CouncilContactListResponseDto;
 import com.schoopy.back.chat.entity.ChatRoomEntity;
 import org.springframework.http.ResponseEntity;
 
@@ -13,4 +14,5 @@ public interface ChatService {
     ResponseEntity<? super List<ChatMessageResponseDto>> getMessagesByRoomId(Long roomId);
     ResponseEntity<? super List<ChatRoomListItemResponseDto>> getChatRoomsByUserId(String myId);
     ChatRoomEntity getOrCreateRoom(String userAId, String userBId);
+    ResponseEntity<? super CouncilContactListResponseDto> getCouncilContactsForStudent(String studentNum);
 }
