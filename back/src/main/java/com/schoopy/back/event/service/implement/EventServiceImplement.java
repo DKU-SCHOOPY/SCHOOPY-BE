@@ -86,6 +86,9 @@ public class EventServiceImplement implements EventService{
             for(MultipartFile file : files) {
                 try{
                     urls.add(s3Uploader.upload(file, "event-images"));
+                } catch(software.amazon.awssdk.services.s3.model.S3Exception e){
+                    log.error("S3 업로드 실패 - 파일명: {}", file.getOriginalFilename(), e);
+                    throw new RuntimeException("S3 업로드 실패", e);
                 } catch(Exception e) {
                     log.error("이미지 업로드 실패 - 파일명: {}", file.getOriginalFilename(), e);
                     throw new RuntimeException("이미지 업로드 실패", e);
