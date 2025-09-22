@@ -31,6 +31,7 @@ jobs:
         server.forward-headers-strategy=native
         base-url=http://52.78.213.185:8080/schoopy/v1
 
+        
         spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
         spring.datasource.url=${{ secrets.DB_URL }}
         spring.datasource.username=${{ secrets.DB_USERNAME }}
