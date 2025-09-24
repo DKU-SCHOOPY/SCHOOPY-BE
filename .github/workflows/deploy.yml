@@ -75,6 +75,9 @@ jobs:
         spring.security.oauth2.client.provider.naver.user-name-attribute=response
 
         #Swagger 설정
+        server.servlet.context-path=/api
+        springdoc.api-docs.path=/v3/api-docs
+        springdoc.swagger-ui.path=/swagger-ui
         springdoc.swagger-ui.url=/api/v3/api-docs
         
         secret-key=${{ secrets.JWT_SECRET_KEY }}

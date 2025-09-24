@@ -27,91 +27,93 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter{
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+    // 스킵할 경로(컨텍스트패스 유무 모두 지원)
+    private static final String[] SKIP_PREFIXES = new String[] {
+        "/swagger-ui", "/v3/api-docs", "/swagger-resources", "/webjars",
+        "/actuator/health", "/actuator/info"
+    };
 
-        String uri = request.getRequestURI();
-        if (uri.startsWith("/swagger-ui")
-                || uri.startsWith("/v3/api-docs")
-                || uri.startsWith("/swagger-resources")
-                || uri.startsWith("/webjars")) {
-            filterChain.doFilter(request, response);
-            return;
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        // 1) CORS 프리플라이트는 무조건 통과
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) return true;
+
+        // 2) 컨텍스트패스(/api)가 있든 없든 둘 다 매칭
+        String uri = request.getRequestURI();          // 예: /api/v3/api-docs
+        String ctx = request.getContextPath();         // 예: /api 또는 ""
+
+        for (String p : SKIP_PREFIXES) {
+            if (uri.startsWith(p)) return true;                        // /v3/api-docs ...
+            if (StringUtils.hasText(ctx) && uri.startsWith(ctx + p))   // /api/v3/api-docs ...
+                return true;
         }
+        return false;
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
 
         String token = parseBearerToken(request);
 
+        // 토큰 없으면 다음 필터로 (익명 접근 허용 경로는 SecurityConfig에서 permitAll)
         if (token == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            // JWT 유효성 검증
             String studentNum = jwtProvider.validate(token);
             if (studentNum == null) {
-                // 유효하지 않은 토큰인 경우
                 response.setContentType("application/json");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("{\"code\": \"INVALID_TOKEN\", \"message\": \"Invalid or expired token.\"}");
+                response.getWriter().write("{\"code\":\"INVALID_TOKEN\",\"message\":\"Invalid or expired token.\"}");
                 return;
             }
 
-            // 사용자 찾기
             UserEntity userEntity = userRepository.findByStudentNum(studentNum);
             if (userEntity == null) {
-                // 사용자 찾기 실패
                 response.setContentType("application/json");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("{\"code\": \"USER_NOT_FOUND\", \"message\": \"User not found.\"}");
+                response.getWriter().write("{\"code\":\"USER_NOT_FOUND\",\"message\":\"User not found.\"}");
                 return;
             }
 
-            // 사용자 역할 가져오기
-            String role = userEntity.getRole();
             List<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + userEntity.getRole()));
 
-            // Spring Security Context 설정
-            SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-            AbstractAuthenticationToken authenticationToken =
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            AbstractAuthenticationToken auth =
                 new UsernamePasswordAuthenticationToken(studentNum, null, authorities);
-            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            context.setAuthentication(auth);
+            SecurityContextHolder.setContext(context);
 
-            securityContext.setAuthentication(authenticationToken);
-            SecurityContextHolder.setContext(securityContext);
+            // 체인 진행
+            filterChain.doFilter(request, response);
 
         } catch (io.jsonwebtoken.ExpiredJwtException e) {
-            // 예외 처리: 토큰이 만료된 경우
+            // 토큰 만료
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("{\"code\": \"TOKEN_EXPIRED\", \"message\": \"Token has expired.\"}");
-            return;
-        }catch (Exception e) {
-            // 예외 처리: JWT 처리 중 오류 발생 시
-            e.printStackTrace(); // 로그 출력 추가
+            response.getWriter().write("{\"code\":\"TOKEN_EXPIRED\",\"message\":\"Token has expired.\"}");
+        } catch (Exception e) {
+            // 기타 오류
+            e.printStackTrace();
             response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Bad Request로 변경
-            response.getWriter().write("{\"code\": \"JWT_ERROR\", \"message\": \"Error processing JWT.\"}");
-            return;
-        } 
-
-        filterChain.doFilter(request, response);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"code\":\"JWT_ERROR\",\"message\":\"Error processing JWT.\"}");
+        }
     }
 
     private String parseBearerToken(HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
-        boolean hasAuthorization = StringUtils.hasText(authorization);
-        if (!hasAuthorization) return null;
-
-        boolean isBearer = authorization.startsWith("Bearer ");
-        if (!isBearer) return null;
-
+        if (!StringUtils.hasText(authorization) || !authorization.startsWith("Bearer ")) return null;
         return authorization.substring(7);
     }
 }

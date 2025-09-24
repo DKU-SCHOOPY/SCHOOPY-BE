@@ -29,6 +29,16 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    private static final String[] SWAGGER_WHITELIST = {
+        // context-path 없음
+        "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**",
+        // context-path가 /api 일 때
+        "/api/swagger-ui/**", "/api/v3/api-docs/**", "/api/swagger-resources/**", "/api/webjars/**",
+        // (옵션) 헬스체크
+        "/actuator/health", "/actuator/info"
+    };
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
@@ -44,6 +54,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(request -> request
+                .requestMatchers(SWAGGER_WHITELIST).permitAll()
                 .requestMatchers(
                     "/swagger-ui/**",
                     "/v3/api-docs/**",

@@ -359,15 +359,27 @@ public class EventServiceImplement implements EventService{
         }
     }
 
-
-    @Override // 행사에 제출된 설문 목록 출력(완료)
-    public List<ApplicationEntity> getSubmissionsByEvent(Long eventCode){
+    @Override
+    public List<ApplicationSummaryResponseDto> getSubmissionsByEvent(Long eventCode){
         EventEntity event = eventRepository.findByEventCode(eventCode);
-        if(event == null) {
-            throw new IllegalArgumentException("행사가 존재하지 않습니다.");
-        }
-        return submitSurveyRepository.findByEventCode(event);
+        if(event == null) throw new IllegalArgumentException("행사가 존재하지 않습니다.");
+
+        return submitSurveyRepository.findByEventCode(event).stream()
+            .map(a -> {
+                UserEntity user = a.getUser();
+                return ApplicationSummaryResponseDto.builder()
+                    .applicationId(a.getApplicationId())
+                    .studentNum(user != null ? user.getStudentNum() : null)
+                    .name(user != null ? user.getName() : null)
+                    .department(user != null ? user.getDepartment() : null)
+                    .gender(user != null ? user.getGender() : null)
+                    .councilPee(user != null && user.isCouncilPee()) // UserEntity에 맞춰 수정
+                    .isPaymentCompleted(a.getIsPaymentCompleted() != null && a.getIsPaymentCompleted())
+                    .build();
+            })
+            .toList();
     }
+
 
     @Override // 행사 승인/반려(완료)
     public ResponseEntity<? super UpdatePaymentStatusResponseDto> updatePaymentStatus(UpdatePaymentStatusRequestDto dto){

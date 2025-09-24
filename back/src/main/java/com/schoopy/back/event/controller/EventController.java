@@ -4,7 +4,6 @@ import com.schoopy.back.event.dto.request.RedirectRequestDto;
 import com.schoopy.back.event.dto.request.ApplicationRequestDto;
 import com.schoopy.back.event.dto.request.UpdatePaymentStatusRequestDto;
 import com.schoopy.back.event.dto.response.*;
-import com.schoopy.back.event.entity.ApplicationEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
@@ -74,9 +73,9 @@ public class EventController {
     }
 
 
-    @GetMapping("/council/submissions/{eventCode}") // 제출된 행사 신청 설문 목록 출력
+    @GetMapping("/council/submissions/{eventCode}")
     @Operation(summary = "신청 폼 출력", description = "행사에 제출된 폼 목록을 반환합니다.")
-    public ResponseEntity<List<ApplicationEntity>> getSubmissionsByEvent(@PathVariable Long eventCode) {
+    public ResponseEntity<List<ApplicationSummaryResponseDto>> getSubmissionsByEvent(@PathVariable Long eventCode) {
         return ResponseEntity.ok(eventService.getSubmissionsByEvent(eventCode));
     }
 
