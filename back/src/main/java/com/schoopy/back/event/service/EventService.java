@@ -4,7 +4,6 @@ import com.schoopy.back.event.dto.request.RedirectRequestDto;
 import com.schoopy.back.event.dto.request.ApplicationRequestDto;
 import com.schoopy.back.event.dto.request.UpdatePaymentStatusRequestDto;
 import com.schoopy.back.event.dto.response.*;
-import com.schoopy.back.event.entity.ApplicationEntity;
 import org.springframework.http.ResponseEntity;
 import com.schoopy.back.event.dto.request.RegistEventRequestDto;
 import java.util.List;
@@ -15,7 +14,7 @@ public interface EventService {
     ResponseEntity<?> getRemitUrl(RedirectRequestDto dto);
     List<ActiveEventResponseDto> getCurrentSurveyEvents();
     ResponseEntity<List<AnswerResponseDto>> getAnswersByApplicationId(Long applicationId);
-    List<ApplicationEntity> getSubmissionsByEvent(Long eventCode);
+    List<ApplicationSummaryResponseDto> getSubmissionsByEvent(Long eventCode);
     ResponseEntity<? super UpdatePaymentStatusResponseDto> updatePaymentStatus(UpdatePaymentStatusRequestDto dto);
     List<CalendarResponseDto> getCalendarEventsByYearAndMonth(int year, int month);
     ResponseEntity<? super FormResponseDto> getFormByEventCode(Long eventCode);
