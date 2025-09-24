@@ -6,4 +6,6 @@ public interface ResponseCode {
     String VALIDATION_FAIL = "VF";
     String OAUTH_ERROR = "OE";
     String BAD_REQUEST = "BR";
+    String INVALID_TOKEN = "IT";
+    String TOKEN_EXPIRED = "TE";
 }

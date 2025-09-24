@@ -10,6 +10,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Getter
 @Setter
@@ -35,6 +37,7 @@ public class FormEntity {
     private String qr_kakaopay_o; // form
     private String qr_kakaopay_x; // form
     @OneToMany(mappedBy = "form", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<QuestionEntity> questions = new ArrayList<>();
 
 }

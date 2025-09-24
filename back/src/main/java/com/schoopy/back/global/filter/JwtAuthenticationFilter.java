@@ -94,8 +94,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             context.setAuthentication(auth);
             SecurityContextHolder.setContext(context);
 
+            // 체인 진행
             filterChain.doFilter(request, response);
+
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            // 토큰 만료
+            response.setContentType("application/json");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"code\":\"TOKEN_EXPIRED\",\"message\":\"Token has expired.\"}");
         } catch (Exception e) {
+            // 기타 오류
             e.printStackTrace();
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
