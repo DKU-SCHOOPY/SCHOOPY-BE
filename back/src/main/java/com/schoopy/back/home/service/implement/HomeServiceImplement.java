@@ -31,6 +31,9 @@ public class HomeServiceImplement implements HomeService{
             .sorted(Comparator.comparing(EventEntity::getEventCode).reversed())
             .map(event -> {
                 FormEntity form = formRepository.findByEvent_EventCode(event.getEventCode());
+                if(form == null) {
+                    return GetHomeResponseDto.from(event);
+                }
                 return GetHomeResponseDto.from(event, form);
             })
             .toList();
@@ -48,14 +51,19 @@ public class HomeServiceImplement implements HomeService{
             event = eventRepository.findByEventCode(dto.getEventCode());
             form = formRepository.findByEvent_EventCode(dto.getEventCode());
 
-            if(event == null || form == null) {
+            if(event == null) {
                 return ResponseDto.badRequest();
             }
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }    
-        return GetEventInformationResponseDto.success(event, form);
+
+        if(form == null) {
+            return GetEventInformationResponseDto.success(event);
+        }else{
+            return GetEventInformationResponseDto.success(event, form);
+        }
     }
     
     

@@ -42,4 +42,19 @@ public class GetHomeResponseDto {
         dto.setEventImages(event.getEventImages()); // 필드 타입(List<String>)에 맞게 유지
         return dto;
     }
+
+    public static GetHomeResponseDto from(EventEntity event) {
+        GetHomeResponseDto dto = new GetHomeResponseDto();
+        dto.setEventCode(event.getEventCode());
+        dto.setEventName(event.getEventName());
+        dto.setDepartment(event.getDepartment());
+        dto.setServeyStartDate(null);
+        dto.setServeyEndDate(null);
+        dto.setEventStartDate(event.getEventStartDate());
+        dto.setEventEndDate(event.getEventEndDate());
+        dto.setMaxParticipant(0);
+        dto.setEventDescription(event.getEventDescription());
+        dto.setEventImages(event.getEventImages()); // 필드 타입(List<String>)에 맞게 유지
+        return dto;
+    }
 }
