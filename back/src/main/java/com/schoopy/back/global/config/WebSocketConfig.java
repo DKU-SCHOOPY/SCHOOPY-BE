@@ -17,7 +17,8 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(chatWebSocketHandler, "/ws/chat/{userA}/{userB}")
-                .setAllowedOrigins("https://schoopy.co.kr", "https://www.schoopy.co.kr", "https://api.schoopy.co.kr"); // CORS 허용
+                .setAllowedOrigins("*"); // CORS 허용        
+                //.setAllowedOrigins("https://schoopy.co.kr", "https://www.schoopy.co.kr", "https://api.schoopy.co.kr"); // CORS 허용
     }
 }
 
