@@ -35,7 +35,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // 스킵할 경로(컨텍스트패스 유무 모두 지원)
     private static final String[] SKIP_PREFIXES = new String[] {
         // Swagger/Actuator
-        "/swagger-ui", "/v3/api-docs", "/swagger-resources", "/webjars",
+        "/swagger-ui",  
+        "/swagger-resources", 
+        "/webjars",
+        "/v3/api-docs",
+        "/v3/api-docs/",
         "/actuator/health", "/actuator/info",
         // 로그인/소셜 로그인/토큰 획득 경로
         "/auth", "/auth/", "/oauth", "/oauth/"
@@ -51,7 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String ctx = request.getContextPath();  // 예: /api 또는 ""
 
         for (String p : SKIP_PREFIXES) {
-            if (uri.startsWith(p)) return true;                         // /auth/**, /oauth/**, /v3/api-docs ...
+            if (uri.equals(p) || uri.startsWith(p)) return true;     // ← equals 추가
             if (StringUtils.hasText(ctx) && uri.startsWith(ctx + p))    // /api/auth/**, /api/v3/api-docs ...
                 return true;
         }
@@ -120,4 +124,3 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return authorization.substring(7);
     }
 }
-    
