@@ -57,6 +57,7 @@ public class SecurityConfig {
                 .requestMatchers(SWAGGER_WHITELIST).permitAll()
                 .requestMatchers(
                     "/swagger-ui/**",
+                    "v3/api-docs",
                     "/v3/api-docs/**",
                     "/swagger-resources/**",
                     "/webjars/**"
