@@ -129,6 +129,7 @@ public class NoticeServiceImplement implements NoticeService {
         }
 
         notice.setReadCheck(true);
+        noticeRepository.save(notice);
 
         return JustReadResponseDto.success();
     }
