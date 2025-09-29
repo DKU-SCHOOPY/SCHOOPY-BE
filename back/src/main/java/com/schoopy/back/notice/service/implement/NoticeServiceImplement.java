@@ -107,7 +107,7 @@ public class NoticeServiceImplement implements NoticeService {
 
     @Override
     public ResponseEntity<? super ReadNoticeResponseDto> readNotice(ReadNoticeRequestDto dto) {
-        NoticeEntity notice = noticeRepository.findById(dto.getNoticeId()).orElse(null);
+        NoticeEntity notice = noticeRepository.findByNoticeId(dto.getNoticeId());
         if(notice == null){
             return ReadNoticeResponseDto.NoticeNotFound();
         }
@@ -135,7 +135,7 @@ public class NoticeServiceImplement implements NoticeService {
     
     @Override
     public ResponseEntity<? super DeleteNoticeResponseDto> deleteNotice(DeleteNoticeRequestDto dto) {
-        NoticeEntity notice = noticeRepository.findById(dto.getNoticeId()).orElse(null);
+        NoticeEntity notice = noticeRepository.findByNoticeId(dto.getNoticeId());
         if(notice == null){
             return ReadNoticeResponseDto.NoticeNotFound();
         }

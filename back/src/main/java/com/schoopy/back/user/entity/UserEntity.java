@@ -73,5 +73,6 @@ public class UserEntity {
         this.phoneNum = dto.getPhoneNum();
         this.role = "STUDENT"; // Default role for new users
         this.councilPee = false;
+        this.noticeCount = 0;
     }
 }
