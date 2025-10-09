@@ -6,7 +6,6 @@ import com.schoopy.back.event.dto.request.ApplicationStatusRequestDto;
 import com.schoopy.back.event.dto.request.UpdatePaymentStatusRequestDto;
 import com.schoopy.back.event.dto.response.*;
 
-import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import com.schoopy.back.event.dto.request.RegistEventRequestDto;
@@ -24,5 +23,5 @@ public interface EventService {
     ResponseEntity<? super FormResponseDto> getFormByEventCode(Long eventCode);
     ResponseEntity<ExportExcelDataResponseDto> exportApplicationsData(Long eventCode);
     ResponseEntity<EventListResponseDto> getEventList(String department);
-    ResponseEntity<? super ApplicationStatusResponseDto> getApplicationStatus(ApplicationStatusRequestDto requestBody);
+    ResponseEntity<? super ApplicationStatusResponseDto> getApplicationStatus(ApplicationStatusRequestDto requestDto);
 }

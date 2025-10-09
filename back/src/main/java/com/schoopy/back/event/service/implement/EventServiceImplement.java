@@ -2,6 +2,7 @@ package com.schoopy.back.event.service.implement;
 
 import com.schoopy.back.event.dto.request.RedirectRequestDto;
 import com.schoopy.back.event.dto.request.ApplicationRequestDto;
+import com.schoopy.back.event.dto.request.ApplicationStatusRequestDto;
 import com.schoopy.back.event.dto.request.UpdatePaymentStatusRequestDto;
 import com.schoopy.back.event.dto.response.*;
 import com.schoopy.back.event.entity.*;
@@ -582,7 +583,7 @@ public class EventServiceImplement implements EventService{
     }
 
     @Override
-    public ResponseEntity<? super ApplicationStatusResponseDto> getApplicationStatus(ApplicationRequestDto requestDto) {
+    public ResponseEntity<? super ApplicationStatusResponseDto> getApplicationStatus(ApplicationStatusRequestDto requestDto){
         try{
             if(requestDto == null || requestDto.getEventCode() == null || requestDto.getStudentNum() == null || requestDto.getStudentNum().isBlank()) {
                 return ResponseEntity.badRequest().build();
