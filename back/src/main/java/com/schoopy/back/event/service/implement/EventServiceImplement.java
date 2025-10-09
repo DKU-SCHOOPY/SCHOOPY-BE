@@ -575,8 +575,25 @@ public class EventServiceImplement implements EventService{
             .build();
 
         return ResponseEntity.ok(body);
+        }
+
+    private static String safe(String s) { 
+        return s == null ? "" : s; 
     }
 
-    private static String safe(String s) { return s == null ? "" : s; }
+    @Override
+    public ResponseEntity<? super ApplicationStatusResponseDto> getApplicationStatus(ApplicationRequestDto requestDto) {
+        try{
+            if(requestDto == null || requestDto.getEventCode() == null || requestDto.getStudentNum() == null || requestDto.getStudentNum().isBlank()) {
+                return ResponseEntity.badRequest().build();
+            }
 
+            boolean status = submitSurveyRepository.existsByUser_StudentNumAndEventCode_EventCode(requestDto.getStudentNum(), requestDto.getEventCode());
+            
+            return ResponseEntity.ok(ApplicationStatusResponseDto.from(status));
+        } catch(Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }
