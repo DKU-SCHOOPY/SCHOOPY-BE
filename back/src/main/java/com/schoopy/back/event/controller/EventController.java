@@ -2,6 +2,7 @@ package com.schoopy.back.event.controller;
 
 import com.schoopy.back.event.dto.request.RedirectRequestDto;
 import com.schoopy.back.event.dto.request.ApplicationRequestDto;
+import com.schoopy.back.event.dto.request.ApplicationStatusRequestDto;
 import com.schoopy.back.event.dto.request.UpdatePaymentStatusRequestDto;
 import com.schoopy.back.event.dto.response.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -105,5 +106,13 @@ public class EventController {
     @Operation(summary = "행사 신청내역(엑셀용 데이터)", description = "엑셀 생성을 위한 JSON 스키마와 데이터 반환")
     public ResponseEntity<ExportExcelDataResponseDto> exportData(@PathVariable Long eventCode) {
         return eventService.exportApplicationsData(eventCode);
+    }
+
+    @PostMapping("/student/application-status")
+    @Operation(summary = "신청 여부 확인", description = "이벤트코드와 학번으로 신청내역 존재 여부를 반환합니다.")
+    public ResponseEntity<? super ApplicationStatusResponseDto> getApplicationStatus(
+            @RequestBody @Valid ApplicationStatusRequestDto requestBody
+    ) {
+        return eventService.getApplicationStatus(requestBody);
     }
 }
