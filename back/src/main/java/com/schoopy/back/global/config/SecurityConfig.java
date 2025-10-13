@@ -75,6 +75,7 @@ public class SecurityConfig {
                 .requestMatchers("/notice/all/**").hasAnyRole("STUDENT", "COUNCIL")
                 .requestMatchers("/notice/council/**").hasRole("COUNCIL")
                 .requestMatchers("/mypage/student/**").hasRole("STUDENT")
+                .requestMatchers("/mypage/all/**").hasAnyRole("STUDENT", "COUNCIL")
                 .requestMatchers("/mypage/council/**").hasRole("COUNCIL")
                 .requestMatchers("/", "/ws/**").permitAll()
                 .anyRequest().authenticated()
