@@ -8,6 +8,9 @@ import org.springframework.http.ResponseEntity;
 import com.schoopy.back.global.dto.ResponseDto;
 import com.schoopy.back.user.entity.UserEntity;
 
+import lombok.Getter;
+
+@Getter
 public class CouncilMypageResponseDto extends ResponseDto{
     List<UserEntity> councilMembers;
 
