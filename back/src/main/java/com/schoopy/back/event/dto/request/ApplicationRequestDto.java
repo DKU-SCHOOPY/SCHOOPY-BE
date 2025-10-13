@@ -8,7 +8,6 @@ import java.util.List;
 public class ApplicationRequestDto {
     private String studentNum;
     private Long eventCode;
-    private Boolean isStudent;
 
     private List<AnswerDto> answer;
 
