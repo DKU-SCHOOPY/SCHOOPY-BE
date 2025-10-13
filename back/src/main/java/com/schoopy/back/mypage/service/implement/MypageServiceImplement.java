@@ -1,14 +1,18 @@
 package com.schoopy.back.mypage.service.implement;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.schoopy.back.global.dto.ResponseDto;
 import com.schoopy.back.mypage.dto.request.ChangeDeptRequestDto;
 import com.schoopy.back.mypage.dto.request.ChangePhoneNumRequestDto;
+import com.schoopy.back.mypage.dto.request.CouncilMypageRequestDto;
 import com.schoopy.back.mypage.dto.request.MypageRequestDto;
 import com.schoopy.back.mypage.dto.response.ChangeDeptResponseDto;
 import com.schoopy.back.mypage.dto.response.ChangePhoeNumResponseDto;
+import com.schoopy.back.mypage.dto.response.CouncilMypageResponseDto;
 import com.schoopy.back.mypage.dto.response.MypageResponseDto;
 import com.schoopy.back.user.entity.UserEntity;
 import com.schoopy.back.user.repository.UserRepository;
@@ -65,5 +69,20 @@ public class MypageServiceImplement implements MypageService{
         }
 
         return ChangePhoeNumResponseDto.success();
+    }
+
+    @Override
+    public ResponseEntity<? super CouncilMypageResponseDto> printCouncilMypage(CouncilMypageRequestDto dto) {
+
+        List<UserEntity> councilMembers;
+        try {
+            councilMembers = userRepository.findByDepartment(dto.getDepartment());
+            if (councilMembers == null) return ResponseDto.badRequest();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return CouncilMypageResponseDto.success(councilMembers);
     }
 }
