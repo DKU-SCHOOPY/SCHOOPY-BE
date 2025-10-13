@@ -21,7 +21,7 @@ public class MypageController {
 
     private final MypageService mypageService;
 
-    @PostMapping("/student/check")
+    @PostMapping("/all/check")
     @Operation(summary = "마이페이지", description = "내 정보 조회")
     public ResponseEntity<? super MypageResponseDto> mypage(
         @RequestBody @Valid MypageRequestDto requestBody
