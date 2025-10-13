@@ -10,6 +10,7 @@ import com.schoopy.back.user.entity.UserEntity;
 public interface NoticeRepository extends JpaRepository<NoticeEntity, Long>{
     List<NoticeEntity> findByReceiverAndIsPresident(UserEntity receiver, boolean isPresident);
     int countByReceiverAndReadCheck(UserEntity receiver, boolean readCheck);
+    List<NoticeEntity> findByReceiverAndReadCheck(UserEntity receiver, boolean readCheck);
     NoticeEntity findByNoticeId(long noticeId);
     int countByReceiverAndReadCheckAndIsPresident(UserEntity receiver, boolean readCheck, boolean isPresident);
 }
