@@ -6,14 +6,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.schoopy.back.mypage.dto.request.ChangeDeptRequestDto;
-import com.schoopy.back.mypage.dto.request.ChangePhoneNumRequestDto;
-import com.schoopy.back.mypage.dto.request.MypageRequestDto;
-import com.schoopy.back.mypage.dto.response.ChangeDeptResponseDto;
-import com.schoopy.back.mypage.dto.response.ChangePhoeNumResponseDto;
-import com.schoopy.back.mypage.dto.response.MypageResponseDto;
-import com.schoopy.back.mypage.dto.request.CouncilMypageRequestDto;
-import com.schoopy.back.mypage.dto.response.CouncilMypageResponseDto;
+import com.schoopy.back.mypage.dto.request.*;
+import com.schoopy.back.mypage.dto.response.*;
 import com.schoopy.back.mypage.service.MypageService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,6 +54,24 @@ public class MypageController {
         @RequestBody @Valid CouncilMypageRequestDto requestBody
     ){
         ResponseEntity<? super CouncilMypageResponseDto> response = mypageService.printCouncilMypage(requestBody);
+        return response;
+    }
+
+    @PostMapping("/council/change-enroll")
+    @Operation(summary = "재학여부 변경", description = "재학여부 변경")
+    public ResponseEntity<? super ChangeEnrollResponseDto> changeEnroll(
+        @RequestBody @Valid ChangeEnrollRequestDto requestBody
+    ){
+        ResponseEntity<? super ChangeEnrollResponseDto> response = mypageService.changeEnroll(requestBody);
+        return response;
+    }
+
+    @PostMapping("/council/change-council-pee")
+    @Operation(summary = "학생회비 납부 여부 변경", description = "학생회비 납부 여부 변경")
+    public ResponseEntity<? super ChangeCouncilPeeResponseDto> changeCouncilPee(
+        @RequestBody @Valid ChangeCouncilPeeRequestDto requestBody
+    ){
+        ResponseEntity<? super ChangeCouncilPeeResponseDto> response = mypageService.changeCouncilPee(requestBody);
         return response;
     }
 }
