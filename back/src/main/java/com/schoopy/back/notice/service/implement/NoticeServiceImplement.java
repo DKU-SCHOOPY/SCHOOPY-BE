@@ -71,7 +71,7 @@ public class NoticeServiceImplement implements NoticeService {
         }
         if(!dto.isPresident()){
             try {
-                List<NoticeEntity> notices = noticeRepository.findByReceiverAndIsPresident(user, false);
+                List<NoticeEntity> notices = noticeRepository.findByReceiverAndReadCheck(user, false);
                 for(NoticeEntity notice : notices){
                     notice.setReadCheck(true);
                     noticeRepository.save(notice);
@@ -85,7 +85,10 @@ public class NoticeServiceImplement implements NoticeService {
         }else{
             String department = user.getDepartment();
             PresidentEntity president = presidentRepository.findByDepartment(department);
-            if(president.getStudentNum() == user.getStudentNum()){
+            if (president == null) {
+                return ReadAllNoticeResponseDto.notPresident();
+            }
+            if(president.getStudentNum().equals(user.getStudentNum())){
                 try {
                     List<NoticeEntity> notices = noticeRepository.findByReceiverAndIsPresident(user, true);
                     for(NoticeEntity notice : notices){
