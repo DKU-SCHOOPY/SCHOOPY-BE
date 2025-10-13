@@ -5,6 +5,9 @@ import org.springframework.http.ResponseEntity;
 
 import com.schoopy.back.global.dto.ResponseDto;
 
+import lombok.Getter;
+
+@Getter
 public class ChangeCouncilPeeResponseDto extends ResponseDto{
     private ChangeCouncilPeeResponseDto () {
         super();
