@@ -54,6 +54,9 @@ public class UserEntity {
     @Column(nullable = false)
     private int noticeCount;
 
+    @Column(nullable = false)
+    private int pNoticeCount;
+
     @Column(nullable = true)
     private String kakaoId;
 
@@ -74,5 +77,6 @@ public class UserEntity {
         this.role = "STUDENT"; // Default role for new users
         this.councilPee = false;
         this.noticeCount = 0;
+        this.pNoticeCount = 0;
     }
 }
