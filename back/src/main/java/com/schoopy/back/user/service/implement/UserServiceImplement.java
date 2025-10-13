@@ -173,8 +173,16 @@ public class UserServiceImplement implements UserService{
 
             token = jwtProvider.create(studentNum, userEntity.getRole());
 
-            int noticeCount = noticeRepository.countByReceiverAndReadCheck(userEntity, false);
-            userEntity.setNoticeCount(noticeCount);
+            //안읽은 알림 개수 설정
+            if(presidentRepository.existsById(studentNum)) {
+                int pnoticeCount = noticeRepository.countByReceiverAndReadCheckAndIsPresident(userEntity, false, true);
+                int noticeCount = noticeRepository.countByReceiverAndReadCheckAndIsPresident(userEntity, false, false);
+                userEntity.setPNoticeCount(pnoticeCount);
+                userEntity.setNoticeCount(noticeCount);
+            }else {
+                int noticeCount = noticeRepository.countByReceiverAndReadCheck(userEntity, false);
+                userEntity.setNoticeCount(noticeCount);
+            }
 
             userRepository.save(userEntity);
 
