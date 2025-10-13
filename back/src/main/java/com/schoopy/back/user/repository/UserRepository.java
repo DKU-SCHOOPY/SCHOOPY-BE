@@ -14,4 +14,5 @@ public interface UserRepository extends JpaRepository<UserEntity, String>{
     UserEntity findByKakaoId(String kakaoId);
     UserEntity findByNaverId(String naverId);
     List<UserEntity> findByStudentNumIn(Collection<String> studentNums);
+    List<UserEntity> findByDepartment(String department);
 }
