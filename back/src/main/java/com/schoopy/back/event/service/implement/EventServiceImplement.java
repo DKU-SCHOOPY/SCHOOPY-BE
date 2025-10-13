@@ -244,7 +244,6 @@ public class EventServiceImplement implements EventService{
             ApplicationEntity submit = new ApplicationEntity();
             submit.setUser(user);
             submit.setEventCode(event);
-            submit.setIsStudent(dto.getIsStudent());
             submitSurveyRepository.save(submit);
 
             if(dto.getAnswer() != null) {

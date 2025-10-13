@@ -29,8 +29,6 @@ public class ApplicationEntity {
     @JoinColumn(name="student_num")
     private UserEntity user;
 
-    private Boolean isStudent;
-
     @Column(nullable = false)
     private Boolean isPaymentCompleted=false;
 
