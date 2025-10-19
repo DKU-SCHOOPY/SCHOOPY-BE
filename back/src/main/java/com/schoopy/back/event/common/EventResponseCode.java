@@ -11,4 +11,5 @@ public interface EventResponseCode extends ResponseCode{
     String GET_FAIL = "FG";
     String DUPLICATION = "DP";
     String BAD_IMAGES = "BI";
+    String DELETE_FAIL = "DF";
 }

@@ -11,4 +11,5 @@ public interface EventResponseMessage extends ResponseMessage{
     String UPDATE_FAIL = "update failed";
     String GET_FAIL = "get failed";
     String BAD_IMAGES = "bad images request";
+    String DELETE_FAIL = "delete failed";
 }

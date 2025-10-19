@@ -39,6 +39,7 @@ public class ExportExcelDataResponseDto {
         private String birthDay;
         private String gender;
         private String phoneNum;
+        private boolean enrolled;
         private boolean councilPee;
 
         // 질문 순서에 맞춘 답변(복수선택은 ", "로 join)

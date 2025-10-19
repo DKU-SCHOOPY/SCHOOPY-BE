@@ -9,6 +9,8 @@ import com.schoopy.back.event.dto.response.*;
 
 import org.springframework.http.ResponseEntity;
 import com.schoopy.back.event.dto.request.RegistEventRequestDto;
+import com.schoopy.back.event.dto.request.UpdateEventRequestDto;
+
 import java.util.List;
 
 public interface EventService {
@@ -24,4 +26,6 @@ public interface EventService {
     ResponseEntity<ExportExcelDataResponseDto> exportApplicationsData(Long eventCode);
     ResponseEntity<EventListResponseDto> getEventList(String department);
     ResponseEntity<? super ApplicationStatusResponseDto> getApplicationStatus(ApplicationStatusRequestDto requestDto);
+    ResponseEntity<? super UpdateEventResponseDto> updateEvent(UpdateEventRequestDto requestDto);
+    ResponseEntity<? super DeleteEventResponseDto> deleteEvent(Long eventCode);
 }

@@ -24,4 +24,6 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
         WHERE a.eventCode.eventCode = :eventCode
         """)
     List<ApplicationEntity> findWithAnswersByEventCode(@Param("eventCode") Long eventCode);
+
+    List<ApplicationEntity> findAllByEventCode(EventEntity event);
 }
