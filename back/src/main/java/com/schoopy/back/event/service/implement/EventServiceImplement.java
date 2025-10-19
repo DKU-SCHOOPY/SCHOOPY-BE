@@ -586,13 +586,32 @@ public class EventServiceImplement implements EventService{
     @Override
     public ResponseEntity<? super ApplicationStatusResponseDto> getApplicationStatus(ApplicationStatusRequestDto requestDto){
         try{
-            if(requestDto == null || requestDto.getEventCode() == null || requestDto.getStudentNum() == null || requestDto.getStudentNum().isBlank()) {
+            if (requestDto == null
+                || requestDto.getEventCode() == null
+                || requestDto.getStudentNum() == null
+                || requestDto.getStudentNum().isBlank()) {
                 return ResponseEntity.badRequest().build();
             }
 
-            boolean status = submitSurveyRepository.existsByUser_StudentNumAndEventCode_EventCode(requestDto.getStudentNum(), requestDto.getEventCode());
-            
-            return ResponseEntity.ok(ApplicationStatusResponseDto.from(status));
+            // 신청 행 자체를 조회
+            var opt = submitSurveyRepository.findByUser_StudentNumAndEventCode_EventCode(
+                    requestDto.getStudentNum(),
+                    requestDto.getEventCode()
+            );
+
+            ApplicationStatusResponseDto body;
+            if (opt.isEmpty()) {
+                // 행이 없으면 반려되어 삭제됐거나, 애초에 신청 안함
+                body = ApplicationStatusResponseDto.none();
+            } else {
+                // 행이 있으면 승인 여부로 세분화
+                boolean paid = Boolean.TRUE.equals(opt.get().getIsPaymentCompleted());
+                body = paid ? ApplicationStatusResponseDto.approved()
+                            : ApplicationStatusResponseDto.pending();
+            }
+
+            return ResponseEntity.ok(body);
+
         } catch(Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
