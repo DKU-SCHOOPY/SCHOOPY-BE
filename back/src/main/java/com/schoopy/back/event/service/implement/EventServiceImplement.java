@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.schoopy.back.event.dto.request.RegistEventRequestDto;
+import com.schoopy.back.event.dto.request.UpdateEventRequestDto;
 import com.schoopy.back.event.service.EventService;
 
 import lombok.RequiredArgsConstructor;
@@ -553,6 +554,7 @@ public class EventServiceImplement implements EventService{
                 .birthDay(u != null && u.getBirthDay() != null ? u.getBirthDay().toString() : "")
                 .gender(safe(u != null ? u.getGender() : null))
                 .phoneNum(safe(u != null ? u.getPhoneNum() : null))
+                .enrolled(u != null && u.isEnrolled())
                 .councilPee(u != null && u.isCouncilPee())
                 .answers(answers)
                 .build()
@@ -595,5 +597,56 @@ public class EventServiceImplement implements EventService{
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<? super UpdateEventResponseDto> updateEvent(UpdateEventRequestDto requestDto) {
+
+        if (requestDto == null || requestDto.getEventCode() == null) {
+            return ResponseEntity.badRequest().body(UpdateEventResponseDto.updateFail());
+        }
+        final boolean nothingToUpdate =
+                requestDto.getEventName() == null && requestDto.getEventDescription() == null;
+        if (nothingToUpdate) {
+            return ResponseEntity.badRequest().body(UpdateEventResponseDto.updateFail());
+        }
+
+        EventEntity event = eventRepository.findById(requestDto.getEventCode()).orElse(null);
+        if (event == null) {
+            return ResponseEntity.badRequest().body(UpdateEventResponseDto.updateFail());
+        }
+
+        if (requestDto.getEventName() != null) {
+            event.setEventName(requestDto.getEventName());
+        }
+        if (requestDto.getEventDescription() != null) {
+            event.setEventDescription(requestDto.getEventDescription());
+        }
+
+        return UpdateEventResponseDto.success(true);
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<? super DeleteEventResponseDto> deleteEvent(Long eventCode) {
+        if (eventCode == null) 
+            return ResponseEntity.badRequest().body(DeleteEventResponseDto.notFound());
+
+        EventEntity event = eventRepository.findById(eventCode).orElse(null);
+        
+        if (event == null) 
+            return ResponseEntity.badRequest().body(DeleteEventResponseDto.notFound());
+
+        List<ApplicationEntity> apps = submitSurveyRepository.findAllByEventCode(event);
+        if (!apps.isEmpty()) {
+            submitSurveyRepository.deleteAll(apps);
+        }
+
+        formRepository.findByEvent(event).ifPresent(formRepository::delete);
+
+        eventRepository.delete(event);
+
+        return DeleteEventResponseDto.success(true);
     }
 }

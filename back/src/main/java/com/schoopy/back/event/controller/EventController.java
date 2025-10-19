@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import com.schoopy.back.event.dto.request.RegistEventRequestDto;
+import com.schoopy.back.event.dto.request.UpdateEventRequestDto;
 import com.schoopy.back.event.service.EventService;
 
 import jakarta.validation.Valid;
@@ -114,5 +115,21 @@ public class EventController {
             @RequestBody @Valid ApplicationStatusRequestDto requestBody
     ) {
         return eventService.getApplicationStatus(requestBody);
+    }
+
+    @PostMapping("/council/update-event")
+    @Operation(summary = "행사 정보 수정", description = "기존 행사 정보를 수정합니다.")
+    public ResponseEntity<? super UpdateEventResponseDto> updateEvent(
+            @RequestBody @Valid UpdateEventRequestDto requestBody
+    ) {
+        return eventService.updateEvent(requestBody);
+    }
+
+    @DeleteMapping("/council/delete-event/{eventCode}")
+    @Operation(summary = "행사 삭제", description = "연관된 신청/답변/폼/질문을 순서대로 삭제한 뒤 이벤트를 삭제합니다.")
+    public ResponseEntity<? super DeleteEventResponseDto> deleteEvent(
+            @PathVariable("eventCode") Long eventCode
+    ) {
+        return eventService.deleteEvent(eventCode);
     }
 }
