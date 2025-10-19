@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ApplicationRepository extends JpaRepository<ApplicationEntity, Long> {
 
@@ -15,7 +16,7 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
     ApplicationEntity findByApplicationId(Long applicationId);
 
     boolean existsByUser_StudentNumAndEventCode_EventCode(String studentNum, Long eventCode);
-
+    Optional<ApplicationEntity> findByUser_StudentNumAndEventCode_EventCode(String studentNum, Long eventCode);
     @Query("""
         SELECT DISTINCT a
         FROM ApplicationEntity a
@@ -26,4 +27,5 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
     List<ApplicationEntity> findWithAnswersByEventCode(@Param("eventCode") Long eventCode);
 
     List<ApplicationEntity> findAllByEventCode(EventEntity event);
+
 }
