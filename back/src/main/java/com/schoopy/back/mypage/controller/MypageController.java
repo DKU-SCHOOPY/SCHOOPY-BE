@@ -74,4 +74,22 @@ public class MypageController {
         ResponseEntity<? super ChangeCouncilPeeResponseDto> response = mypageService.changeCouncilPee(requestBody);
         return response;
     }
+
+    @PostMapping("/student/change-enroll")
+    @Operation(summary = "재학여부 변경 신청", description = "재학여부 변경 신청")
+    public ResponseEntity<? super ChangeEnrollRequestResponseDto> changeEnrollRequest(
+        @RequestBody @Valid ChangeEnrollRequestRequestDto requestBody
+    ){
+        ResponseEntity<? super ChangeEnrollRequestResponseDto> response = mypageService.changeEnrollRequest(requestBody);
+        return response;
+    }
+
+    @PostMapping("/student/change-council-pee")
+    @Operation(summary = "학생회비 납부 여부 변경 신청", description = "학생회비 납부 여부 변경 신청")
+    public ResponseEntity<? super ChangeCouncilPeeResponseDto> changeCouncilPeeRequest(
+        @RequestBody @Valid ChangeCouncilPeeRequestRequestDto requestBody
+    ){
+        ResponseEntity<? super ChangeCouncilPeeResponseDto> response = mypageService.changeCouncilPeeRequest(requestBody);
+        return response;
+    }
 }
