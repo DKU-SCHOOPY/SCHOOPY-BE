@@ -11,4 +11,6 @@ public interface NoticeService {
     ResponseEntity<? super ReadNoticeResponseDto> readNotice(ReadNoticeRequestDto dto);
     ResponseEntity<? super JustReadResponseDto> justRead(JustReadRequestDto dto);
     ResponseEntity<? super DeleteNoticeResponseDto> deleteNotice(DeleteNoticeRequestDto dto);
+    ResponseEntity<? super EResponseDto> eRequest(ERequestDto dto);
+    ResponseEntity<? super CResponseDto> cRequest(CRequestDto dto);
 }
