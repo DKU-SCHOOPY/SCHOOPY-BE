@@ -72,4 +72,21 @@ public class NoticeController {
         ResponseEntity<? super DeleteNoticeResponseDto> response = noticeService.deleteNotice(requestBody);
         return response;
     }
+
+    @PostMapping("council/Erequest")
+    public ResponseEntity<? super EResponseDto> eRequest(
+        @RequestBody @Valid ERequestDto requestBody
+    ) {
+        ResponseEntity<? super EResponseDto> response = noticeService.eRequest(requestBody);
+        return response;
+    }
+
+    @PostMapping("council/Crequest")
+    public ResponseEntity<? super CResponseDto> cRequest(
+        @RequestBody @Valid CRequestDto requestBody
+    ) {
+        ResponseEntity<? super CResponseDto> response = noticeService.cRequest(requestBody);
+        return response;
+    }
+    
 }
