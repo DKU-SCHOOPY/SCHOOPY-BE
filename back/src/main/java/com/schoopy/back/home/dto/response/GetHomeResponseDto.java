@@ -34,7 +34,7 @@ public class GetHomeResponseDto extends ResponseDto{
     private String eventDescription;
     private List<String> eventImages;
 
-    private GetHomeResponseDto (EventEntity event, FormEntity form, int noticeCount) {
+    private GetHomeResponseDto (EventEntity event, FormEntity form) {
         super();
         this.setEventCode(event.getEventCode());
         this.setEventName(event.getEventName());
@@ -46,10 +46,9 @@ public class GetHomeResponseDto extends ResponseDto{
         this.setMaxParticipant(form.getMaxParticipants());
         this.setEventDescription(event.getEventDescription());
         this.setEventImages(event.getEventImages()); // 필드 타입(List<String>)에 맞게 유지
-        this.setNoticeCount(noticeCount);
     }
 
-    private GetHomeResponseDto(EventEntity event, int noticeCount) {
+    private GetHomeResponseDto(EventEntity event) {
         super();
         this.setEventCode(event.getEventCode());
         this.setEventName(event.getEventName());
@@ -61,25 +60,24 @@ public class GetHomeResponseDto extends ResponseDto{
         this.setMaxParticipant(0);
         this.setEventDescription(event.getEventDescription());
         this.setEventImages(event.getEventImages()); // 필드 타입(List<String>)에 맞게 유지
-        this.setNoticeCount(noticeCount);
     }
 
-    public static ResponseEntity<GetHomeResponseDto> success(EventEntity event, FormEntity form, int noticeCount) {
-        GetHomeResponseDto responseBody = new GetHomeResponseDto(event, form, noticeCount);
+    public static ResponseEntity<GetHomeResponseDto> success(EventEntity event, FormEntity form) {
+        GetHomeResponseDto responseBody = new GetHomeResponseDto(event, form);
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     } 
 
-    public static ResponseEntity<GetHomeResponseDto> success(EventEntity event, int noticeCount) {
-        GetHomeResponseDto responseBody = new GetHomeResponseDto(event, noticeCount);
+    public static ResponseEntity<GetHomeResponseDto> success(EventEntity event) {
+        GetHomeResponseDto responseBody = new GetHomeResponseDto(event);
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 
-    public static GetHomeResponseDto from(EventEntity event, FormEntity form, int noticeCount) {
-        return new GetHomeResponseDto(event, form, noticeCount);
+    public static GetHomeResponseDto from(EventEntity event, FormEntity form) {
+        return new GetHomeResponseDto(event, form);
     }
 
-    public static GetHomeResponseDto from(EventEntity event, int noticeCount) {
-        return new GetHomeResponseDto(event, noticeCount);
+    public static GetHomeResponseDto from(EventEntity event) {
+        return new GetHomeResponseDto(event);
     }
 
 }
