@@ -14,6 +14,7 @@ import com.schoopy.back.global.dto.ResponseDto;
 import com.schoopy.back.home.dto.request.GetEventInformationRequestDto;
 import com.schoopy.back.home.dto.request.GetHomeRequestDto;
 import com.schoopy.back.home.dto.response.GetEventInformationResponseDto;
+import com.schoopy.back.home.dto.response.GetHomeListResponseDto;
 import com.schoopy.back.home.dto.response.GetHomeResponseDto;
 import com.schoopy.back.home.service.HomeService;
 import com.schoopy.back.notice.repository.NoticeRepository;
@@ -34,7 +35,7 @@ public class HomeServiceImplement implements HomeService{
     private final NoticeRepository noticeRepository;
 
     @Override
-    public ResponseEntity<? super List<GetHomeResponseDto>> home(GetHomeRequestDto dto) {
+    public ResponseEntity<? super GetHomeListResponseDto> home(GetHomeRequestDto dto) {
 
         UserEntity userEntity = userRepository.findByStudentNum(dto.getStudentNum());
 
@@ -60,16 +61,16 @@ public class HomeServiceImplement implements HomeService{
             nc = userEntity.getNoticeCount();
         }
 
-        List<GetHomeResponseDto> body = eventRepository.findAll().stream()
-            .sorted(Comparator.comparing(EventEntity::getEventCode).reversed())
-            .map(event -> {
-                FormEntity form = formRepository.findByEvent_EventCode(event.getEventCode());
-                if (form == null) return GetHomeResponseDto.from(event, nc);
-                return GetHomeResponseDto.from(event, form, nc);
-            })
-            .toList();
+        List<GetHomeResponseDto> events = eventRepository.findAll().stream()
+        .sorted(Comparator.comparing(EventEntity::getEventCode).reversed())
+        .map(event -> {
+            FormEntity form = formRepository.findByEvent_EventCode(event.getEventCode());
+            if (form == null) return GetHomeResponseDto.from(event);
+            return GetHomeResponseDto.from(event, form);
+        })
+        .toList();
 
-        return ResponseEntity.ok(body);
+        return GetHomeListResponseDto.success(nc, events); 
     }
 
 
