@@ -11,21 +11,14 @@ import lombok.Getter;
 @Getter
 public class MypageResponseDto extends ResponseDto{
 
-    private String name;
-    private String studentNum;
-    private String department;
-    private String birthDay;
-    private String phoneNum;
+    private UserEntity user;
     private boolean kakaoLogin;
     private boolean naverLogin;
 
     private MypageResponseDto(UserEntity user) {
         super();
-        this.name = user.getName();
-        this.studentNum = user.getStudentNum();
-        this.department = user.getDepartment();
-        this.birthDay = user.getBirthDay();
-        this.phoneNum = user.getPhoneNum();
+        this.user = user;
+
         if(user.getKakaoId() != null) {
             this.kakaoLogin = true;
         } else {

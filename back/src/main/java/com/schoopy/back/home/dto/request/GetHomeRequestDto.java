@@ -1,4 +1,4 @@
-package com.schoopy.back.mypage.dto.request;
+package com.schoopy.back.home.dto.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ChangeCouncilPeeRequestDto {
+public class GetHomeRequestDto {
     private String studentNum;
-    private String department;
+    private boolean president;
 }
