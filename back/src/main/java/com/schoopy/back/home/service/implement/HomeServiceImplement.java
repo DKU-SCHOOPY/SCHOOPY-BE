@@ -42,15 +42,15 @@ public class HomeServiceImplement implements HomeService{
         int pnoticeCount = 0;
 
         //안읽은 알림 개수 설정
-            if(presidentRepository.existsById(dto.getStudentNum())) {
-                pnoticeCount = noticeRepository.countByReceiverAndReadCheckAndIsPresident(userEntity, false, true);
-                noticeCount = noticeRepository.countByReceiverAndReadCheckAndIsPresident(userEntity, false, false);
-                userEntity.setPNoticeCount(pnoticeCount);
-                userEntity.setNoticeCount(noticeCount);
-            }else {
-                noticeCount = noticeRepository.countByReceiverAndReadCheck(userEntity, false);
-                userEntity.setNoticeCount(noticeCount);
-            }
+        if(presidentRepository.existsById(dto.getStudentNum())) {
+            pnoticeCount = noticeRepository.countByReceiverAndReadCheckAndIsPresident(userEntity, false, true);
+            noticeCount = noticeRepository.countByReceiverAndReadCheckAndIsPresident(userEntity, false, false);
+            userEntity.setPNoticeCount(pnoticeCount);
+            userEntity.setNoticeCount(noticeCount);
+        }else {
+            noticeCount = noticeRepository.countByReceiverAndReadCheck(userEntity, false);
+            userEntity.setNoticeCount(noticeCount);
+        }
 
         int nc;
 
