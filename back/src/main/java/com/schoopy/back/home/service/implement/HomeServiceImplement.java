@@ -12,9 +12,14 @@ import com.schoopy.back.event.repository.EventRepository;
 import com.schoopy.back.event.repository.FormRepository;
 import com.schoopy.back.global.dto.ResponseDto;
 import com.schoopy.back.home.dto.request.GetEventInformationRequestDto;
+import com.schoopy.back.home.dto.request.GetHomeRequestDto;
 import com.schoopy.back.home.dto.response.GetEventInformationResponseDto;
 import com.schoopy.back.home.dto.response.GetHomeResponseDto;
 import com.schoopy.back.home.service.HomeService;
+import com.schoopy.back.notice.repository.NoticeRepository;
+import com.schoopy.back.user.repository.PresidentRepository;
+import com.schoopy.back.user.repository.UserRepository;
+import com.schoopy.back.user.entity.UserEntity;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,19 +29,47 @@ public class HomeServiceImplement implements HomeService{
 
     private final EventRepository eventRepository;
     private final FormRepository formRepository;
+    private final UserRepository userRepository;
+    private final PresidentRepository presidentRepository;
+    private final NoticeRepository noticeRepository;
 
     @Override
-    public List<GetHomeResponseDto> home() {
-        return eventRepository.findAll().stream()
+    public ResponseEntity<? super List<GetHomeResponseDto>> home(GetHomeRequestDto dto) {
+
+        UserEntity userEntity = userRepository.findByStudentNum(dto.getStudentNum());
+
+        int noticeCount = 0;
+        int pnoticeCount = 0;
+
+        //안읽은 알림 개수 설정
+            if(presidentRepository.existsById(dto.getStudentNum())) {
+                pnoticeCount = noticeRepository.countByReceiverAndReadCheckAndIsPresident(userEntity, false, true);
+                noticeCount = noticeRepository.countByReceiverAndReadCheckAndIsPresident(userEntity, false, false);
+                userEntity.setPNoticeCount(pnoticeCount);
+                userEntity.setNoticeCount(noticeCount);
+            }else {
+                noticeCount = noticeRepository.countByReceiverAndReadCheck(userEntity, false);
+                userEntity.setNoticeCount(noticeCount);
+            }
+
+        int nc;
+
+        if(dto.isPresident()){
+            nc = userEntity.getPNoticeCount();
+        } else {
+            nc = userEntity.getNoticeCount();
+        }
+
+        List<GetHomeResponseDto> body = eventRepository.findAll().stream()
             .sorted(Comparator.comparing(EventEntity::getEventCode).reversed())
             .map(event -> {
                 FormEntity form = formRepository.findByEvent_EventCode(event.getEventCode());
-                if(form == null) {
-                    return GetHomeResponseDto.from(event);
-                }
-                return GetHomeResponseDto.from(event, form);
+                if (form == null) return GetHomeResponseDto.from(event, nc);
+                return GetHomeResponseDto.from(event, form, nc);
             })
             .toList();
+
+        return ResponseEntity.ok(body);
     }
 
 
