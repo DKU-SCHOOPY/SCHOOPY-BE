@@ -10,4 +10,6 @@ public interface MypageService {
     ResponseEntity<? super CouncilMypageResponseDto> printCouncilMypage (CouncilMypageRequestDto dto);
     ResponseEntity<? super ChangeEnrollResponseDto> changeEnroll (ChangeEnrollRequestDto dto);
     ResponseEntity<? super ChangeCouncilPeeResponseDto> changeCouncilPee (ChangeCouncilPeeRequestDto dto);
+    ResponseEntity<? super ChangeCouncilPeeResponseDto> changeCouncilPeeRequest(ChangeCouncilPeeRequestRequestDto dto);
+    ResponseEntity<? super ChangeEnrollRequestResponseDto> changeEnrollRequest(ChangeEnrollRequestRequestDto dto);
 }
