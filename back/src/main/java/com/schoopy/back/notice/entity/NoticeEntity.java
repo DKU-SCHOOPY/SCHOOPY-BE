@@ -36,6 +36,9 @@ public class NoticeEntity {
     private UserEntity receiver;
 
     @Column(nullable = false)
+    private String type;
+
+    @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
@@ -52,6 +55,17 @@ public class NoticeEntity {
     public NoticeEntity(UserEntity sender, UserEntity receiver, String title, String message, boolean isPresident) {
         this.sender = sender;
         this.receiver = receiver;
+        this.type = "NOTICE";
+        this.title = title;
+        this.message = message;
+        this.readCheck = false;
+        this.isPresident = isPresident;
+    }
+
+    public NoticeEntity(UserEntity sender, UserEntity receiver, String type, String title, String message, boolean isPresident) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.type = type;
         this.title = title;
         this.message = message;
         this.readCheck = false;
