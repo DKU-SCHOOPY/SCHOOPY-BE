@@ -80,7 +80,11 @@ public class MypageServiceImplement implements MypageService{
 
         List<UserEntity> councilMembers;
         try {
-            councilMembers = userRepository.findByDepartment(dto.getDepartment());
+            if ((dto.getDepartment().equals("SW융합대학"))) {
+                councilMembers = userRepository.findAll();
+            }else{
+                councilMembers = userRepository.findByDepartment(dto.getDepartment());
+            }
             if (councilMembers == null) return ResponseDto.badRequest();
         } catch (Exception e) {
             e.printStackTrace();
@@ -114,16 +118,23 @@ public class MypageServiceImplement implements MypageService{
 
     @Override
     public ResponseEntity<? super ChangeCouncilPeeResponseDto> changeCouncilPee(ChangeCouncilPeeRequestDto dto) {
-        String studentNum = dto.getStudentNum();
 
-        UserEntity userEntity = userRepository.findByStudentNum(studentNum);
+        UserEntity userEntity = userRepository.findByStudentNum(dto.getStudentNum());
         if (userEntity == null) return ResponseDto.badRequest();
 
         try {
-            if(userEntity.isCouncilPee()) {
-                userEntity.setCouncilPee(false);
+            if(dto.getDepartment().equals("SW융합대학")) {
+                if(userEntity.isCouncilPee()) {
+                    userEntity.setCouncilPee(false);
+                } else {
+                    userEntity.setCouncilPee(true);
+                }
             } else {
-                userEntity.setCouncilPee(true);
+                if(userEntity.isDepartmentCouncilPee()) {
+                    userEntity.setDepartmentCouncilPee(false);
+                } else {
+                    userEntity.setDepartmentCouncilPee(true);
+                }   
             }
             userRepository.save(userEntity);
 
