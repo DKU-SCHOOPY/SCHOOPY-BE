@@ -49,6 +49,9 @@ public class UserEntity {
     private boolean councilPee;
 
     @Column(nullable = false)
+    private boolean departmentCouncilPee;
+
+    @Column(nullable = false)
     private String role;
 
     @Column(nullable = false)
@@ -78,6 +81,7 @@ public class UserEntity {
         this.birthDay = dto.getBirthDay();
         this.phoneNum = dto.getPhoneNum();
         this.enrolled = false;
+        this.departmentCouncilPee = false;
         this.role = "STUDENT"; // Default role for new users
         this.councilPee = false;
         this.noticeCount = 0;
