@@ -7,4 +7,5 @@ import com.schoopy.back.user.entity.PresidentEntity;
 public interface PresidentRepository extends JpaRepository<PresidentEntity, String>{
     PresidentEntity findByDepartment(String department);
     PresidentEntity findByStudentNum(String studentNum);
+    boolean existsByStudentNum(String studentNum);
 }
