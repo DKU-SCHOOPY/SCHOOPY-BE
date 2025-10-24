@@ -177,19 +177,24 @@ public class NoticeServiceImplement implements NoticeService {
     public ResponseEntity<? super CResponseDto> cRequest(CRequestDto dto) {
         NoticeEntity notice = noticeRepository.findByNoticeId(dto.getNoticeId());
         UserEntity userEntity = userRepository.findByStudentNum(notice.getSender().getStudentNum());
+        UserEntity presidentUser = notice.getReceiver();
+        boolean isSW;
+
+        if(presidentUser.getDepartment().equals("SW융합대학")) {
+            isSW = true;
+        } else {
+            isSW = false;
+        }
 
         try {
             if(dto.isAccept()){
-                if(dto.isSW()) {
+                if(isSW) {
                     userEntity.setCouncilPee(true);
                 } else {
                     userEntity.setDepartmentCouncilPee(true);
                 }
                 String title = "학생회비 납부 인증 요청 승인";
                 String message = "학생회비 납부 인증 요청이 승인되었습니다.\n학생회비를 납부해주셔서 감사합니다.";
-                String department = userEntity.getDepartment();
-                PresidentEntity president = presidentRepository.findByDepartment(department);
-                UserEntity presidentUser = userRepository.findByStudentNum(president.getStudentNum());
                 NoticeEntity new_notice = new NoticeEntity(presidentUser, userEntity, "NOTICE",title, message, false);
                 noticeRepository.save(new_notice);
             }else{
@@ -200,9 +205,6 @@ public class NoticeServiceImplement implements NoticeService {
                 }
                 String title = "학생회비 납부 인증 요청 거절";
                 String message = "학생회비 납부 인증 요청이 거절되었습니다.\n 자세한 내용은 학생회에 문의해주세요.";
-                String department = userEntity.getDepartment();
-                PresidentEntity president = presidentRepository.findByDepartment(department);
-                UserEntity presidentUser = userRepository.findByStudentNum(president.getStudentNum());
                 NoticeEntity new_notice = new NoticeEntity(presidentUser, userEntity, "NOTICE",title, message, false);
                 noticeRepository.save(new_notice);
             }
