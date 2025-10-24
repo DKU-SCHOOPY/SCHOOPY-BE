@@ -160,7 +160,7 @@ public class MypageServiceImplement implements MypageService{
 
         if (userEntity == null) return ResponseDto.badRequest();
 
-        String title = "학생회부 납부 인증 요청";
+        String title = "학생회비 납부 인증 요청";
         String message = userEntity.getName() + "학생이 학생회비를 납부 완료하였습니다.\n 납부 여부를 확인 후 승인 부탁드립니다.";
         String department;
         if(dto.isSW()) {
