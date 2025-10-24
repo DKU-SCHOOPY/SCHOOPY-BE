@@ -10,5 +10,4 @@ import lombok.Setter;
 public class CRequestDto {
     private long noticeId;
     private boolean accept;
-    private boolean SW;
 }
