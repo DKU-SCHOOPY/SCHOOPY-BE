@@ -178,12 +178,11 @@ public class NoticeServiceImplement implements NoticeService {
         NoticeEntity notice = noticeRepository.findByNoticeId(dto.getNoticeId());
         UserEntity userEntity = userRepository.findByStudentNum(notice.getSender().getStudentNum());
         UserEntity presidentUser = notice.getReceiver();
-        boolean isSW;
+        PresidentEntity presidentEntity = presidentRepository.findByStudentNum(presidentUser.getStudentNum());
+        boolean isSW = false;
 
-        if(presidentUser.getDepartment().equals("SW융합대학")) {
+        if(presidentEntity.getDepartment().equals("SW융합대학")) {
             isSW = true;
-        } else {
-            isSW = false;
         }
 
         try {
