@@ -13,14 +13,16 @@ import lombok.Getter;
 @Getter
 public class CouncilMypageResponseDto extends ResponseDto{
     List<UserEntity> councilMembers;
+    boolean SW;
 
-    private CouncilMypageResponseDto(List<UserEntity> councilMembers) {
+    private CouncilMypageResponseDto(List<UserEntity> councilMembers, boolean SW) {
         super();
         this.councilMembers = councilMembers;
+        this.SW = SW;
     }
 
-    public static ResponseEntity<CouncilMypageResponseDto> success(List<UserEntity> councilMembers) {
-        CouncilMypageResponseDto responseBody = new CouncilMypageResponseDto(councilMembers);
+    public static ResponseEntity<CouncilMypageResponseDto> success(List<UserEntity> councilMembers, boolean SW) {
+        CouncilMypageResponseDto responseBody = new CouncilMypageResponseDto(councilMembers, SW);
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 }
