@@ -88,11 +88,14 @@ public class MypageServiceImplement implements MypageService{
     public ResponseEntity<? super CouncilMypageResponseDto> printCouncilMypage(CouncilMypageRequestDto dto) {
 
         List<UserEntity> councilMembers;
+        boolean SW;
         try {
             if ((dto.getDepartment().equals("SW융합대학"))) {
                 councilMembers = userRepository.findAll();
+                SW = true;
             }else{
                 councilMembers = userRepository.findByDepartment(dto.getDepartment());
+                SW = false;
             }
             if (councilMembers == null) return ResponseDto.badRequest();
         } catch (Exception e) {
@@ -100,7 +103,7 @@ public class MypageServiceImplement implements MypageService{
             return ResponseDto.databaseError();
         }
 
-        return CouncilMypageResponseDto.success(councilMembers);
+        return CouncilMypageResponseDto.success(councilMembers, SW);
     }
 
     @Override
