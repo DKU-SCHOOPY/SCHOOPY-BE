@@ -663,6 +663,8 @@ public class EventServiceImplement implements EventService{
         }
 
         formRepository.findByEvent(event).ifPresent(formRepository::delete);
+        
+        
 
         eventRepository.delete(event);
 
