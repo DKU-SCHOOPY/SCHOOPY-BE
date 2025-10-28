@@ -8,4 +8,5 @@ public interface ResponseCode {
     String BAD_REQUEST = "BR";
     String INVALID_TOKEN = "IT";
     String TOKEN_EXPIRED = "TE";
+    String INCORRECT_REQUEST = "IR";
 }
