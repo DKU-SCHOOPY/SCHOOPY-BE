@@ -8,4 +8,5 @@ public interface ResponseMessage {
     String BAD_REQUEST = "bad request";
     String INVALID_TOKEN = "invalid token";
     String TOKEN_EXPIRED = "token expired";
+    String INCORRECT_REQUEST = "incorrect request";
 }
