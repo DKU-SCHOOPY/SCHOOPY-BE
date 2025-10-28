@@ -30,6 +30,9 @@ public class ApplicationEntity {
     private UserEntity user;
 
     @Column(nullable = false)
+    private Boolean isStudent;
+
+    @Column(nullable = false)
     private Boolean isPaymentCompleted=false;
 
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, orphanRemoval = true)
